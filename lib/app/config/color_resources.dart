@@ -12,7 +12,7 @@ class ColorResources{
   static Color primary800 = Color(0xff002736);
   static Color primary900 = Color(0xff001016);
 
-  static Color background = Color(0xffFFFFFF);
+  static Color background = Color(0xffEFEFEF);
   static Color secondary100 = Color(0xffFEFEFE);
   static Color secondary200 = Color(0xffFDFDFD);
   static Color secondary300 = Color(0xffFBFBFB);
@@ -36,5 +36,7 @@ class ColorResources{
 
   static Color errorSnackBar = Colors.black54;
   static Color textError = Colors.red;
+  static Color black = Colors.black;
+  static Color white = Color(0xffFFFFFF);
 
 }

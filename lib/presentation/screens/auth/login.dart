@@ -4,10 +4,12 @@ import 'package:etms/data/datasources/request/login_data.dart';
 import 'package:etms/presentation/widgets/custom_password_textform.dart';
 import 'package:etms/presentation/widgets/custom_textform.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
 import '../../../app/config/api_constants.dart';
 import '../../../app/config/color_resources.dart';
+import '../../../app/route/route_name.dart';
 import '../../controllers/auth_controller.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -43,7 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   fit: BoxFit.cover,
                 )
             ),
-            child: Stack(
+            child:
+            Stack(
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Align(
@@ -110,19 +113,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           InkWell(
                             onTap: (){
                               if(_key.currentState!.validate()){
-                                LogInData loginData=LogInData(
-                                    loginName: _userNameController.text,
-                                    loginDevice: 'ML',
-                                    password: _passwordController.text
-                                );
-                                String companyCode = _companyCodeController.text.toString();
-                                SharedPreferenceHelper sharedData= Get.find<SharedPreferenceHelper>();
-                                sharedData.saveCompanyCode(companyCode.toString());
-                                Future.delayed(Duration(seconds: 1),(){
-                                  authController.companyCode.value=companyCode;
-                                  authController.companyCode.refresh();
-                                  authController.logIn(data: loginData);
-                                });
+                                Get.toNamed(RouteName.dashboard);
+                                // LogInData loginData=LogInData(
+                                //     loginName: _userNameController.text,
+                                //     loginDevice: 'ML',
+                                //     password: _passwordController.text
+                                // );
+                                // String companyCode = _companyCodeController.text.toString();
+                                // SharedPreferenceHelper sharedData= Get.find<SharedPreferenceHelper>();
+                                // sharedData.saveCompanyCode(companyCode.toString());
+                                // Future.delayed(Duration(seconds: 1),(){
+                                //   authController.companyCode.value=companyCode;
+                                //   authController.companyCode.refresh();
+                                //   authController.logIn(data: loginData);
+                                // });
                               }
                             },
                             child: Container(

@@ -4,6 +4,7 @@ import 'package:etms/presentation/screens/auth/login.dart';
 import 'package:etms/presentation/screens/root_screen.dart';
 import 'package:etms/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'app/config/config.dart';
 import 'app/route/route_path.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeConfig.lightTheme,
       home: const RootScreen(),
       initialBinding: AppBinding(),
+      builder: EasyLoading.init(),
     );
   }
 }
