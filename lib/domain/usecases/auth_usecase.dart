@@ -7,7 +7,7 @@ class AuthUseCase{
   final AuthRepository respository;
   AuthUseCase(this.respository);
 
-  Future<LoginResponse> logIn({required LogInData data}) async{
-    return respository.logIn(data: data);
+  Future<LoginResponse> logIn({required LogInData data, required String apiLink}) async{
+    return respository.logIn(data: data, apiLink: apiLink);
   }
 }

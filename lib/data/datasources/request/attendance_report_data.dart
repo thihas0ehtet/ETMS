@@ -1,6 +1,6 @@
 class AttendanceReportData {
   int? unitId;
-  int? empSysId;
+  String? empSysId;
   String? active;
   String? sDate;
   String? eDate;

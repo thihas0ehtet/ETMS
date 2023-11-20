@@ -1,5 +1,6 @@
 import 'package:etms/app/config/color_resources.dart';
 import 'package:etms/app/config/config.dart';
+import 'package:etms/app/route/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,7 @@ class _MenuScreenState extends State<MenuScreen> {
             alignment: Alignment.topCenter,
             child: Container(
               height: 200,
-              color: ColorResources.primary500,
+              color: ColorResources.primary800,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,10 +55,11 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   GestureDetector(
                     onTap: (){
-                      AuthController authController = Get.find();
-                      SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
-                      authController.companyCode.value="";
-                      _sharedPrefs.saveCompanyCode("");
+                      // AuthController authController = Get.find();
+                      // SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+                      // authController.companyCode.value="";
+                      // _sharedPrefs.saveCompanyCode("");
+                      Get.toNamed(RouteName.login);
                     },
                     child: SvgPicture.asset('assets/images/bell.svg',color: ColorResources.text50,width: 22,),
                   )

@@ -3,5 +3,5 @@ import 'package:etms/data/datasources/response/login_response.dart';
 import 'package:get/get.dart';
 
 abstract class AuthRepository{
-  Future<LoginResponse> logIn({required LogInData data});
+  Future<LoginResponse> logIn({required LogInData data, required String apiLink});
 }

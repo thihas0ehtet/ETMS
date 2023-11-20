@@ -3,6 +3,7 @@ import 'package:etms/app/helpers/shared_preference_helper.dart';
 import 'package:etms/data/datasources/request/login_data.dart';
 import 'package:etms/presentation/widgets/custom_password_textform.dart';
 import 'package:etms/presentation/widgets/custom_textform.dart';
+import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -85,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     controller: _userNameController,
                                     hintText: 'User Name',
                                     validationText: 'enter user name',
-                                    icon: Icons.person,
+                                    icon: FeatherIcons.user,
                                   ),
                                   SizedBox(height: 22,),
                                   CustomPasswordTextForm(
@@ -97,13 +98,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                         });
                                       },
                                       hintText: 'Password',
-                                      validationText: 'enter password'),
+                                      validationText: 'enter password',
+                                    onChange: (value){
+                                        setState(() {
+                                          _passwordController.text=value;
+                                        });
+                                    },
+                                  ),
                                   SizedBox(height: 22,),
                                   CustomTextForm(
                                     controller: _companyCodeController,
                                     hintText: 'Company Code',
                                     validationText: 'enter company code',
-                                    icon: Icons.home,
+                                    svgIcon: 'assets/images/company.svg',
                                     isNumber: true,
                                   ),
                                   SizedBox(height: 25,),
@@ -113,13 +120,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           InkWell(
                             onTap: (){
                               if(_key.currentState!.validate()){
-                                Get.toNamed(RouteName.dashboard);
-                                // LogInData loginData=LogInData(
-                                //     loginName: _userNameController.text,
-                                //     loginDevice: 'ML',
-                                //     password: _passwordController.text
-                                // );
-                                // String companyCode = _companyCodeController.text.toString();
+                                // Get.offAllNamed(RouteName.dashboard);
+                                LogInData loginData=LogInData(
+                                    loginName: _userNameController.text,
+                                    loginDevice: 'ML',
+                                    password: _passwordController.text
+                                );
+                                String companyCode = _companyCodeController.text.toString();
+                                // String apiLink = companyCode+'/api/'+ApiConstants.login;
+                                authController.logIn(data: loginData, code: companyCode);
+
+
                                 // SharedPreferenceHelper sharedData= Get.find<SharedPreferenceHelper>();
                                 // sharedData.saveCompanyCode(companyCode.toString());
                                 // Future.delayed(Duration(seconds: 1),(){

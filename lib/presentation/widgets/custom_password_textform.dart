@@ -1,4 +1,6 @@
+import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../app/config/config.dart';
 
 class CustomPasswordTextForm extends StatelessWidget {
@@ -7,8 +9,9 @@ class CustomPasswordTextForm extends StatelessWidget {
   VoidCallback onPress;
   String hintText;
   String validationText;
+  final ValueChanged<String>? onChange;
   CustomPasswordTextForm({super.key, required this.controller, required this.hidePassword, required this.onPress,
-  required this.hintText, required this.validationText});
+  required this.hintText, required this.validationText, required this.onChange});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +19,7 @@ class CustomPasswordTextForm extends StatelessWidget {
       controller: controller,
       maxLines: 1,
       obscureText: hidePassword?true:false,
+      onChanged: onChange,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.only(left: 15.0, top: 12.0, bottom: 12.0),
           hintText: 'Password',
@@ -28,7 +32,9 @@ class CustomPasswordTextForm extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.lock, color: ColorResources.primary700,size: 18,),
+                SvgPicture.asset('assets/images/lock.svg',width: 18,height: 18,
+                  color: ColorResources.primary700,),
+                //Icon(MdiIcon, color: ColorResources.primary700,size: 18,),
                 SizedBox(width: 10,),
                 Container(
                   color: Colors.black,
@@ -38,10 +44,15 @@ class CustomPasswordTextForm extends StatelessWidget {
               ],
             ),
           ),
-          suffixIcon: IconButton(
-            onPressed: onPress,
-            icon: Icon(hidePassword?Icons.close:Icons.remove_red_eye),
-          )
+          suffixIcon: controller.text.length>0?
+          GestureDetector(
+            onTap: onPress,
+            child: Container(
+              margin: EdgeInsets.only(top: 13,bottom: 13),
+              child: SvgPicture.asset(hidePassword?'assets/images/eye close.svg':'assets/images/eye open.svg',
+                color: ColorResources.primary700,),
+            ),
+          ):null,
       ),
       validator: (value) {
         if(value!.isEmpty ) {

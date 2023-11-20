@@ -8,11 +8,10 @@ Future<dynamic> responseInterceptor(
   print("HEYY THIS IS REsponse");
   // EasyLoading.dismiss();
 
-  if (response.statusCode != 200) {
-    handleErrorStatus(response);
-    return response;
-  }
-
+  // if (response.statusCode != 200) {
+  //   handleErrorStatus(response);
+  //   return response;
+  // }
   return response;
 }
 

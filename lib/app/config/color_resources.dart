@@ -35,8 +35,10 @@ class ColorResources{
   static Color text900 = Color(0xff030303);
 
   static Color errorSnackBar = Colors.black54;
-  static Color textError = Colors.red;
+  static Color error = Colors.red;
   static Color black = Colors.black;
   static Color white = Color(0xffFFFFFF);
-
+  static Color border = Color(0xff475772);
+  static Color red = Color(0xffFD2A37);
+  static Color green = Color(0xff03AC00);
 }

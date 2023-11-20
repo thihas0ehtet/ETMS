@@ -10,6 +10,7 @@ import 'app/config/config.dart';
 import 'app/route/route_path.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await AppBinding().dependencies();
   runApp(const MyApp());
 }

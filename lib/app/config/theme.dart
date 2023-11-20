@@ -16,14 +16,14 @@ class ThemeConfig {
     brightness: Brightness.light,
     primary: ColorResources.primary700,
     secondary: ColorResources.background,
-    surface: ColorResources.background,
+    surface: ColorResources.primary700,
     background: ColorResources.background,
-    error: ColorResources.textError,
+    error: ColorResources.error,
     onPrimary: ColorResources.text500,
     onSecondary: ColorResources.text50,
-    onSurface: ColorResources.background,
+    onSurface: ColorResources.primary700,
     onBackground: ColorResources.background,
-    onError: ColorResources.textError,
+    onError: ColorResources.error,
   ),
   );
 }

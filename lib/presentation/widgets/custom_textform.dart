@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../app/config/config.dart';
 
 class CustomTextForm extends StatelessWidget {
   TextEditingController controller;
-  IconData icon;
+  IconData? icon;
+  String? svgIcon;
   String hintText;
   String validationText;
   bool isNumber;
-  CustomTextForm({super.key,required this.controller, required this.hintText, required this.validationText, required this.icon,
-  this.isNumber=false});
+  CustomTextForm({super.key,required this.controller, required this.hintText, required this.validationText,this.icon,
+    this.svgIcon, this.isNumber=false});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,11 @@ class CustomTextForm extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if(icon!=null)
               Icon(icon, color: ColorResources.primary700,size: 18,),
+              if(svgIcon!=null)
+                SvgPicture.asset(svgIcon!,width: 18,height: 18,
+                  color: ColorResources.primary700,),
               SizedBox(width: 10,),
               Container(
                 color: Colors.black,

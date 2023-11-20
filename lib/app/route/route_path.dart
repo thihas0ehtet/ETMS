@@ -1,6 +1,8 @@
 import 'package:etms/app/app_binding.dart';
 import 'package:etms/app/route/route_name.dart';
+import 'package:etms/presentation/apply_leave/apply_leave_page.dart';
 import 'package:etms/presentation/attendance/attendance_report.dart';
+import 'package:etms/presentation/attendance/attendance_screen.dart';
 import 'package:etms/presentation/screens/auth/login.dart';
 import 'package:etms/presentation/screens/dashboard.dart';
 import 'package:etms/presentation/screens/menu/menu.dart';
@@ -28,8 +30,16 @@ class AppPages {
         page: () => const MenuScreen()
     ),
     GetPage(
+        name: RouteName.attendanceScreen,
+        page: () => const AttendanceScreen()
+    ),
+    GetPage(
         name: RouteName.attendanceReport,
         page: () => const AttendanceReportScreen()
+    ),
+    GetPage(
+        name: RouteName.applyLeave,
+        page: () => const ApplyLeavePage()
     ),
   ];
 }

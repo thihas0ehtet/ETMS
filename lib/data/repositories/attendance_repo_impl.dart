@@ -1,0 +1,35 @@
+import 'package:etms/app/config/api_constants.dart';
+import 'package:etms/app/utils/api_link.dart';
+import 'package:etms/data/datasources/request/attendance_report_data.dart';
+import 'package:etms/data/datasources/response/att_report_response.dart';
+import 'package:etms/domain/repositories/attendance_repository.dart';
+import 'package:get/get_connect/http/src/response/response.dart';
+import '../../app/api/base_provider.dart';
+import '../../app/helpers/error_handling/unknown_error.dart';
+
+class AttendanceRepoImpl extends BaseProvider implements AttendanceRepository{
+  @override
+  Future<List<AttReportResponse>> getAttendanceReport({required AttendanceReportData data}) async{
+    try{
+      String apiLink = await ApiConstants.getAttendance.link();
+      final Response response  = await post(apiLink,data.toJson());
+      if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
+      }
+      else if(response.statusCode==200){
+        List<AttReportResponse> list = [];
+        for(var i=0;i<response.body.length;i++){
+          list.add(AttReportResponse.fromJson(response.body[i]));
+        }
+        return list;
+      }
+      else{
+        throw UnknownException(response.body['Message']);
+      }
+    }
+    catch(e){
+      throw UnknownException(e.toString());
+    }
+  }
+
+}

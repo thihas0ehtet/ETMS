@@ -14,7 +14,25 @@ extension CustomSnackBars on String{
         backgroundColor: ColorResources.errorSnackBar,
         titleText: Text(
           'Failed !',
-          style: latoRegular
+          style: latoRegular.copyWith(color: ColorResources.primary50, fontSize: 15),
+        ),
+        messageText: Text(
+          this,
+          style: latoRegular.copyWith(color: ColorResources.primary50),
+        ),
+      );
+  }
+  SnackbarController? alert() {
+    return
+      // connectivityController.isConnected.value?
+      Get.snackbar(
+        '',
+        '',
+        duration: const Duration(seconds: 3),
+        backgroundColor: ColorResources.errorSnackBar,
+        titleText: Text(
+          'Alert',
+          style: latoRegular.copyWith(color: ColorResources.primary50, fontSize: 16),
         ),
         messageText: Text(
           this,

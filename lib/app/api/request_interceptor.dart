@@ -7,9 +7,9 @@ Future<Request> requestInterceptor(Request request) async {
   print("HEYY THIS IS REQUEST");
   request.headers['X-Requested-With'] = 'XMLHttpRequest';
   request.headers['Accept'] = 'application/json';
-  print("Request is $request");
-  print(request.url);
-  print(request.files);
-  print(request.bodyBytes);
+  // print("Request is $request");
+  // print(request.url);
+  // print(request.files);
+  // print(request.bodyBytes);
   return request;
 }

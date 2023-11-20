@@ -1,11 +1,14 @@
-import 'package:awesome_bottom_bar/widgets/inspired/inspired.dart';
 import 'package:etms/app/route/route_name.dart';
+import 'package:etms/app/utils/app_utils.dart';
 import 'package:etms/presentation/screens/menu/menu.dart';
+import 'package:etms/presentation/test/basic_examle.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../app/config/config.dart';
 
 
@@ -17,8 +20,37 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int visit = 0;
   bool selected = false;
+  int tabIndex=0;
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +61,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               // Expanded(child: Login),
               AnimatedOpacity(
-                opacity: selected ? 0.1 : 0.7,
+                opacity: selected ? 0.1 : 1,
                 duration: Duration(milliseconds: 300),
                 child: Container(
-                  child: visit==1?MenuScreen():
-                  Get.arguments,
+                  child: tabIndex==0?MenuScreen():
+                  tabIndex==1?MenuScreen():
+                  TableBasicsExample(),
                 ),),
               Positioned(
                 bottom: 60,
@@ -60,11 +93,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           duration: const Duration(seconds: 1),
                           curve: Curves.easeOutBack,
                           child: GestureDetector(
-                            onTap: (){
+                            onTap: () async {
                               setState(() {
                                 selected=!selected;
                               });
-                              Get.toNamed(RouteName.attendanceReport);
+
+                              // final hasPermission = await _handleLocationPermission();
+                              // if (!hasPermission) return;
+                              // await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+                              //     .then((Position position) {
+                              //   print("THIS IS POsitiosn and $position");
+                              //   // setState(() => _currentPosition = position);
+                              //   // _getAddressFromLatLng(_currentPosition!);
+                              //   Get.toNamed(RouteName.attendanceScreen);
+                              // }).catchError((e) {
+                              //   debugPrint(e);
+                              // });
+
+
+
+                              var status = await Permission.location.status;
+                              print("Status is $status");
+                              if (!status.isGranted) {
+                                AppUtils.checkLocationPermission(context);
+                              }
+                              else{
+                                await Future.delayed(Duration(milliseconds: 200),(){
+                                  Get.toNamed(RouteName.attendanceScreen);
+                                });
+                                // await Geolocator.getCurrentPosition(
+                                //     desiredAccuracy: LocationAccuracy.high)
+                                //     .then((Position position) {
+                                //   Get.toNamed(RouteName.attendanceScreen);
+                                //   // setState(() => _currentPosition = position);
+                                //   // _getAddressFromLatLng(_currentPosition!);
+                                // }).catchError((e) {
+                                //   debugPrint(e);
+                                // });
+                              }
+
+
+                              // await Geolocator.getCurrentPosition(
+                              //     desiredAccuracy: LocationAccuracy.high)
+                              //     .then((Position position) {
+                              //       print("THIS IS POsitiosn and $position");
+                              //   // setState(() => _currentPosition = position);
+                              //   // _getAddressFromLatLng(_currentPosition!);
+                              // }).catchError((e) {
+                              //   debugPrint(e);
+                              // });
                             },
                             child: Column(
                               children: [
@@ -82,13 +159,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           right: selected?null:MediaQuery.of(context).size.width/3,
                           duration: const Duration(seconds: 1),
                           curve: Curves.easeOutBack,
-                          child:  Column(
-                            children: [
-                              SvgPicture.asset('assets/images/leave.svg',width: 20,height: 20,
-                                color: ColorResources.primary700,),
-                              //Image.asset('assets/images/attendance.svg'),
-                              Text("Leave",style: latoRegular.copyWith(color: ColorResources.primary700,fontSize: 14),)
-                            ],
+                          child:  GestureDetector(
+                            onTap: () async {
+                              setState(() {
+                                selected=!selected;
+                              });
+                              await Future.delayed(Duration(milliseconds: 200),(){
+                                Get.toNamed(RouteName.applyLeave);
+                              });
+                            },
+                            child: Column(
+                              children: [
+                                SvgPicture.asset('assets/images/leave.svg',width: 20,height: 20,
+                                  color: ColorResources.primary700,),
+                                Text("Leave",style: latoRegular.copyWith(color: ColorResources.primary700,fontSize: 14),)
+                              ],
+                            ),
                           )
                       ),
                       AnimatedPositioned(
@@ -115,52 +201,128 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
 
               Align(
-                // bottom: 10,
-              alignment: Alignment.bottomCenter,
-                child:
-                    // Container(
-                    //   width: 100,
-                    //   height: 100,
-                    //   decoration: BoxDecoration(
-                    //       color: Colors.green,
-                    //       shape: BoxShape.circle
-                    //   ),
-                    // ),
-               Stack(
-                 children: [
-                   Align(
-                     alignment: Alignment.bottomCenter,
-                     child:  Container(
-                       height: 70,
-                       width: context.width,
-                       decoration: BoxDecoration(
-                           color: Colors.green,
-                           shape: BoxShape.rectangle
-                       ),
-                     ),
-                   ),
-                   Positioned(
-                     bottom: 20,
-                     child: Container(
-                       alignment: Alignment.center,
-                       height: 100,
-                       width: context.width,
-                       decoration: BoxDecoration(
-                           color: Colors.red,
-                           shape: BoxShape.circle
-                       ),
-                       child: Container(
-                         height: 70,
-                         width: 70,
-                         decoration: BoxDecoration(
-                             color: Colors.orange,
-                             shape: BoxShape.circle
-                         ),
-                       ),
-                     ),
-                   ),
-                 ],
-               )
+                  alignment: Alignment.bottomCenter,
+                  child:
+                  Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          height: 60,
+                          width: context.width,
+                          decoration: BoxDecoration(
+                            color: ColorResources.primary800,
+                            shape: BoxShape.rectangle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 3,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: GestureDetector(
+                          onTap: (){
+                            setState(() {
+                              selected=false;
+                              tabIndex=0;
+                            });
+                          },
+                          child: Container(
+                              padding: EdgeInsets.only(left: context.width/7),
+                              child: IntrinsicHeight(
+                                child: Column(
+                                  children: [
+                                    Icon(FeatherIcons.home, color: tabIndex==0?ColorResources.primary500:ColorResources.white,size: 24,).paddingOnly(bottom: 4),
+                                    Text("Home",style: latoRegular.copyWith(color: tabIndex==0?ColorResources.primary500:ColorResources.white, fontSize: 12),).paddingOnly(bottom: 7)
+                                  ],
+                                ),
+                              )
+                            // Icon(FeatherIcons.grid,size: 30,)
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 20,
+                        child: GestureDetector(
+                          onTap: (){
+                            setState(() {
+                              tabIndex=1;
+                              selected=!selected;
+                            });
+                          },
+                          child: Container(
+                              alignment: Alignment.center,
+                              height: 80,
+                              width: context.width,
+                              decoration: BoxDecoration(
+                                // color: Colors.white,
+                                color: ColorResources.background,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Container(
+                                height: 60,
+                                width: 60,
+                                // width: context.width,
+                                decoration: BoxDecoration(
+                                  // color: Colors.white,
+                                  color: selected?ColorResources.primary500:Colors.transparent,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 1,
+                                      blurRadius: 3,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child:
+                                Container(
+                                    margin: EdgeInsets.all(1),
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                        color: ColorResources.white,
+                                        shape: BoxShape.circle
+                                    ),
+                                    child: Icon(FeatherIcons.grid,size: selected?26:24,)
+                                ),
+                              )
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: GestureDetector(
+                          onTap: (){
+                            setState(() {
+                              selected=false;
+                              tabIndex=2;
+                            });
+                          },
+                          child: Container(
+                              margin: EdgeInsets.only(right: context.width/7),
+                              // padding: EdgeInsets.only(right: 20),
+                              // margin: EdgeInsets.all(1),
+                              child: IntrinsicHeight(
+                                child: Column(
+                                  children: [
+                                    Icon(FeatherIcons.user,color: tabIndex==2?ColorResources.primary500:ColorResources.white, size: 24,).paddingOnly(bottom: 4),
+                                    Text("Profile",style: latoRegular.copyWith(color: tabIndex==2?ColorResources.primary500:ColorResources.white, fontSize: 12),).paddingOnly(bottom: 7)
+                                  ],
+                                ),
+                              )
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
               ),
               // Align(
               //   alignment: Alignment.bottomCenter,
@@ -216,15 +378,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 List<TabItem> items = const [
   TabItem(
-    icon: FeatherIcons.home,
-    title: 'Home'
+      icon: FeatherIcons.home,
+      title: 'Home'
   ),
   TabItem(
-    icon: FeatherIcons.grid,
-    title: 'All'
+      icon: FeatherIcons.grid,
+      title: 'All'
   ),
   TabItem(
-    icon: FeatherIcons.user,
-    title: 'Profile'
+      icon: FeatherIcons.user,
+      title: 'Profile'
   ),
 ];

@@ -11,19 +11,24 @@ import '../datasources/response/login_response.dart';
 
 class AuthRepoImpl extends BaseProvider implements AuthRepository{
   @override
-  Future<LoginResponse> logIn({required LogInData data}) async {
+  Future<LoginResponse> logIn({required LogInData data, required String apiLink}) async {
     try{
-      // final Response response = await post(':'+companyCode+'/api/'+ApiConstants.login, data.toJson());
-      String apiLink= await ApiConstants.login.link();
+      String apiLink123= await ApiConstants.login.link();
+      print("API LINK IS 124 $apiLink and $apiLink123");
       final Response response = await post(apiLink, data.toJson());
-      print("HEYY RESPONSE IS $apiLink ${response.body} ${response.statusCode}");
-      if(response.statusCode!=201){
-        throw UnknownException(response.body['message']);
+      print("HEYY RESPONSE IS125 $apiLink ${response.body} ${response.statusCode}");
+      if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
       }
-      return LoginResponse.fromJson(response.body);
+      if(response.statusCode==201){
+        return LoginResponse.fromJson(response.body);
+      }
+      else{
+        throw UnknownException(response.body['Message']);
+      }
     }
     catch(e){
-      throw UnknownException("There is something wrong!");
+      throw UnknownException(e.toString());
     }
   }
 }
