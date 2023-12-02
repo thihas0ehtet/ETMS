@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../app/api/base_provider.dart';
 import '../../app/config/api_constants.dart';
 import '../../presentation/controllers/auth_controller.dart';
-import '../datasources/response/login_response.dart';
+import '../datasources/response/auth/login_response.dart';
 
 class AuthRepoImpl extends BaseProvider implements AuthRepository{
   @override

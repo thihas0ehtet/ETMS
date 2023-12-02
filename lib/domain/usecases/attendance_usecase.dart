@@ -1,10 +1,6 @@
 import 'package:etms/data/datasources/request/attendance_report_data.dart';
-import 'package:etms/data/datasources/request/login_data.dart';
-import 'package:etms/data/datasources/response/att_report_response.dart';
-import 'package:etms/data/datasources/response/login_response.dart';
 import 'package:etms/domain/repositories/attendance_repository.dart';
-import 'package:etms/domain/repositories/auth_repository.dart';
-import 'package:get/get.dart';
+import '../../data/datasources/response/attendance_report/attendance_report_response.dart';
 
 class AttendanceUseCase{
   final AttendanceRepository respository;
@@ -12,5 +8,9 @@ class AttendanceUseCase{
 
   Future<List<AttReportResponse>> getAttendanceReport({required AttendanceReportData data}) async{
     return respository.getAttendanceReport(data: data);
+  }
+
+  Future<AttReportSummaryResponse> getAttReportSummary({required AttendanceReportData data}) async{
+    return respository.getAttReportSummary(data: data);
   }
 }

@@ -41,13 +41,11 @@ class _ApplyLeavePageState extends State<ApplyLeavePage>with SingleTickerProvide
     return SafeArea(
         child: Scaffold(
           backgroundColor: ColorResources.background,
+          appBar: MyAppBar(title: 'Leave',
+            widget:  Text('Leave Calendar',style: latoRegular.copyWith(color: ColorResources.white,
+                decoration: TextDecoration.underline),),),
           body: Column(
             children: [
-              CustomAppBar(
-                title: 'Leave',
-                widget:  Text('Leave Calendar',style: latoRegular.copyWith(color: ColorResources.white,
-                    decoration: TextDecoration.underline),),
-              ),
               Align(
                 alignment: Alignment.topLeft,
                 child: TabBar(

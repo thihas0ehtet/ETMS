@@ -21,6 +21,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    EasyLoading.instance
+      ..loadingStyle = EasyLoadingStyle.custom
+      ..indicatorSize = 60
+      ..backgroundColor = Colors.transparent
+      ..indicatorColor = ColorResources.primary800
+      ..boxShadow = <BoxShadow>[]
+      ..indicatorType = EasyLoadingIndicatorType.circle
+      ..textColor=ColorResources.text500
+    ;
+
     return GetMaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,

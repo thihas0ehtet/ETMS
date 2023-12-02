@@ -2,10 +2,9 @@ import 'package:etms/app/utils/custom_snackbar.dart';
 import 'package:etms/data/datasources/request/allowed_dates_data.dart';
 import 'package:etms/data/datasources/request/leave_carry_data.dart';
 import 'package:etms/data/datasources/request/leave_report_data.dart';
+import 'package:etms/data/datasources/request/leave_status_data.dart';
 import 'package:etms/data/datasources/response/allowed_date_response.dart';
-import 'package:etms/data/datasources/response/leave_carry_response.dart';
-import 'package:etms/data/datasources/response/leave_list_response.dart';
-import 'package:etms/data/datasources/response/leave_type_response.dart';
+import 'package:etms/data/datasources/response/apply_leave/apply_leave_response.dart';
 import 'package:etms/domain/repositories/leave_repository.dart';
 import 'package:etms/domain/usecases/leave_usecase.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -21,6 +20,9 @@ class LeaveController extends GetxController with StateMixin{
   RxList<LeaveReportDataResponse> leaveReportList=  RxList<LeaveReportDataResponse>();
   RxList<AllowedDateResponse> allowedDateList=  RxList<AllowedDateResponse>();
   Rx<LeaveCarryResponse> leaveCarry = LeaveCarryResponse().obs;
+  RxList<LeaveStatusResponse> statusDetailList=  RxList<LeaveStatusResponse>();
+  RxList<LeaveStatusResponse> statusFirstList=  RxList<LeaveStatusResponse>();
+  RxList<LeaveStatusResponse> statusSecondList=  RxList<LeaveStatusResponse>();
 
   LeaveUseCase useCase = LeaveUseCase(Get.find());
 
@@ -45,10 +47,6 @@ class LeaveController extends GetxController with StateMixin{
     try{
       await EasyLoading.show();
       List<LeaveReportDataResponse> response = await useCase.getLeaveReportList(data: data);
-      print("Report data is ${data.toJson()}");
-      print("HKJLKK DATA IS $response ");
-      // attReportResponse.value = response;
-      // attReportResponse.refresh();
       leaveReportList.value=response;
       leaveReportList.refresh();
       await EasyLoading.dismiss();
@@ -69,10 +67,10 @@ class LeaveController extends GetxController with StateMixin{
     leaveCarry.refresh();
   }
 
-  Future<void> getAllowedDates({required AllowedDatesData data}) async{
+  Future<void> getAllowedDates({required AllowedDatesData data, required int start, required int end}) async{
     try{
       await EasyLoading.show();
-      List<AllowedDateResponse> response = await useCase.getAllowedDates(data: data);
+      List<AllowedDateResponse> response = await useCase.getAllowedDates(data: data, start: start, end: end);
       print("HKJLKK DATA IS $response");
       // attReportResponse.value = response;
       // attReportResponse.refresh();
@@ -91,8 +89,6 @@ class LeaveController extends GetxController with StateMixin{
     try{
       await EasyLoading.show();
       LeaveCarryResponse response = await useCase.getLeaveCarry(data: data);
-      // attReportResponse.value = response;
-      // attReportResponse.refresh();
       leaveCarry.value=response;
       leaveCarry.refresh();
       await EasyLoading.dismiss();
@@ -103,4 +99,49 @@ class LeaveController extends GetxController with StateMixin{
       await EasyLoading.dismiss();
     }
   }
+
+  Future<void> getLeaveStatusDetail({required LeaveStatusData data}) async{
+    try{
+      await EasyLoading.show();
+      List<LeaveStatusResponse> response = await useCase.getLeaveStatusDetail(data: data);
+      statusDetailList.value=response;
+      statusDetailList.refresh();
+      print("HLKJKERJ THIS IS${statusDetailList}");
+      await EasyLoading.dismiss() ;
+
+    }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }
+  }
+
+  Future<void> getLeaveStatusFirst({required LeaveStatusData data}) async{
+    try{
+      await EasyLoading.show();
+      List<LeaveStatusResponse> response = await useCase.getLeaveStatusFirst(data: data);
+      statusFirstList.value=response;
+      statusFirstList.refresh();
+      await EasyLoading.dismiss();
+
+    }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }
+  }
+
+  Future<void> getLeaveStatusSecond({required LeaveStatusData data}) async{
+    try{
+      await EasyLoading.show();
+      List<LeaveStatusResponse> response = await useCase.getLeaveStatusSecond(data: data);
+      statusSecondList.value=response;
+      statusSecondList.refresh();
+      await EasyLoading.dismiss();
+
+    }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }
+  }
+
+
 }

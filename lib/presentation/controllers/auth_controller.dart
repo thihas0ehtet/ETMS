@@ -1,7 +1,7 @@
 import 'package:etms/app/route/route_name.dart';
 import 'package:etms/app/utils/custom_snackbar.dart';
 import 'package:etms/data/datasources/request/login_data.dart';
-import 'package:etms/data/datasources/response/login_response.dart';
+import 'package:etms/data/datasources/response/auth/login_response.dart';
 import 'package:etms/domain/usecases/auth_usecase.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';

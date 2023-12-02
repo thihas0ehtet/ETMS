@@ -1,4 +1,5 @@
 import 'package:etms/app/config/config.dart';
+import 'package:etms/app/utils/dateTime_format.dart';
 import 'package:etms/data/datasources/request/attendance_report_data.dart';
 import 'package:etms/presentation/attendance/widget/check_inout_status.dart';
 import 'package:etms/presentation/attendance/widget/check_inout_widget.dart';
@@ -9,7 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../app/helpers/shared_preference_helper.dart';
-import '../../data/datasources/response/att_report_response.dart';
+import '../../data/datasources/response/attendance_report/att_report_response.dart';
 
 class AttendanceReportScreen extends StatefulWidget {
   const AttendanceReportScreen({super.key});
@@ -33,14 +34,15 @@ class _AttendanceReportState extends State<AttendanceReportScreen> {
 
   getAttendanceReport(String inputDate) async {
     // String inputMonth = 'Jan 2023';
-    print("INput date $inputDate");
     DateTime parsedMonth = DateFormat('MMM yyyy').parse(inputDate);
 
     // Get the start and end dates of the month
     DateTime startOfMonth = DateTime(parsedMonth.year, parsedMonth.month, 1);
     DateTime endOfMonth = DateTime(parsedMonth.year, parsedMonth.month + 1, 0);
-    print("Start of month is $startOfMonth");
-    print("And end is $endOfMonth");
+    debugPrint("Start of month is $startOfMonth");
+    debugPrint("And end is $endOfMonth");
+    debugPrint(DateFormat('dd MMM yyyy').format(startOfMonth));
+    debugPrint(DateFormat('dd MMM yyyy').format(endOfMonth));
 
 
     SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
@@ -50,8 +52,8 @@ class _AttendanceReportState extends State<AttendanceReportScreen> {
       unitId: 0,
       empSysId: sysId,
       active: 'All',
-      sDate: startOfMonth.toString(),
-      eDate: endOfMonth.toString(),
+      sDate: startOfMonth.dMY(),
+      eDate: endOfMonth.dMY(),
       uid: 1
     );
     await controller.getAttendanceReport(data: data);

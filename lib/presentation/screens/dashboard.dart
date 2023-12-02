@@ -1,5 +1,6 @@
 import 'package:etms/app/route/route_name.dart';
 import 'package:etms/app/utils/app_utils.dart';
+import 'package:etms/presentation/profile/profile_view.dart';
 import 'package:etms/presentation/screens/menu/menu.dart';
 import 'package:etms/presentation/test/basic_examle.dart';
 import 'package:feather_icons/feather_icons.dart';
@@ -56,7 +57,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          backgroundColor: ColorResources.background,
+          backgroundColor: ColorResources.white,
+          // backgroundColor: ColorResources.background,
           body: Stack(
             children: [
               // Expanded(child: Login),
@@ -66,7 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Container(
                   child: tabIndex==0?MenuScreen():
                   tabIndex==1?MenuScreen():
-                  TableBasicsExample(),
+                  ProfileView(),
                 ),),
               Positioned(
                 bottom: 60,
@@ -186,13 +188,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           right: selected?MediaQuery.of(context).size.width/5:MediaQuery.of(context).size.width/3,
                           duration: const Duration(seconds: 1),
                           curve: Curves.easeOutBack,
-                          child: Column(
-                            children: [
-                              SvgPicture.asset('assets/images/pay-slip.svg',width: 20,height: 20,
-                                color: ColorResources.primary700,),
-                              //Image.asset('assets/images/attendance.svg'),
-                              Text("Pay-Slip",style: latoRegular.copyWith(color: ColorResources.primary700,fontSize: 14),)
-                            ],
+                          child: GestureDetector(
+                            onTap: () async {
+                              setState(() {
+                                selected=!selected;
+                              });
+                              await Future.delayed(Duration(milliseconds: 200),(){
+                                Get.toNamed(RouteName.payslip_period);
+                              });
+                            },
+                            child: Column(
+                              children: [
+                                SvgPicture.asset('assets/images/pay-slip.svg',width: 20,height: 20,
+                                  color: ColorResources.primary700,),
+                                //Image.asset('assets/images/attendance.svg'),
+                                Text("Pay-Slip",style: latoRegular.copyWith(color: ColorResources.primary700,fontSize: 14),)
+                              ],
+                            ),
                           )
                       ),
                     ],
@@ -238,8 +250,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: IntrinsicHeight(
                                 child: Column(
                                   children: [
-                                    Icon(FeatherIcons.home, color: tabIndex==0?ColorResources.primary500:ColorResources.white,size: 24,).paddingOnly(bottom: 4),
-                                    Text("Home",style: latoRegular.copyWith(color: tabIndex==0?ColorResources.primary500:ColorResources.white, fontSize: 12),).paddingOnly(bottom: 7)
+                                    Icon(FeatherIcons.home, color: tabIndex==0?ColorResources.white:ColorResources.primary500,size: 24,).paddingOnly(bottom: 4),
+                                    Text("Home",style: latoRegular.copyWith(color: tabIndex==0?ColorResources.white:ColorResources.primary500, fontSize: 12),).paddingOnly(bottom: 7)
                                   ],
                                 ),
                               )
@@ -262,7 +274,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               width: context.width,
                               decoration: BoxDecoration(
                                 // color: Colors.white,
-                                color: ColorResources.background,
+                                color: ColorResources.white,
                                 shape: BoxShape.circle,
                               ),
                               child: Container(
@@ -313,8 +325,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: IntrinsicHeight(
                                 child: Column(
                                   children: [
-                                    Icon(FeatherIcons.user,color: tabIndex==2?ColorResources.primary500:ColorResources.white, size: 24,).paddingOnly(bottom: 4),
-                                    Text("Profile",style: latoRegular.copyWith(color: tabIndex==2?ColorResources.primary500:ColorResources.white, fontSize: 12),).paddingOnly(bottom: 7)
+                                    Icon(FeatherIcons.user,color: tabIndex==2?ColorResources.white:ColorResources.primary500, size: 24,).paddingOnly(bottom: 4),
+                                    Text("Profile",style: latoRegular.copyWith(color: tabIndex==2?ColorResources.white:ColorResources.primary500, fontSize: 12),).paddingOnly(bottom: 7)
                                   ],
                                 ),
                               )

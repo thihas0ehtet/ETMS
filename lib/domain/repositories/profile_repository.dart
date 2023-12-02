@@ -1,0 +1,14 @@
+import 'package:etms/data/datasources/response/profile/countries_response.dart';
+import 'package:etms/data/datasources/response/profile/emp_master_response.dart';
+import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
+import 'package:etms/data/datasources/response/profile/next_kin_response.dart';
+import 'package:etms/data/datasources/response/profile/relation_type_response.dart';
+
+abstract class ProfileRepository {
+  Future<String> getMyPhoto();
+  Future<EmpMasterResponse> getEmpMaster();
+  Future<List<RelationTypeResponse>> getRelationType();
+  Future<List<MaritalStatusResponse>> getMaritalStatus();
+  Future<List<CountriesResponse>> getCountries();
+  Future<NextKinResponse> getNextKin();
+}

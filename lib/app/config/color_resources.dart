@@ -41,4 +41,5 @@ class ColorResources{
   static Color border = Color(0xff475772);
   static Color red = Color(0xffFD2A37);
   static Color green = Color(0xff03AC00);
+  static Color yellow = Color(0xffF8D000);
 }

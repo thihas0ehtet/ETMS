@@ -1,13 +1,12 @@
 import 'package:etms/app/config/config.dart';
 import 'package:etms/data/datasources/request/leave_report_data.dart';
-import 'package:etms/data/datasources/response/leave_type_response.dart';
+import 'package:etms/data/datasources/response/apply_leave/apply_leave_response.dart';
 import 'package:etms/presentation/apply_leave/widgets/leave_status_item_list.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../app/helpers/shared_preference_helper.dart';
-import '../../data/datasources/response/leave_list_response.dart';
 import '../controllers/leave_controller.dart';
 import '../widgets/custom_button.dart';
 
@@ -171,9 +170,6 @@ class _LeaveListViewState extends State<LeaveListView> {
                 });
                 getLeaveReportList();
               }
-              print("INdex is ${typeStringList.indexOf(selectedLeaveType)}");
-              print(selectedYear);
-              print(selectedLeaveType);
             },
             text: 'View Leave List',).paddingOnly(top:10),
           leaveList.isNotEmpty?
