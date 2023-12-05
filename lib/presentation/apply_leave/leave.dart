@@ -61,13 +61,6 @@ class _LeaveViewState extends State<LeaveView> {
       leaveTypeList.addAll(controller.leaveTypes);
       typeStringList.addAll(controller.leaveTypes.map((element) => element.leaveTypeName.toString()).toList());
     });
-
-    // for(var i=0;i<controller.leaveTypes.length;i++){
-    //   leaveTypeList.add(controller.leaveTypes[i].leaveTypeName.toString());
-    // }
-    // setState(() {
-    //   leaveTypeList=controller.leaveTypes.value;
-    // });
   }
 
   getAllowedDates() async {
@@ -92,28 +85,53 @@ class _LeaveViewState extends State<LeaveView> {
     SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
     String sysId= await _sharedPrefs.getEmpSysId;
     String typeId = leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].leaveTypeID.toString();
-
-    DateTime leaveStart = DateFormat('dd/MM/yyyy').parse(_startDateController.text);
-    String formattedLeaveStart = DateFormat('dd MMM yyyy').format(leaveStart);
-    DateTime leaveEnd = DateFormat('dd/MM/yyyy').parse(_endDateController.text);
-    String formattedLeaveEnd = DateFormat('dd MMM yyyy').format(leaveEnd);
-
+    print("ALLOW DDFD DATA $start and $end}");
+    print(_startDateController.text);
+    // AllowedDatesData data1=AllowedDatesData(
+    //     leaveStartDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_startDateController.text)),
+    //     leaveEndDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_endDateController.text)),
+    //     unitId: '1',
+    //     leaveTypeId: typeId,
+    //     empSysId: sysId
+    // );
+    // print("FDLKSJFK DATA ${data1.toJson()}");
+    // // print("HELLO ${DateTime.parse(_startDateController.text)}");
     AllowedDatesData data=AllowedDatesData(
-        leaveStartDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_startDateController.text)),
-      leaveEndDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_endDateController.text)),
-      unitId: '1',
-      leaveTypeId: typeId,
-      empSysId: sysId
-    );
-
-    AllowedDatesData data1=AllowedDatesData(
-        leaveStartDate: DateTime.parse(_startDateController.text).dMY(),
-        leaveEndDate: DateTime.parse(_endDateController.text).dMY(),
+        leaveStartDate: DateFormat('dd/MM/yyyy').parse(_startDateController.text).dMY(),
+        leaveEndDate: DateFormat('dd/MM/yyyy').parse(_endDateController.text).dMY(),
         unitId: '1',
         leaveTypeId: typeId,
         empSysId: sysId
     );
-    print("HELLO DAFJDFK JIS $data1 and $start and $end");
+    print("DATEE IS ${data.toJson()}");
+    await controller.getAllowedDates(data: data, start: start, end: end);
+
+    // SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+    // String sysId= await _sharedPrefs.getEmpSysId;
+    // String typeId = leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].leaveTypeID.toString();
+    //
+    // DateTime leaveStart = DateFormat('dd/MM/yyyy').parse(_startDateController.text);
+    // String formattedLeaveStart = DateFormat('dd MMM yyyy').format(leaveStart);
+    // DateTime leaveEnd = DateFormat('dd/MM/yyyy').parse(_endDateController.text);
+    // String formattedLeaveEnd = DateFormat('dd MMM yyyy').format(leaveEnd);
+
+    // AllowedDatesData data=AllowedDatesData(
+    //     leaveStartDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_startDateController.text)),
+    //   leaveEndDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_endDateController.text)),
+    //   unitId: '1',
+    //   leaveTypeId: typeId,
+    //   empSysId: sysId
+    // );
+    //
+    // AllowedDatesData data1=AllowedDatesData(
+    //     leaveStartDate: DateTime.parse(_startDateController.text).dMY(),
+    //     leaveEndDate: DateTime.parse(_endDateController.text).dMY(),
+    //     unitId: '1',
+    //     leaveTypeId: typeId,
+    //     empSysId: sysId
+    // );
+    // print(data.toJson());
+    // print("HELLO DAFJDFK JIS ${data1.toJson()} and $start and $end");
     // await controller.getAllowedDates(data: data, start: start, end: end);
   }
 
@@ -138,153 +156,251 @@ class _LeaveViewState extends State<LeaveView> {
     );
   }
 
+  setData(bool fromData, bool toData){
+    setState(() {
+      fromData=toData;
+    });
+  }
+
   Widget showDatePickAlert({required dateController, required bool checkFirst, required bool checkSecond,
   required bool isFromDate}){
     String pickedDate=dateController.text;
-    return StatefulBuilder(
-        builder: (context,setState){
-          return
-            AlertDialog(
-            content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState){
-                return
-                  Wrap(
-                    children: [
-                      SfDateRangePicker(
-                        showNavigationArrow: true,
-                        todayHighlightColor: ColorResources.primary500,
-                        selectionColor: ColorResources.primary500,
-                        selectionTextStyle: TextStyle(color: ColorResources.white),
-                        headerHeight: 40,
-                        showActionButtons: false,
-                        selectionMode: DateRangePickerSelectionMode.single,
-                        onSelectionChanged: (DateRangePickerSelectionChangedArgs args){
-                          if (args.value is DateTime){
-                            setState((){
-                              pickedDate=DateFormat('dd/MM/yyyy').format(args.value);
-                            });
-                          }
-                        },
-                      ),
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: checkFirst,
-                            activeColor: ColorResources.primary800,
-                            onChanged: (bool? value){
-                              setState(() {
-                                checkFirst=value!;
-                              });
-                            },
-                          ),
-                          Text(
-                            '1st Half Leave',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: checkSecond,
-                            activeColor: ColorResources.primary800,
-                            onChanged: (value){
-                              setState(() {
-                                checkSecond=value!;
-                              });
-                            },
-                          ),
-                          Text(
-                            '2nd Half Leave',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ],
-                      ),
-                      if(requireHalfLeaveSelect)
-                      Text('Please select half leave type', style: latoRegular.copyWith(color: ColorResources.error),
-                      ).paddingOnly(top: 5,left: 5,bottom: 5)
-                    ],
-                  );
-              }
-            ),
-            actions: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  InkWell(
-                      onTap: (){  Navigator.of(context).pop();},
-                      child: Container(
-                        width: 100,
-                        padding: EdgeInsets.only(top: 12, bottom: 12),
-                        decoration: BoxDecoration(
+    return AlertDialog(
+        content: StatefulBuilder(
+          builder: (context,setState){
+            return Wrap(
+              children: [
+                SfDateRangePicker(
+                  showNavigationArrow: true,
+                  todayHighlightColor: ColorResources.primary500,
+                  selectionColor: ColorResources.primary500,
+                  selectionTextStyle: TextStyle(color: ColorResources.white),
+                  headerHeight: 40,
+                  showActionButtons: false,
+                  selectionMode: DateRangePickerSelectionMode.single,
+                  onSelectionChanged: (DateRangePickerSelectionChangedArgs args){
+                    if (args.value is DateTime){
+                      setState((){
+                        pickedDate=DateFormat('dd/MM/yyyy').format(args.value);
+                      });
+                    }
+                  },
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: checkFirst,
+                      activeColor: ColorResources.primary800,
+                      onChanged: (bool? value){
+                        setState(() {
+                          checkFirst=value!;
+                        });
+                        print("CHECK FIRST $checkFirst");
+                      },
+                    ),
+                    Text(
+                      '1st Half Leave',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: checkSecond,
+                      activeColor: ColorResources.primary800,
+                      onChanged: (value){
+                        setState(() {
+                          checkSecond=value!;
+                        });
+                        print("CHECK Second $checkSecond");
+                      },
+                    ),
+                    Text(
+                      '2nd Half Leave',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
+                if(requireHalfLeaveSelect)
+                  Text('Please select half leave type', style: latoRegular.copyWith(color: ColorResources.error),
+                  ).paddingOnly(top: 5,left: 5,bottom: 5),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    InkWell(
+                        onTap: (){  Navigator.of(context).pop();},
+                        child: Container(
+                          width: 100,
+                          padding: EdgeInsets.only(top: 12, bottom: 12),
+                          decoration: BoxDecoration(
                             color: ColorResources.secondary700,
                             borderRadius: BorderRadius.all(Radius.circular(5)),
-                        ),
-                        // width: context.width/2,
-                        child: Text('Cancel', textAlign: TextAlign.center,
-                          style: latoRegular.copyWith(color: ColorResources.text50),),
-                      )
-                  ),
-                  InkWell(
-                      onTap: (){
-                        // if use don't select one of these, show warning
-                        if(!checkFirst && !checkSecond){
-                          setState((){
-                            requireHalfLeaveSelect=true;
-                          });
-                        } else{
-                          if(isFromDate){
+                          ),
+                          // width: context.width/2,
+                          child: Text('Cancel', textAlign: TextAlign.center,
+                            style: latoRegular.copyWith(color: ColorResources.text50),),
+                        )
+                    ),
+                    InkWell(
+                        onTap: (){
+                          if(!checkFirst && !checkSecond){
                             setState((){
-                              fromCheckFirstHalf=checkFirst;
-                              fromCheckSecondHalf=checkSecond;
+                              requireHalfLeaveSelect=true;
                             });
                           } else{
-                            setState((){
-                              toCheckFirstHalf=checkFirst;
-                              toCheckSecondHalf=checkSecond;
+                            if(isFromDate){
+                              setData(fromCheckFirstHalf, checkFirst);
+                              setData(fromCheckSecondHalf, checkSecond);
+                              setState((){
+                                fromCheckFirstHalf=checkFirst;
+                                fromCheckSecondHalf=checkSecond;
+                              });
+                            } else{
+                              setData(toCheckFirstHalf, checkFirst);
+                              setData(toCheckSecondHalf, checkSecond);
+                              setState((){
+                                toCheckFirstHalf=checkFirst;
+                                toCheckSecondHalf=checkSecond;
+                              });
+                            }setState((){
+                              dateController.text=pickedDate.toString();
+                              requireHalfLeaveSelect=false;
                             });
+                            print("JKDLSJFKL THIS IS $fromCheckFirstHalf and $fromCheckSecondHalf and $checkFirst and $checkSecond");
+
+
+                            // check to date and work api automatically
+                            if(isFromDate!=true){
+                              DateTime start = DateFormat('dd/MM/yyyy').parseStrict(_startDateController.text);
+                              DateTime end = DateFormat('dd/MM/yyyy').parseStrict(_endDateController.text);
+                              if(end.isBefore(start)){
+                                'Please select the valid date range'.alert();
+                              }
+                              else{
+                                getAllowedDates();
+
+                                Navigator.of(context).pop();
+                              }
+                            } else{
+                              Navigator.of(context).pop();
+                            }
                           }
-                          print("LJFDKLSJ LOOOOK $fromCheckFirstHalf and $fromCheckSecondHalf and $checkFirst and $checkSecond");
-
-                          setState((){
-                            dateController.text=pickedDate.toString();
-                            requireHalfLeaveSelect=false;
-                          });
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: Container(
-                        width: 100,
-                        // alignment: Alignment.center,
-                        padding: EdgeInsets.only(top: 12, bottom: 12),
-                        // margin: EdgeInsets.only(left: 20,right: 20),
-                        decoration: BoxDecoration(
-                            color: ColorResources.primary800,
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            border: Border.all(color: ColorResources.border)
-                        ),
-                        // width: context.width/2,
-                        child: Text('Confirm', textAlign: TextAlign.center, style: latoRegular.copyWith(color: ColorResources.text50),),
-                      )
-                  )
-                ],
-              )
-
-              // TextButton(
-              //   onPressed: () {
-              //     Navigator.of(context).pop();
-              //   },
-              //   child: Text('Close'),
-              // ),
-              // TextButton(
-              //   onPressed: () {
-              //     Navigator.of(context).pop();
-              //   },
-              //   child: Text('Close'),
-              // ),
-            ],
-          );
-        });
+                        },
+                        child: Container(
+                          width: 100,
+                          // alignment: Alignment.center,
+                          padding: EdgeInsets.only(top: 12, bottom: 12),
+                          // margin: EdgeInsets.only(left: 20,right: 20),
+                          decoration: BoxDecoration(
+                              color: ColorResources.primary800,
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              border: Border.all(color: ColorResources.border)
+                          ),
+                          // width: context.width/2,
+                          child: Text('Confirm', textAlign: TextAlign.center, style: latoRegular.copyWith(color: ColorResources.text50),),
+                        )
+                    )
+                  ],
+                )
+              ],
+            );
+          },
+        )
+      // actions: <Widget>[
+      //   Row(
+      //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //     children: [
+      //       InkWell(
+      //           onTap: (){  Navigator.of(context).pop();},
+      //           child: Container(
+      //             width: 100,
+      //             padding: EdgeInsets.only(top: 12, bottom: 12),
+      //             decoration: BoxDecoration(
+      //                 color: ColorResources.secondary700,
+      //                 borderRadius: BorderRadius.all(Radius.circular(5)),
+      //             ),
+      //             // width: context.width/2,
+      //             child: Text('Cancel', textAlign: TextAlign.center,
+      //               style: latoRegular.copyWith(color: ColorResources.text50),),
+      //           )
+      //       ),
+      //       InkWell(
+      //           onTap: (){
+      //             // if use don't select one of these, show warning
+      //             print("FIRST AND SECOND $checkFirst and $checkSecond and $fromCheckFirstHalf and $fromCheckSecondHalf");
+      //             if(!checkFirst && !checkSecond){
+      //               setState((){
+      //                 requireHalfLeaveSelect=true;
+      //               });
+      //             } else{
+      //               print("HFJSD $isFromDate");
+      //               if(isFromDate){
+      //                 setState((){
+      //                   fromCheckFirstHalf=checkFirst;
+      //                   fromCheckSecondHalf=checkSecond;
+      //                 });
+      //               } else{
+      //                 setState((){
+      //                   toCheckFirstHalf=checkFirst;
+      //                   toCheckSecondHalf=checkSecond;
+      //                 });
+      //               }
+      //               print("JKDLSJFKL THIS IS $fromCheckFirstHalf and $fromCheckSecondHalf and $checkFirst and $checkSecond");
+      //               setState((){
+      //                 dateController.text=pickedDate.toString();
+      //                 requireHalfLeaveSelect=false;
+      //               });
+      //
+      //               // check to date and work api automatically
+      //               if(isFromDate!=true){
+      //                 DateTime start = DateFormat('dd/MM/yyyy').parseStrict(_startDateController.text);
+      //                 DateTime end = DateFormat('dd/MM/yyyy').parseStrict(_endDateController.text);
+      //                 if(end.isBefore(start)){
+      //                   'Please select the valid date range'.alert();
+      //                 }
+      //                 else{
+      //                   getAllowedDates();
+      //
+      //                   Navigator.of(context).pop();
+      //                 }
+      //               } else{
+      //                 Navigator.of(context).pop();
+      //               }
+      //             }
+      //           },
+      //           child: Container(
+      //             width: 100,
+      //             // alignment: Alignment.center,
+      //             padding: EdgeInsets.only(top: 12, bottom: 12),
+      //             // margin: EdgeInsets.only(left: 20,right: 20),
+      //             decoration: BoxDecoration(
+      //                 color: ColorResources.primary800,
+      //                 borderRadius: BorderRadius.all(Radius.circular(5)),
+      //                 border: Border.all(color: ColorResources.border)
+      //             ),
+      //             // width: context.width/2,
+      //             child: Text('Confirm', textAlign: TextAlign.center, style: latoRegular.copyWith(color: ColorResources.text50),),
+      //           )
+      //       )
+      //     ],
+      //   )
+      //
+      //   // TextButton(
+      //   //   onPressed: () {
+      //   //     Navigator.of(context).pop();
+      //   //   },
+      //   //   child: Text('Close'),
+      //   // ),
+      //   // TextButton(
+      //   //   onPressed: () {
+      //   //     Navigator.of(context).pop();
+      //   //   },
+      //   //   child: Text('Close'),
+      //   // ),
+      // ],
+    );
   }
   
   Widget datePick({required TextEditingController controller, required bool checkFirst, required bool checkSecond, required bool isFromDate}){
@@ -318,7 +434,7 @@ class _LeaveViewState extends State<LeaveView> {
             else{
               showDialog(
                 context: context,
-                builder: (BuildContext context) {
+                builder: (context) {
                   return showDatePickAlert(
                     dateController: controller,
                     checkFirst: checkFirst,
@@ -430,12 +546,12 @@ class _LeaveViewState extends State<LeaveView> {
                 ],
               ),
              // Text(showGetDatesButton.toString()),
-             if( _startDateController.text.isNotEmpty && _endDateController.text.isNotEmpty && showGetDatesButton)
-              CustomButton(
-                  onTap: (){
-                    getAllowedDates();
-                  },
-                  text: 'View All Half Leave Days').paddingOnly(top: 20,bottom: 10),
+             // if( _startDateController.text.isNotEmpty && _endDateController.text.isNotEmpty && showGetDatesButton)
+             //  CustomButton(
+             //      onTap: (){
+             //        getAllowedDates();
+             //      },
+             //      text: 'View All Half Leave Days').paddingOnly(top: 20,bottom: 10),
               Text("Remark").paddingOnly(top: 20, bottom: 10),
               SimpleTextFormField(
                   controller: _remarkController,

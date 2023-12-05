@@ -116,12 +116,12 @@ class _ProfileViewState extends State<ProfileView> {
                                           fit: BoxFit.cover,
                                           image: MemoryImage(photoBytes!)))
                               ).paddingOnly(right: 15),
-                            Text('${data!.empFirstName} ${data!.empLastName}', style: latoSemibold.copyWith(fontSize: 18),)
+                            Text('${profileController.empMaster.value.empFirstName} ${profileController.empMaster.value.empLastName}', style: latoSemibold.copyWith(fontSize: 18),)
                           ],
                         ),
                         GestureDetector(
                           onTap: (){
-                            Get.toNamed(RouteName.profile_edit,arguments: [data,photoBytes]);
+                            Get.toNamed(RouteName.profile_edit,arguments: [profileController.empMaster.value,photoBytes]);
                           },
                           child: Row(
                             children: [
@@ -133,9 +133,9 @@ class _ProfileViewState extends State<ProfileView> {
                       ],
                     ),
                     SizedBox(height: 10,),
-                    widgetInfo('Contact No.', data!.empContactNo.toString()),
-                    widgetInfo('Email', data!.empEmail.toString()),
-                    widgetInfo('Address', data!.empCurrentAddr.toString()),
+                    widgetInfo('Contact No.', profileController.empMaster.value.empContactNo.toString()),
+                    widgetInfo('Email', profileController.empMaster.value.empEmail.toString()),
+                    widgetInfo('Address', profileController.empMaster.value.empCurrentAddr.toString()),
                   ],
                 ),
               ),

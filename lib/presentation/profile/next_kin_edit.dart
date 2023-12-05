@@ -1,4 +1,5 @@
 import 'package:etms/app/utils/dateTime_format.dart';
+import 'package:etms/data/datasources/request/next_of_kin_data.dart';
 import 'package:etms/data/datasources/response/profile/next_kin_response.dart';
 import 'package:etms/presentation/controllers/profile_controller.dart';
 import 'package:etms/presentation/profile/widget/profile_text_field.dart';
@@ -10,6 +11,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../app/config/color_resources.dart';
 import '../../app/config/font_family.dart';
+import '../../app/helpers/shared_preference_helper.dart';
 import '../widgets/custom_button.dart';
 
 class NextOfKinEditView extends StatefulWidget {
@@ -59,7 +61,7 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
       _contactNoController.text = data!.nKContactNo!;
       _addressController.text = data!.nKAddress!;
       _emailController.text = data!.nKEmail!;
-      _dobController.text = DateTime.parse(data!.nKBirthDate.toString()).dMY()!;
+      _dobController.text = data!.nKBirthDate==null?'':DateTime.parse(data!.nKBirthDate.toString()).dMY()!;
       _genderController.text = data!.nKGender=='M'?'Male':'Female';
     });
     await controller.getCountries();
@@ -69,14 +71,39 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
       selectedCountry = countriesList[data!.nKNationality!];
       _countryController.text = countriesList[data!.nKNationality!];
     });
+    print("LKFJSD IS $selectedCountry");
+    print(countriesList[data!.nKNationality!-1]);
     await controller.getRelationType();
     setState(() {
       relationList.addAll(controller.reTypeList.map((element) => element.relationName.toString()).toList());
       relationIdList.addAll(controller.reTypeList.map((element) => element.relationID!).toList());
-      selectedRelation = relationList[data!.nKRelationID!];
+      selectedRelation = relationList[data!.nKRelationID!-1];
       _relationController.text = relationList[data!.nKRelationID!];
     });
   }
+
+  saveNextOfKin() async{
+    SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+    String sysId= await _sharedPrefs.getEmpSysId;
+
+    // print("KFJDSKJF KFDJ ");
+    // print(countriesIdList[countriesList.indexWhere((element) => element == selectedCountry)]);
+    // print(relationIdList[relationList.indexWhere((element) => element == selectedRelation)]);
+    NextOfKinData data = NextOfKinData(
+      empSysId: sysId,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      birthDate: _dobController.text,
+      gender: _genderController.text=='Male'?'M':'F',
+      contactNo: _contactNoController.text,
+      email: _emailController.text,
+      nationality: countriesIdList[countriesList.indexWhere((element) => element == selectedCountry)],
+      relationId: relationIdList[relationList.indexWhere((element) => element == selectedRelation)],
+      address: _addressController.text
+    );
+    await controller.saveNextKin(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -106,9 +133,6 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                           SizedBox(height: 10,),
 
                           ProfileTextField(controller: _addressController, label: 'Address'),
-                          SizedBox(height: 10,),
-
-                          ProfileTextField(controller: _emailController, label: 'Email'),
                           SizedBox(height: 10,),
 
                           ProfileTextField(controller: _emailController, label: 'Email'),
@@ -303,7 +327,7 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
             ),
             Align(
                 alignment: Alignment.bottomCenter,
-                child: CustomButton(onTap: (){}, text: 'Submit',).paddingOnly(bottom: 20)
+                child: CustomButton(onTap: (){saveNextOfKin();}, text: 'Submit',).paddingOnly(bottom: 20)
             )
           ],
         ).paddingOnly(left: 20, right: 20):

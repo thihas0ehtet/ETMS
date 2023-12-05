@@ -57,6 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+          // backgroundColor: Color(0xff161616).withOpacity(0.7),
           backgroundColor: ColorResources.white,
           // backgroundColor: ColorResources.background,
           body: Stack(
@@ -251,7 +252,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 child: Column(
                                   children: [
                                     Icon(FeatherIcons.home, color: tabIndex==0?ColorResources.white:ColorResources.primary500,size: 24,).paddingOnly(bottom: 4),
-                                    Text("Home",style: latoRegular.copyWith(color: tabIndex==0?ColorResources.white:ColorResources.primary500, fontSize: 12),).paddingOnly(bottom: 7)
+                                    Text("Home",style: latoRegular.copyWith(color: ColorResources.white, fontSize: 12),).paddingOnly(bottom: 7)
                                   ],
                                 ),
                               )
@@ -297,13 +298,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 child:
                                 Container(
                                     margin: EdgeInsets.all(1),
-                                    height: 40,
-                                    width: 40,
+                                    // height: selected?26:24,
+                                    // width: selected?26:24,
+
                                     decoration: BoxDecoration(
-                                        color: ColorResources.white,
+                                        color: ColorResources.primary800,
                                         shape: BoxShape.circle
                                     ),
-                                    child: Icon(FeatherIcons.grid,size: selected?26:24,)
+                                    child:
+                                    Container(
+                                      margin: EdgeInsets.all(15),
+                                      // height: 10,
+                                      // width: 10,
+                                      child: SvgPicture.asset('assets/images/menu.svg',
+                                        color: ColorResources.primary500,),
+                                    ),
+                                    // Icon(FeatherIcons.grid,size: selected?26:24, color: ColorResources.primary500,)
                                 ),
                               )
                           ),
@@ -326,7 +336,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 child: Column(
                                   children: [
                                     Icon(FeatherIcons.user,color: tabIndex==2?ColorResources.white:ColorResources.primary500, size: 24,).paddingOnly(bottom: 4),
-                                    Text("Profile",style: latoRegular.copyWith(color: tabIndex==2?ColorResources.white:ColorResources.primary500, fontSize: 12),).paddingOnly(bottom: 7)
+                                    Text("Profile",style: latoRegular.copyWith(color: ColorResources.white, fontSize: 12),).paddingOnly(bottom: 7)
                                   ],
                                 ),
                               )

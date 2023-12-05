@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../app/helpers/shared_preference_helper.dart';
+import '../../../app/route/route_name.dart';
 import '../../controllers/attendance_controller.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -182,9 +183,9 @@ class _MenuScreenState extends State<MenuScreen> {
                       // SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
                       // authController.companyCode.value="";
                       // _sharedPrefs.saveCompanyCode("");
-                      // Get.toNamed(RouteName.login);
-                      getAttReportSummary(DateFormat('MMM yyy').format(DateTime.now()));
-                      debugPrint("THis is ${attSummary.empFirstName}");
+                      Get.toNamed(RouteName.login);
+                      // getAttReportSummary(DateFormat('MMM yyy').format(DateTime.now()));
+                      // debugPrint("THis is ${attSummary.empFirstName}");
                     },
                     child: SvgPicture.asset('assets/images/bell.svg',color: ColorResources.text50,width: 22,),
                   )

@@ -82,6 +82,9 @@ dependencies:
   #image
   cached_network_image: ^3.3.0
 
+  # biometric auth
+  local_auth: ^2.1.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

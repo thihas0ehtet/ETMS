@@ -22,6 +22,7 @@ class LeaveUseCase{
     return respository.getAllowedDates(data: data, start: start, end: end);
   }
 
+
   Future<LeaveCarryResponse> getLeaveCarry({required LeaveCarryData data}) async{
     return respository.getLeaveCarry(data: data);
   }

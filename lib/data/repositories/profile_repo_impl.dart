@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:etms/app/utils/api_link.dart';
+import 'package:etms/data/datasources/request/emp_master_data.dart';
+import 'package:etms/data/datasources/request/next_of_kin_data.dart';
 import 'package:etms/data/datasources/response/profile/countries_response.dart';
 import 'package:etms/data/datasources/response/profile/emp_master_response.dart';
 import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
@@ -10,6 +14,7 @@ import '../../app/api/base_provider.dart';
 import '../../app/config/api_constants.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
 import '../../app/helpers/shared_preference_helper.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
   @override
@@ -44,6 +49,36 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
         throw UnknownException('There is something wrong!');
       } else if(response.statusCode==200){
         return EmpMasterResponse.fromJson(response.body);
+      } else{
+        throw UnknownException(response.body['Message']);
+      }
+    } catch(e){
+      throw UnknownException(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> saveEmpMaster(EmpMasterData data) async {
+    try{
+      String apiLink = await ApiConstants.getEmpMaster.link();
+      SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+      String sysId= await _sharedPrefs.getEmpSysId;
+      final Response response = await put('$apiLink/$sysId',data.toJson());
+      print("JFLKDSJLKF JDATAER IS ${data.toJson()}");
+
+      // final http.Response response1 = await http.post(
+      //   Uri.parse('https://etms.com.sg:99/api/EmpMaster/2882'),
+      //   headers: <String, String>{
+      //     'Content-Type': 'application/json',
+      //     // Add any other headers as needed
+      //   },
+      //   body: json.encode(data),
+      // );
+
+      if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
+      } else if(response.statusCode==204){
+        return true;
       } else{
         throw UnknownException(response.body['Message']);
       }
@@ -129,6 +164,25 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
         throw UnknownException('There is something wrong!');
       } else if(response.statusCode==200){
         return NextKinResponse.fromJson(response.body);
+      } else{
+        throw UnknownException(response.body['Message']);
+      }
+    } catch(e){
+      throw UnknownException(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> saveNextKin(NextOfKinData data) async {
+    try{
+      String apiLink = await ApiConstants.getNextKin.link();
+      SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+      String sysId= await _sharedPrefs.getEmpSysId;
+      final Response response = await put('$apiLink/$sysId',data.toJson());
+      if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
+      } else if(response.statusCode==204){
+        return true;
       } else{
         throw UnknownException(response.body['Message']);
       }

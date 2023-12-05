@@ -5,6 +5,7 @@ class ApiConstants{
   static const getLeaveType = 'getEmpLeaveType';
   static const getLeaveReportList = 'getLeaveList';
   static const getDates = 'getdates';
+  static const getDatesDetail = 'getdates_001';
   static const getLeaveCarry = 'getLeavecarry';
   static const getLeaveStatusDetail = 'getLeaveStatusDetail';
   static const getLeaveStatusFirst = 'getLeaveStatusFirstApproval';

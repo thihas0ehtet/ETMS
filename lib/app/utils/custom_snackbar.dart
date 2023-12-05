@@ -22,6 +22,23 @@ extension CustomSnackBars on String{
         ),
       );
   }
+  SnackbarController? success() {
+    return
+      Get.snackbar(
+        '',
+        '',
+        duration: const Duration(seconds: 3),
+        backgroundColor: ColorResources.green.withOpacity(0.2),
+        titleText: Text(
+          'Success !',
+          style: latoRegular.copyWith(color: ColorResources.primary50, fontSize: 15),
+        ),
+        messageText: Text(
+          this,
+          style: latoRegular.copyWith(color: ColorResources.primary50),
+        ),
+      );
+  }
   SnackbarController? alert() {
     return
       // connectivityController.isConnected.value?

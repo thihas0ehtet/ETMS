@@ -1,3 +1,5 @@
+import 'package:etms/data/datasources/request/emp_master_data.dart';
+import 'package:etms/data/datasources/request/next_of_kin_data.dart';
 import 'package:etms/data/datasources/response/profile/countries_response.dart';
 import 'package:etms/data/datasources/response/profile/emp_master_response.dart';
 import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
@@ -13,12 +15,15 @@ class ProfileUsecase{
   ProfileUsecase(this.respository);
 
   Future<String> getMyPhoto() async{
-    print("JFDLKSJF KCOME HERE");
     return respository.getMyPhoto();
   }
 
   Future<EmpMasterResponse> getEmpMaster() async{
     return respository.getEmpMaster();
+  }
+
+  Future<bool> saveEmpMaster(EmpMasterData data) async{
+    return respository.saveEmpMaster(data);
   }
 
   Future<List<RelationTypeResponse>> getRelationType() async{
@@ -35,5 +40,9 @@ class ProfileUsecase{
 
   Future<NextKinResponse> getNextKin() async{
     return respository.getNextKin();
+  }
+
+  Future<bool> saveNextKin(NextOfKinData data) async{
+    return respository.saveNextKin(data);
   }
 }

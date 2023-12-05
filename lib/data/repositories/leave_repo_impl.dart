@@ -1,6 +1,7 @@
 import 'package:etms/app/config/api_constants.dart';
 import 'package:etms/app/utils/api_link.dart';
 import 'package:etms/data/datasources/request/allowed_dates_data.dart';
+import 'package:etms/data/datasources/request/get_dates_data.dart';
 import 'package:etms/data/datasources/request/leave_report_data.dart';
 import 'package:etms/data/datasources/response/allowed_date_response.dart';
 import 'package:etms/domain/repositories/leave_repository.dart';
@@ -77,8 +78,10 @@ class LeaveRepoImpl extends BaseProvider implements LeaveRepository{
     try{
       String apiLink = await ApiConstants.getDates.link();
 
-      final Response response  = await get('$apiLink?StartAMPM=$start&EndAMPM=$end');
-      // print("SZ is ${response.body[0]}");
+      final Response response  = await post('$apiLink?StartAMPM=$start&EndAMPM=$end',data.toJson());
+      print("FJDLFJSDF '$apiLink?StartAMPM=$start&EndAMPM=$end'");
+      print(data.toJson());
+      print("SZ is ${response.body} ${response.statusCode}");
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       }

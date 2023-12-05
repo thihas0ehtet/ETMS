@@ -1,3 +1,5 @@
+import 'package:etms/data/datasources/request/emp_master_data.dart';
+import 'package:etms/data/datasources/request/next_of_kin_data.dart';
 import 'package:etms/data/datasources/response/profile/countries_response.dart';
 import 'package:etms/data/datasources/response/profile/emp_master_response.dart';
 import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
@@ -11,4 +13,6 @@ abstract class ProfileRepository {
   Future<List<MaritalStatusResponse>> getMaritalStatus();
   Future<List<CountriesResponse>> getCountries();
   Future<NextKinResponse> getNextKin();
+  Future<bool> saveEmpMaster(EmpMasterData data);
+  Future<bool> saveNextKin(NextOfKinData data);
 }

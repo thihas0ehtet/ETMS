@@ -1,4 +1,6 @@
 import 'package:etms/app/utils/custom_snackbar.dart';
+import 'package:etms/data/datasources/request/emp_master_data.dart';
+import 'package:etms/data/datasources/request/next_of_kin_data.dart';
 import 'package:etms/data/datasources/response/profile/countries_response.dart';
 import 'package:etms/data/datasources/response/profile/emp_master_response.dart';
 import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
@@ -24,7 +26,6 @@ class ProfileController extends GetxController with StateMixin{
   Rx<NextKinResponse> nextKin = NextKinResponse().obs;
 
   Future<void> getMyPhoto()async{
-    print("HELLO TIS IS getMyPhoto");
     try{
       await EasyLoading.show();
       String response = await useCase.getMyPhoto();
@@ -43,6 +44,24 @@ class ProfileController extends GetxController with StateMixin{
       EmpMasterResponse response = await useCase.getEmpMaster();
       empMaster.value=response;
       empMaster.refresh();
+      await EasyLoading.dismiss();
+    }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }
+  }
+
+
+  Future<void> saveEmpMaster(EmpMasterData data)async{
+    try{
+      await EasyLoading.show();
+      bool success = await useCase.saveEmpMaster(data);
+      if(success==true){
+        'saved profile information'.success();
+        await getEmpMaster();
+      } else{
+        'failed to save profile information'.error();
+      }
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
       e.toString().error();
@@ -95,6 +114,23 @@ class ProfileController extends GetxController with StateMixin{
       NextKinResponse response = await useCase.getNextKin();
       nextKin.value=response;
       nextKin.refresh();
+      await EasyLoading.dismiss();
+    }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }
+  }
+
+  Future<void> saveNextKin(NextOfKinData data)async{
+    try{
+      await EasyLoading.show();
+      bool success = await useCase.saveNextKin(data);
+      if(success==true){
+        'saved Next of Kin data'.success();
+        // await getNextKin();
+      } else{
+        'failed to save Next of Kin data'.error();
+      }
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
       e.toString().error();

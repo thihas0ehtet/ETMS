@@ -1,5 +1,7 @@
 import 'dart:typed_data';
+import 'package:etms/app/utils/custom_snackbar.dart';
 import 'package:etms/app/utils/dateTime_format.dart';
+import 'package:etms/data/datasources/request/emp_master_data.dart';
 import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
 import 'package:etms/presentation/controllers/profile_controller.dart';
 import 'package:etms/presentation/profile/widget/profile_text_field.dart';
@@ -50,6 +52,8 @@ class _ProfileEditViewState extends State<ProfileEditView> {
       _contactNoController.text = data.empContactNo.toString();
       _permanentAddrController.text = data.empPermanentAddr.toString();
       _currentAddrController.text = data.empCurrentAddr.toString();
+      _emailController.text = data.empEmail.toString();
+      _passportExpController.text = data.empPassportExpDate==null?'':DateTime.parse(data.empPassportExpDate).dMY().toString();
       photoBytes = Get.arguments[1];
     });
     getMaritalStatus();
@@ -71,6 +75,19 @@ class _ProfileEditViewState extends State<ProfileEditView> {
       selectedMStatus = mStringList[0];
       _maritalStatusController.text = mStringList[0];
     }
+  }
+
+  saveProfile() async {
+    EmpMasterData empMasterData = EmpMasterData(
+      code: data.empCode,
+      contactNo: _contactNoController.text,
+      email: _emailController.text,
+      maritalStatus: mIdList[mStringList.indexWhere((element) => element == selectedMStatus)],
+      passportExp: _passportExpController.text,
+      permanentAddr: _permanentAddrController.text,
+      currentAddr: _currentAddrController.text
+    );
+    await controller.saveEmpMaster(empMasterData);
   }
 
   @override
@@ -95,36 +112,6 @@ class _ProfileEditViewState extends State<ProfileEditView> {
 
                             Row(
                               children: [
-                                // Stack(
-                                //   children: [
-                                //     Container(
-                                //         height:70,
-                                //         width: 70,
-                                //         decoration: BoxDecoration(
-                                //             shape: BoxShape.circle,
-                                //             image: DecorationImage(
-                                //                 fit: BoxFit.cover,
-                                //                 image: MemoryImage(photoBytes!)))
-                                //     ),
-                                //     InkWell(
-                                //       onTap: (){
-                                //         // pickImageFromGallary();
-                                //       },
-                                //       child: Container(
-                                //         width: 25,
-                                //         height: 25,
-                                //         margin: EdgeInsets.only(left: 50, top: 45),
-                                //         // margin: const EdgeInsets.fromLTRB(110,100, 0, 0),
-                                //         decoration: BoxDecoration(
-                                //             shape: BoxShape.circle,
-                                //             color: Colors.white,
-                                //             border: Border.all(color: Colors.black)
-                                //         ),
-                                //         child: const Icon(Icons.edit,color:Colors.black,size: 15,),
-                                //       ),
-                                //     ),
-                                //   ],
-                                // )
                                 Container(
                                     height: 70,
                                     width: 70,
@@ -135,12 +122,12 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                                             image: MemoryImage(photoBytes!)))
                                 )
                                     .paddingOnly(right: 15),
-                                Expanded(child: ProfileTextField(controller: _firstNameController, label: 'First Name')),
+                                Expanded(child: ProfileTextField(controller: _firstNameController, label: 'First Name', isReadOnly: true,)),
                               ],
                             ),
                             SizedBox(height: 10,),
 
-                            ProfileTextField(controller: _lastNameController, label: 'Last Name'),
+                            ProfileTextField(controller: _lastNameController, label: 'Last Name', isReadOnly: true),
                             SizedBox(height: 10,),
 
                             ProfileTextField(controller: _contactNoController, label: 'Contact No.'),
@@ -254,7 +241,9 @@ class _ProfileEditViewState extends State<ProfileEditView> {
               ),
               Align(
                   alignment: Alignment.bottomCenter,
-                  child: CustomButton(onTap: (){}, text: 'Submit',).paddingOnly(bottom: 20)
+                  child: CustomButton(onTap: (){
+                    saveProfile();
+                  }, text: 'Submit',).paddingOnly(bottom: 20)
               )
             ],
           ).paddingOnly(left: 20, right: 20):

@@ -19,6 +19,7 @@ class LeaveController extends GetxController with StateMixin{
   RxList<LeaveTypeData> leaveTypes=  RxList<LeaveTypeData>();
   RxList<LeaveReportDataResponse> leaveReportList=  RxList<LeaveReportDataResponse>();
   RxList<AllowedDateResponse> allowedDateList=  RxList<AllowedDateResponse>();
+  RxList<AllowedDateResponse> allowedDateDetail =  RxList<AllowedDateResponse>();
   Rx<LeaveCarryResponse> leaveCarry = LeaveCarryResponse().obs;
   RxList<LeaveStatusResponse> statusDetailList=  RxList<LeaveStatusResponse>();
   RxList<LeaveStatusResponse> statusFirstList=  RxList<LeaveStatusResponse>();
@@ -71,15 +72,25 @@ class LeaveController extends GetxController with StateMixin{
     try{
       await EasyLoading.show();
       List<AllowedDateResponse> response = await useCase.getAllowedDates(data: data, start: start, end: end);
-      print("HKJLKK DATA IS $response");
-      // attReportResponse.value = response;
-      // attReportResponse.refresh();
       allowedDateList.value=response;
       allowedDateList.refresh();
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){
-      print("ERROR IS $e");
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }
+  }
+
+  Future<void> getDateDetail({required AllowedDatesData data, required int start, required int end}) async{
+    try{
+      await EasyLoading.show();
+      List<AllowedDateResponse> response = await useCase.getAllowedDates(data: data, start: start, end: end);
+      allowedDateDetail.value=response;
+      allowedDateDetail.refresh();
+      await EasyLoading.dismiss();
+
+    }on UnknownException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }
