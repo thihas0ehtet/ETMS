@@ -25,6 +25,7 @@ class PaySlipController extends GetxController with StateMixin{
       List<PayrollPeriodResponse> response = await useCase.getPayPeriod();
       payPeriodList.value=response;
       payPeriodList.refresh();
+      refresh();
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){
@@ -39,6 +40,7 @@ class PaySlipController extends GetxController with StateMixin{
       PayrollDetailResponse response = await useCase.getPayDetail(data);
       payDetail.value=response;
       payDetail.refresh();
+      refresh();
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){
@@ -53,6 +55,7 @@ class PaySlipController extends GetxController with StateMixin{
       List<PayslipAllowanceResponse> response = await useCase.getPayslipAllowance(data);
       payslipAllowList.value=response;
       payslipAllowList.refresh();
+      refresh();
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){
@@ -67,6 +70,7 @@ class PaySlipController extends GetxController with StateMixin{
       List<PayslipDeductionResponse> response = await useCase.getPayslipDeduction(data);
       payslipDedList.value=response;
       payslipDedList.refresh();
+      refresh();
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){

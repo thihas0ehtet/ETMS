@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:etms/app/utils/custom_snackbar.dart';
 import 'package:etms/data/datasources/request/emp_master_data.dart';
 import 'package:etms/data/datasources/request/next_of_kin_data.dart';
+import 'package:etms/data/datasources/request/request.dart';
 import 'package:etms/data/datasources/response/profile/countries_response.dart';
 import 'package:etms/data/datasources/response/profile/emp_master_response.dart';
 import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
@@ -18,7 +21,8 @@ class ProfileController extends GetxController with StateMixin{
   ProfileController({required this.repository});
 
   ProfileUsecase useCase = ProfileUsecase(Get.find());
-  var photo=''.obs;
+  // var photo=''.obs;
+  Rx<Uint8List> imageBytes = Uint8List.fromList([]).obs;
   RxList<RelationTypeResponse> reTypeList=  RxList<RelationTypeResponse>();
   RxList<CountriesResponse> countriesList=  RxList<CountriesResponse>();
   RxList<MaritalStatusResponse> mStatusList=  RxList<MaritalStatusResponse>();
@@ -29,8 +33,9 @@ class ProfileController extends GetxController with StateMixin{
     try{
       await EasyLoading.show();
       String response = await useCase.getMyPhoto();
-      photo.value=response;
-      photo.refresh();
+      Uint8List bytes = base64.decode(response.split(',').last);
+      imageBytes.value = bytes;
+      imageBytes.refresh();
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
       e.toString().error();
@@ -52,13 +57,25 @@ class ProfileController extends GetxController with StateMixin{
   }
 
 
-  Future<void> saveEmpMaster(EmpMasterData data)async{
+  Future<void> saveEmpMaster(EmpMasterData data, FormData? photoForm)async{
     try{
       await EasyLoading.show();
       bool success = await useCase.saveEmpMaster(data);
       if(success==true){
-        'saved profile information'.success();
         await getEmpMaster();
+        if(photoForm!=null){
+          // await uploadPhoto(photoForm);
+          // 'saved profile information'.success();
+          bool photoSuccess = await useCase.uploadPhoto(photoForm);
+          if(photoSuccess==true){
+            await getMyPhoto();
+            'saved profile information'.success();
+          } else{
+            'failed to save photo'.error();
+          }
+        } else{
+          'saved profile information'.success();
+        }
       } else{
         'failed to save profile information'.error();
       }
@@ -75,6 +92,7 @@ class ProfileController extends GetxController with StateMixin{
       List<RelationTypeResponse> response = await useCase.getRelationType();
       reTypeList.value=response;
       reTypeList.refresh();
+      refresh();
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
       e.toString().error();
@@ -88,6 +106,7 @@ class ProfileController extends GetxController with StateMixin{
       List<CountriesResponse> response = await useCase.getCountries();
       countriesList.value=response;
       countriesList.refresh();
+      refresh();
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
       e.toString().error();
@@ -101,6 +120,7 @@ class ProfileController extends GetxController with StateMixin{
       List<MaritalStatusResponse> response = await useCase.getMaritalStatus();
       mStatusList.value=response;
       mStatusList.refresh();
+      refresh();
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
       e.toString().error();
@@ -114,6 +134,7 @@ class ProfileController extends GetxController with StateMixin{
       NextKinResponse response = await useCase.getNextKin();
       nextKin.value=response;
       nextKin.refresh();
+      refresh();
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
       e.toString().error();
@@ -130,6 +151,24 @@ class ProfileController extends GetxController with StateMixin{
         // await getNextKin();
       } else{
         'failed to save Next of Kin data'.error();
+      }
+      await EasyLoading.dismiss();
+    }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }
+  }
+
+  Future<void> uploadPhoto(FormData data)async{
+    try{
+      await EasyLoading.show();
+      bool success = await useCase.uploadPhoto(data);
+      if(success==true){
+        await getMyPhoto();
+        // 'saved photo'.success();
+        // await getNextKin();
+      } else{
+        'failed to save photo'.error();
       }
       await EasyLoading.dismiss();
     }on UnknownException catch(e){

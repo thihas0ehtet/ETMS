@@ -1,13 +1,11 @@
-// Copyright 2019 Aleksander Woźniak
-// SPDX-License-Identifier: Apache-2.0
-
 import 'package:flutter/widgets.dart';
-import 'package:flutter_parse/app/extension.dart';
+// import 'package:flutter_parse/app/extension.dart';
 import 'package:intl/intl.dart';
 
-import '../customization/header_style.dart';
-import '../shared/utils.dart' show CalendarFormat, DayBuilder;
+import 'customization/header_style.dart';
+import 'utils.dart' show CalendarFormat, DayBuilder;
 import 'custom_icon_button.dart';
+import 'package:get/get.dart';
 
 class CalendarHeader extends StatelessWidget {
   final dynamic locale;
@@ -61,7 +59,7 @@ class CalendarHeader extends StatelessWidget {
                         ? TextAlign.center
                         : TextAlign.start,
                   ),
-                ).pad(left: 12),
+                ).paddingOnly(left: 12),
           ),
           // if (headerStyle.formatButtonVisible &&
           //     availableCalendarFormats.length > 1)

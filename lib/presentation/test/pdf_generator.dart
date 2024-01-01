@@ -48,7 +48,33 @@ class _PdfGeneratorViewState extends State<PdfGeneratorView> {
         bounds: Rect.fromLTWH(0, 0, pageSize.width, pageSize.height),
         pen: PdfPen(PdfColor(142, 170, 219)));
     //Generate PDF grid.
-    final PdfGrid grid = getGrid();
+    List list = [
+      {
+        'checkin':'5:04 AM',
+        'checkout':'6:AM',
+        'status':'Late',
+        'lat': 4.9,
+        'ute': 4.7,
+        'ot': 5.0
+      },
+      {
+        'checkin':'5:10 AM',
+        'checkout':'6:20 AM',
+        'status':'onTime',
+        'lat': 4.3,
+        'ute': 1.2,
+        'ot': 3.0
+      },
+      {
+        'checkin':'5:30 AM',
+        'checkout':'6:20 AM',
+        'status':'onTime',
+        'lat': 4.9,
+        'ute': 4.7,
+        'ot': 5.0
+      }
+    ];
+    final PdfGrid grid = getGrid(list);
     //Draw the header section by creating text element
     final PdfLayoutResult result = drawHeader(page, pageSize, grid);
     //Draw grid
@@ -56,13 +82,64 @@ class _PdfGeneratorViewState extends State<PdfGeneratorView> {
     // drawGrid(page, grid, result);
     drawGrid(page, grid, result);
     //Add invoice footer
-    drawFooter(page, pageSize);
+    // drawFooter(page, pageSize);
     //Save the PDF document
     final List<int> bytes = document.saveSync();
     //Dispose the document.
     document.dispose();
     //Save and launch the file.
-    await saveAndLaunchFile(bytes, 'Invoice.pdf');
+    await saveAndLaunchFile(bytes, 'attendance-report.pdf');
+  }
+
+  PdfGrid getGrid(List list) {
+    //Create a PDF grid
+    final PdfGrid grid = PdfGrid();
+    //Secify the columns count to the grid.
+    grid.columns.add(count: 7);
+    //Create the header row of the grid.
+    final PdfGridRow headerRow = grid.headers.add(1)[0];
+    //Set style
+    headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(68, 114, 196));
+    headerRow.style.textBrush = PdfBrushes.white;
+    headerRow.cells[0].value = 'Date';
+    headerRow.cells[0].stringFormat.alignment = PdfTextAlignment.center;
+    headerRow.cells[1].value = 'Check In';
+    headerRow.cells[2].value = 'Check Out';
+    headerRow.cells[3].value = 'Status';
+    headerRow.cells[4].value = 'LAT';
+    headerRow.cells[5].value = 'UTE';
+    headerRow.cells[6].value = 'OT';
+    //Add rows
+    for(var i =0;i<list.length;i++){
+      addProducts(DateTime.now().toString(), list[i]['checkin'], list[i]['checkout'],
+          list[i]['status'], list[i]['lat'], list[i]['ute'], list[i]['ot'], grid);
+    }
+    // addProducts('11-02-2023', '8:30 AM', '3:30 PM', 'On time', 17.98, 1.0, 1.0, grid);
+    // addProducts('LJ-0192', '9:30 AM', '4:40 PM', 'Late', 49.99, 3, 149.97, grid);
+    // addProducts('So-B909-M', '10:30 AM', '3:45 PM', 'onTime', 9.5, 2, 19, grid);
+    // addProducts('LJ-0192', '8:30 AM', '5:37 PM', 'late', 49.99, 4, 199.96, grid);
+    // addProducts('FK-5136', '9:50 AM', '4:38 PM', 'on Time', 75.49, 6, 1052.94, grid);
+    // addProducts('HL-U509', '8:40 AM', '5:20 PM', 'late', 34.99, 1, 34.99, grid);
+    //Apply the table built-in style
+    grid.applyBuiltInStyle(PdfGridBuiltInStyle.listTable2Accent1);
+    //Set gird columns width
+    // grid.columns[1].width = 200;
+    for (int i = 0; i < headerRow.cells.count; i++) {
+      headerRow.cells[i].style.cellPadding =
+          PdfPaddings(bottom: 5, left: 5, right: 5, top: 5);
+    }
+    for (int i = 0; i < grid.rows.count; i++) {
+      final PdfGridRow row = grid.rows[i];
+      for (int j = 0; j < row.cells.count; j++) {
+        final PdfGridCell cell = row.cells[j];
+        if (j == 0) {
+          cell.stringFormat.alignment = PdfTextAlignment.center;
+        }
+        cell.style.cellPadding =
+            PdfPaddings(bottom: 5, left: 5, right: 5, top: 5);
+      }
+    }
+    return grid;
   }
 
   //Draws the invoice header
@@ -179,60 +256,16 @@ class _PdfGeneratorViewState extends State<PdfGeneratorView> {
     );
   }
 
-  //Create PDF grid and return
-  PdfGrid getGrid() {
-    //Create a PDF grid
-    final PdfGrid grid = PdfGrid();
-    //Secify the columns count to the grid.
-    grid.columns.add(count: 5);
-    //Create the header row of the grid.
-    final PdfGridRow headerRow = grid.headers.add(1)[0];
-    //Set style
-    headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(68, 114, 196));
-    headerRow.style.textBrush = PdfBrushes.white;
-    headerRow.cells[0].value = 'Product Id';
-    headerRow.cells[0].stringFormat.alignment = PdfTextAlignment.center;
-    headerRow.cells[1].value = 'Product Name';
-    headerRow.cells[2].value = 'Price';
-    headerRow.cells[3].value = 'Quantity';
-    headerRow.cells[4].value = 'Total';
-    //Add rows
-    addProducts('CA-1098', 'AWC Logo Cap', 8.99, 2, 17.98, grid);
-    addProducts('LJ-0192', 'Long-Sleeve Logo Jersey,M', 49.99, 3, 149.97, grid);
-    addProducts('So-B909-M', 'Mountain Bike Socks,M', 9.5, 2, 19, grid);
-    addProducts('LJ-0192', 'Long-Sleeve Logo Jersey,M', 49.99, 4, 199.96, grid);
-    addProducts('FK-5136', 'ML Fork', 175.49, 6, 1052.94, grid);
-    addProducts('HL-U509', 'Sports-100 Helmet,Black', 34.99, 1, 34.99, grid);
-    //Apply the table built-in style
-    grid.applyBuiltInStyle(PdfGridBuiltInStyle.listTable1LightAccent5);
-    //Set gird columns width
-    grid.columns[1].width = 200;
-    for (int i = 0; i < headerRow.cells.count; i++) {
-      headerRow.cells[i].style.cellPadding =
-          PdfPaddings(bottom: 5, left: 5, right: 5, top: 5);
-    }
-    for (int i = 0; i < grid.rows.count; i++) {
-      final PdfGridRow row = grid.rows[i];
-      for (int j = 0; j < row.cells.count; j++) {
-        final PdfGridCell cell = row.cells[j];
-        if (j == 0) {
-          cell.stringFormat.alignment = PdfTextAlignment.center;
-        }
-        cell.style.cellPadding =
-            PdfPaddings(bottom: 5, left: 5, right: 5, top: 5);
-      }
-    }
-    return grid;
-  }
-
-  void addProducts(String productId, String productName, double price,
-      int quantity, double total, PdfGrid grid) {
+  void addProducts(String date, String checkIN, String checkOut,
+      String status, double lat, double ute, double ot, PdfGrid grid) {
     final PdfGridRow row = grid.rows.add();
-    row.cells[0].value = productId;
-    row.cells[1].value = productName;
-    row.cells[2].value = price.toString();
-    row.cells[3].value = quantity.toString();
-    row.cells[4].value = total.toString();
+    row.cells[0].value = date;
+    row.cells[1].value = checkIN;
+    row.cells[2].value = checkOut;
+    row.cells[3].value = status;
+    row.cells[4].value = lat.toString();
+    row.cells[5].value = ute.toString();
+    row.cells[6].value = ot.toString();
   }
 
   //Get the total amount.

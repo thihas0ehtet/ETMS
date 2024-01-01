@@ -1,7 +1,9 @@
 import 'package:etms/app/helpers/error_handling/unknown_error.dart';
 import 'package:etms/app/helpers/shared_preference_helper.dart';
 import 'package:etms/app/utils/api_link.dart';
+import 'package:etms/app/utils/response_code.dart';
 import 'package:etms/data/datasources/request/login_data.dart';
+import 'package:etms/data/datasources/request/reset_password_data.dart';
 import 'package:etms/domain/repositories/auth_repository.dart';
 import 'package:get/get.dart';
 import '../../app/api/base_provider.dart';
@@ -13,10 +15,7 @@ class AuthRepoImpl extends BaseProvider implements AuthRepository{
   @override
   Future<LoginResponse> logIn({required LogInData data, required String apiLink}) async {
     try{
-      String apiLink123= await ApiConstants.login.link();
-      print("API LINK IS 124 $apiLink and $apiLink123");
       final Response response = await post(apiLink, data.toJson());
-      print("HEYY RESPONSE IS125 $apiLink ${response.body} ${response.statusCode}");
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       }
@@ -28,6 +27,23 @@ class AuthRepoImpl extends BaseProvider implements AuthRepository{
       }
     }
     catch(e){
+      throw UnknownException(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> resetPassword({required ResetPasswordData data}) async {
+    try{
+      String apiLink = await ApiConstants.resetPassword.link();
+      final Response response = await put(apiLink, data.toJson());
+     if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
+      } else if(response.statusCode!.codeSuccess){
+        return true;
+      } else{
+        throw UnknownException(response.body);
+      }
+    } catch(e){
       throw UnknownException(e.toString());
     }
   }

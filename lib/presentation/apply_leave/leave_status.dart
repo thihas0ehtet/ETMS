@@ -44,25 +44,18 @@ class _LeaveStatusViewState extends State<LeaveStatusView> {
       selectDate: startOfMonth.dMY()
     );
 
-    await controller.getLeaveStatusDetail(data: leaveStatusData);
+    await controller.getLeaveStatusList(data: leaveStatusData);
     setState(() {
       statusDetailList=controller.statusDetailList;
-    });
-
-    await controller.getLeaveStatusFirst(data: leaveStatusData);
-    setState(() {
       statusFirstList=controller.statusFirstList;
-    });
-
-    await controller.getLeaveStatusSecond(data: leaveStatusData);
-    setState(() {
       statusSecondList=controller.statusSecondList;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return
+      Column(
       crossAxisAlignment:CrossAxisAlignment.start,
       children: [
         FilterWidget(
@@ -76,7 +69,6 @@ class _LeaveStatusViewState extends State<LeaveStatusView> {
                 filteredDate=_selectedDate;
               });
               Navigator.pop(context);
-              print("Filterred Data is $filteredDate");
               getData(DateFormat('yyyy / MMMM').format(filteredDate).toString());
             },
             filteredDateWidget: Text(DateFormat('yyyy / MMMM').format(filteredDate),style: latoRegular,)
@@ -98,6 +90,8 @@ class _LeaveStatusViewState extends State<LeaveStatusView> {
                   ],
                 ),
               // LeaveStatusList(list: statusDetailList),
+              if(statusDetailList.isEmpty && statusFirstList.isEmpty && statusSecondList.isEmpty && controller.isStatusListLoading==false)
+              Center(child: Text('There is no data.')).paddingOnly(top: 30),
               if(statusFirstList.isNotEmpty)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

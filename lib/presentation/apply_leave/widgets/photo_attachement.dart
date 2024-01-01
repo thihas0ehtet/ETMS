@@ -1,11 +1,18 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:etms/data/datasources/request/request.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../app/config/config.dart';
+import '../../../app/helpers/shared_preference_helper.dart';
 import '../../../app/utils/app_utils.dart';
+import '../../controllers/profile_controller.dart';
 import '../../widgets/overlay_photo.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class PhotoAttachmentView extends StatefulWidget {
   const PhotoAttachmentView({super.key});
@@ -15,6 +22,7 @@ class PhotoAttachmentView extends StatefulWidget {
 }
 
 class _PhotoAttachmentViewState extends State<PhotoAttachmentView> {
+  ProfileController profileController = Get.find();
   File? imageFile;
   final ImagePicker _picker = ImagePicker();
 
@@ -28,6 +36,31 @@ class _PhotoAttachmentViewState extends State<PhotoAttachmentView> {
         imageFile=File(image.path);
       });
     }
+  }
+
+  Future<void> convertToJpg(String inputImagePath) async {
+    Uint8List bytes = await File(inputImagePath).readAsBytes();
+
+    // Compress and convert the image to JPG
+    Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(
+      inputImagePath,
+      format: CompressFormat.jpeg
+    );
+
+    // Write the compressed bytes to the output file
+    String fileType = path.basename(inputImagePath).split('.')[1];
+    String outputFile = inputImagePath.replaceAll(fileType, 'jpeg');
+    File file = await File(outputFile).writeAsBytes(compressedBytes!);
+    SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+    String sysId= await _sharedPrefs.getEmpSysId;
+    FormData formData= FormData(
+        {
+          'file': MultipartFile(file!.path, filename: file.path.split('/').last),
+          'id': sysId
+        }
+    );
+    await profileController.uploadPhoto(formData);
+
   }
 
   Future<void> _onImageButtonPressed({
@@ -200,6 +233,13 @@ class _PhotoAttachmentViewState extends State<PhotoAttachmentView> {
                 ),
               )
           ),
+
+
+        TextButton(
+            onPressed: ()=>
+                // pickImageFromGallary(),
+                convertToJpg(imageFile!.path.toString()),
+            child: Text("Click Here"))
 
       ],
     );

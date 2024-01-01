@@ -3,9 +3,8 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-
-import '../customization/calendar_builders.dart';
-import '../customization/calendar_style.dart';
+import 'calendar_builders.dart';
+import 'calendar_style.dart';
 
 class CellContent extends StatelessWidget {
   final DateTime day;

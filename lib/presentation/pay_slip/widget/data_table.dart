@@ -15,7 +15,7 @@ Widget DataTableWidget({
 }
     ){
   return  DataTable(
-    border: TableBorder.all(),
+    // border: TableBorder.all(),
     horizontalMargin: 4,
     columnSpacing: 30,
     headingRowColor:   MaterialStateColor.resolveWith((states) => ColorResources.primary200),
@@ -45,6 +45,7 @@ Widget DataTableWidget({
             (index) =>
             index==dataList.length?
             DataRow(
+              color: MaterialStateProperty.all<Color>(ColorResources.white),
               cells: <DataCell>[
                 DataCell(
                     SizedBox(
@@ -58,6 +59,7 @@ Widget DataTableWidget({
               ],
             ):
             DataRow(
+              color: MaterialStateProperty.all<Color>(index%2==0?ColorResources.white:ColorResources.primary50),
               cells: <DataCell>[
                 DataCell(
                     SizedBox(

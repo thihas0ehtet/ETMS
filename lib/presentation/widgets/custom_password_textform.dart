@@ -49,7 +49,7 @@ class CustomPasswordTextForm extends StatelessWidget {
             onTap: onPress,
             child: Container(
               margin: EdgeInsets.only(top: 13,bottom: 13),
-              child: SvgPicture.asset(hidePassword?'assets/images/eye close.svg':'assets/images/eye open.svg',
+              child: SvgPicture.asset(hidePassword?'assets/images/eye_close.svg':'assets/images/eye_open.svg',
                 color: ColorResources.primary700,),
             ),
           ):null,

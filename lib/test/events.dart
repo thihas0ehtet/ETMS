@@ -1,14 +1,14 @@
-// Copyright 2019 Aleksander Woźniak
-// SPDX-License-Identifier: Apache-2.0
-
-import 'dart:collection';
-
+// import 'package:etms/test/table_calendar.dart';
+// import 'package:flutter/material.dart';
+// import 'package:table_calendar/table_calendar.dart';
+//
+// import '../presentation/test/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_parse/calendar/shared/utils.dart';
-import 'package:flutter_parse/calendar/utils.dart';
+import '../presentation/test/utils.dart';
+import 'utils.dart';
 // import 'package:table_calendar/table_calendar.dart';
 
-import 'custom/table_calendar.dart';
+import 'table_calendar.dart';
 import 'customization/calendar_style.dart';
 
 class TableEventsExample extends StatefulWidget {

@@ -85,6 +85,16 @@ dependencies:
   # biometric auth
   local_auth: ^2.1.7
 
+  #image compress
+  flutter_image_compress: ^2.1.0
+
+  #pdf generator
+  syncfusion_flutter_pdf: ^23.1.42
+  open_file: ^3.3.2
+
+  #qr scanner
+  qr_code_scanner: ^1.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -95,6 +105,14 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/dm_logo.png"
+  adaptive_icon_background: "#ffffff"
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

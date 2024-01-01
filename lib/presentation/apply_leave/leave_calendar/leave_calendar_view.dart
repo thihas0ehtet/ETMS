@@ -1,18 +1,29 @@
+import 'package:etms/app/config/config.dart';
+import 'package:etms/app/utils/dateTime_format.dart';
 import 'package:etms/presentation/apply_leave/leave_calendar/event_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import '../../../app/helpers/shared_preference_helper.dart';
+import '../../../data/datasources/request/leave_status_data.dart';
+import '../../../data/datasources/response/apply_leave/leave_list_response.dart';
+import '../../../data/datasources/response/apply_leave/leave_status_response.dart';
+import '../../controllers/leave_controller.dart';
+import '../../widgets/my_app_bar.dart';
 import 'utils.dart';
 import 'table_calendar.dart';
 import 'customization/calendar_style.dart';
 
-class TableEventsExample extends StatefulWidget {
-  const TableEventsExample({super.key});
+class LeaveCalenderView extends StatefulWidget {
+  const LeaveCalenderView({super.key});
 
   @override
-  _TableEventsExampleState createState() => _TableEventsExampleState();
+  _LeaveCalenderViewState createState() => _LeaveCalenderViewState();
 }
 
-class _TableEventsExampleState extends State<TableEventsExample> {
-  late final ValueNotifier<List<Event>> _selectedEvents;
+class _LeaveCalenderViewState extends State<LeaveCalenderView> {
+  LeaveController controller = Get.find();
+  late final ValueNotifier<List<LeaveStatusResponse>> _selectedEvents;
   final CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
       .toggledOff; // Can be toggled on/off by longpressing a date
@@ -20,6 +31,7 @@ class _TableEventsExampleState extends State<TableEventsExample> {
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+  Map<dynamic, List<LeaveStatusResponse>> kEventsData={};
 
   // LinkedHashMap<DateTime, List<Event>>? kEvents12;
 
@@ -37,6 +49,23 @@ class _TableEventsExampleState extends State<TableEventsExample> {
     super.dispose();
   }
 
+  Color generateColor(String text){
+    if(text.toLowerCase()=='pending'){
+      return ColorResources.yellow;
+    }
+    else if(text.toLowerCase().contains('reject')){
+      return ColorResources.red;
+    }
+    return ColorResources.green;
+  }
+
+  Color generateTextColor(String text){
+    if(text.toLowerCase()=='pending'){
+      return Colors.black;
+    }
+    return ColorResources.white;
+  }
+
   // void addEventData(){
   //   final kEventSource = { for (var item in List.generate(50, (index) => index)) DateTime.utc(kFirstDay.year, kFirstDay.month, item * 5) : List.generate(
   //           item % 4 + 1, (index) => Event('Event $item | ${index + 1}')) }
@@ -48,11 +77,10 @@ class _TableEventsExampleState extends State<TableEventsExample> {
   //     });
   // }
 
-  List<Event> _getEventsForDay(DateTime day) {
-    if(kEvents==null){
-      return [];
-    }
-    return kEvents![day] ?? [];
+  List<LeaveStatusResponse> _getEventsForDay(DateTime day) {
+    String startOfMonth = DateTime(day.year, day.month, 1).dMY().toString();
+    String date=DateFormat('dd-MMM-yyyy').format(day);
+    return kEventsData[date] ?? [];
   }
 
 
@@ -79,6 +107,25 @@ class _TableEventsExampleState extends State<TableEventsExample> {
     }
   }
 
+  getData(String inputDate) async{
+    // DateTime parsedMonth = DateFormat('yyyy / MMMM').parse(inputDate);
+    // DateTime startOfMonth = DateTime(parsedMonth.year, parsedMonth.month, 1);
+
+    SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+    String sysId= await _sharedPrefs.getEmpSysId;
+    LeaveStatusData leaveStatusData = LeaveStatusData(
+        empSysId: sysId,
+        selectDate: inputDate
+    );
+    print("HELLOO SYS ID ${sysId} and $inputDate");
+
+    await controller.getLeaveStatusList(data: leaveStatusData);
+    setState(() {
+      kEventsData=controller.kEvents;
+    });
+  }
+
+
   // void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
   //   setState(() {
   //     _selectedDay = null;
@@ -98,15 +145,69 @@ class _TableEventsExampleState extends State<TableEventsExample> {
   //   }
   // }
 
+  Widget statusWiget(String text, Color color){
+    return Expanded(
+      child: Row(
+        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Icon(Icons.circle,color: color, size: 12,).paddingOnly(right: 8),
+          Expanded(child: Text(text))
+        ],
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
+    print("This is $kFirstDay and $kLastDay and $_focusedDay");
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('TableCalendar - Events'),
-      ),
+      backgroundColor: Color(0xffF4F4F4),
+      // backgroundColor: ColorResources.secondary500,
+      appBar: MyAppBar(title: 'Leave Calendar'),
+      // appBar: AppBar(
+      //   title: const Text('TableCalendar - Events'),
+      // ),
       body: Column(
         children: [
-          TableCalendarOne<Event>(
+          Material(
+            elevation: 2,
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
+            child: Container(
+              // elevation: 2,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(5))
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  statusWiget('Pending', ColorResources.yellow),
+                  statusWiget('Approved', ColorResources.green),
+                  statusWiget('Reject', ColorResources.red),
+                  // Row(
+                  //   // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //   children: [
+                  //     Icon(Icons.circle,color: ColorResources.yellow, size: 12,).paddingOnly(right: 8),
+                  //     Text('Pending'),
+                  //   ],
+                  // ),
+                  // Row(
+                  //   // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //   children: [
+                  //     Icon(Icons.circle,color: ColorResources.yellow, size: 12,).paddingOnly(right: 8),
+                  //     Text('Pending'),
+                  //   ],
+                  // ),
+                  // Row(
+                  //   // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //   children: [
+                  //     Icon(Icons.circle,color: ColorResources.yellow, size: 12,).paddingOnly(right: 8),
+                  //     Text('PendingPendingPendingPendingPendingPendingPendingPending'),
+                  //   ],
+                  // )
+                ],
+              ).paddingAll(10),
+            ).paddingOnly(left: 10, right: 10),
+          ).paddingOnly(left: 20, right: 20),
+          TableCalendar<LeaveStatusResponse>(
             // rowHeight: _getEventsForDay1.length.toDouble(),
             firstDay: kFirstDay,
             lastDay: kLastDay,
@@ -118,14 +219,20 @@ class _TableEventsExampleState extends State<TableEventsExample> {
             rangeSelectionMode: _rangeSelectionMode,
             eventLoader: _getEventsForDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
-            calendarStyle: const CalendarStyle(
+            calendarStyle: CalendarStyle(
+              selectedDecoration: BoxDecoration(
+                  color: ColorResources.secondary700,
+                  shape: BoxShape.circle),
+              todayDecoration: BoxDecoration(
+                  color: ColorResources.primary500,
+                  shape: BoxShape.circle),
               // Use `CalendarStyle` to customize the UI
               outsideDaysVisible: false,
-              markerDecoration: BoxDecoration(
-                color: Colors.green,
-                // color: ((_getEventsForDay as List<Event>).length%2)==0?Colors.green:Colors.red,
-                shape: BoxShape.circle
-              )
+              // markerDecoration: BoxDecoration(
+              //   color: Colors.green,
+              //   // color: ((_getEventsForDay as List<Event>).length%2)==0?Colors.green:Colors.red,
+              //   shape: BoxShape.circle
+              // )
             ),
             onDaySelected: _onDaySelected,
             // onRangeSelected: _onRangeSelected,
@@ -137,29 +244,77 @@ class _TableEventsExampleState extends State<TableEventsExample> {
             //   }
             // },
             onPageChanged: (focusedDay) {
+              print("Focus day is $focusedDay");
+              String parsedMonth = DateFormat('yyyy / MMMM').format(focusedDay);
+              String startOfMonth = DateTime(focusedDay.year, focusedDay.month, 1).dMY().toString();
+              print("Paresed Month123 $parsedMonth and $startOfMonth");
               _focusedDay = focusedDay;
+              getData(startOfMonth);
             },
           ),
-          const SizedBox(height: 8.0),
+          SizedBox(height: 8.0),
+          Divider(thickness: 1,),
           Expanded(
-            child: ValueListenableBuilder<List<Event>>(
+            child: ValueListenableBuilder<List<LeaveStatusResponse>>(
               valueListenable: _selectedEvents,
               builder: (context, value, _) {
                 return ListView.builder(
                   itemCount: value.length,
                   itemBuilder: (context, index) {
+                    LeaveStatusResponse data= value[index];
                     return Container(
                       margin: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
+                        // horizontal: 12.0,
                         vertical: 4.0,
                       ),
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListTile(
+                      color: ColorResources.white,
+                      // decoration: BoxDecoration(
+                      //   border: Border.all(),
+                      //   borderRadius: BorderRadius.circular(12.0),
+                      // ),
+                      child: GestureDetector(
                         onTap: () => print('${value[index]}'),
-                        title: Text('${value[index]}'),
+                        child:  Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(data.leaveTypeName.toString(),
+                                    softWrap: true,
+                                    // overflow: TextOverflow.ellipsis,
+                                    style: latoSemibold.copyWith(fontSize: 15),
+                                  ).paddingOnly(bottom: 10),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Text(DateTime.parse(data.leaveDate.toString()).dMYE().toString(),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5,),
+                                    ],
+                                  ).paddingOnly(bottom: 5),
+                                  Text('(${data.halfType})',
+                                    style: latoRegular.copyWith(color: ColorResources.primary500),)
+                                  // Text('(Evening-half)',
+                                  //   style: latoRegular.copyWith(color: ColorResources.primary500),)
+
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 10,right: 10,top: 4,bottom: 4),
+                              decoration: BoxDecoration(
+                                  color: generateColor(data.status.toString()),
+                                  borderRadius: BorderRadius.all(Radius.circular(20))
+                              ),
+                              child: Text(data.status.toString(),style: latoRegular.copyWith(color: generateTextColor(data.status.toString())),),
+                            ),
+                          ],
+                        ).paddingOnly(left: 20, right: 20, top: 10,bottom: 5),
                       ),
                     );
                   },

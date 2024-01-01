@@ -58,7 +58,7 @@ class _PaySlipPeriodScreenState extends State<PaySlipPeriodScreen> {
                           children: [
                             Row(
                               children: [
-                                SvgPicture.asset('assets/images/Payslip.svg',width: 25,height: 25,
+                                SvgPicture.asset('assets/images/payslip.svg',width: 25,height: 25,
                                   color: ColorResources.primary800,).paddingOnly(right: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,6 +1,4 @@
-import 'package:etms/domain/entities/login_model.dart';
-
-class LoginResponse implements LoginModel{
+class LoginResponse{
   int? userID;
   String? userName;
   String? loginName;

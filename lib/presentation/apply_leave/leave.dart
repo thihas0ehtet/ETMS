@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../app/helpers/shared_preference_helper.dart';
+import '../../data/datasources/response/allowed_date_response.dart';
 import '../../data/datasources/response/apply_leave/leave_list_response.dart';
 import '../../data/datasources/response/apply_leave/apply_leave_response.dart';
 
@@ -43,6 +44,10 @@ class _LeaveViewState extends State<LeaveView> {
   bool toCheckFirstHalf = true;
   bool toCheckSecondHalf = true;
   bool requireHalfLeaveSelect = false;
+  List<AllowedDateResponse> dateList = [];
+  List<AllowedDateResponse> dateDetailList = [];
+  double sumOfDates = 0.0;
+  bool isExpanded=true;
 
   @override
   void initState() {
@@ -105,6 +110,17 @@ class _LeaveViewState extends State<LeaveView> {
     );
     print("DATEE IS ${data.toJson()}");
     await controller.getAllowedDates(data: data, start: start, end: end);
+    setState(() {
+      dateList = controller.allowedDateList;
+      dateDetailList = controller.allowedDateDetail;
+    });
+    double sum = 0.0;
+    for(var i =0 ;i<dateList.length;i++){
+      sum+=dateList[i].duration!.toDouble();
+    }
+    setState(() {
+      sumOfDates = sum;
+    });
 
     // SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
     // String sysId= await _sharedPrefs.getEmpSysId;
@@ -195,7 +211,6 @@ class _LeaveViewState extends State<LeaveView> {
                         setState(() {
                           checkFirst=value!;
                         });
-                        print("CHECK FIRST $checkFirst");
                       },
                     ),
                     Text(
@@ -213,7 +228,6 @@ class _LeaveViewState extends State<LeaveView> {
                         setState(() {
                           checkSecond=value!;
                         });
-                        print("CHECK Second $checkSecond");
                       },
                     ),
                     Text(
@@ -268,10 +282,7 @@ class _LeaveViewState extends State<LeaveView> {
                               dateController.text=pickedDate.toString();
                               requireHalfLeaveSelect=false;
                             });
-                            print("JKDLSJFKL THIS IS $fromCheckFirstHalf and $fromCheckSecondHalf and $checkFirst and $checkSecond");
-
-
-                            // check to date and work api automatically
+                             // check to date and work api automatically
                             if(isFromDate!=true){
                               DateTime start = DateFormat('dd/MM/yyyy').parseStrict(_startDateController.text);
                               DateTime end = DateFormat('dd/MM/yyyy').parseStrict(_endDateController.text);
@@ -284,7 +295,13 @@ class _LeaveViewState extends State<LeaveView> {
                                 Navigator.of(context).pop();
                               }
                             } else{
+                              DateTime start = DateFormat('dd/MM/yyyy').parseStrict(_startDateController.text);
+                              DateTime end = DateFormat('dd/MM/yyyy').parseStrict(_endDateController.text);
+                              if(start.isBefore(end)){
+                                getAllowedDates();
+                              }
                               Navigator.of(context).pop();
+                              // Navigator.of(context).pop();
                             }
                           }
                         },
@@ -545,13 +562,104 @@ class _LeaveViewState extends State<LeaveView> {
                   )
                 ],
               ),
-             // Text(showGetDatesButton.toString()),
-             // if( _startDateController.text.isNotEmpty && _endDateController.text.isNotEmpty && showGetDatesButton)
-             //  CustomButton(
-             //      onTap: (){
-             //        getAllowedDates();
-             //      },
-             //      text: 'View All Half Leave Days').paddingOnly(top: 20,bottom: 10),
+             if(dateList.isNotEmpty)
+               Column(
+                 children: [
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       Text('Total Leaves $sumOfDates Days'),
+                       GestureDetector(
+                         onTap: () {
+                           setState(() {
+                             isExpanded=!isExpanded;
+                           });
+                         },
+                         child: Row(
+                           children: [
+                             Text('More Detail',style: latoRegular.copyWith(color: ColorResources.primary500),),
+                             Icon(isExpanded?Icons.keyboard_arrow_down:Icons.keyboard_arrow_up, color: ColorResources.primary500,)
+                           ],
+                         ),
+                       ),
+                     ],
+                   ),
+                   if(!isExpanded)
+                   SingleChildScrollView(
+                     scrollDirection: Axis.horizontal,
+                     // constrained: false,
+                     child: FittedBox(
+                       child: DataTable(
+                         // border: TableBorder.all(),
+                         horizontalMargin: 4,
+                         columnSpacing: 10,
+                         headingRowColor:   MaterialStateColor.resolveWith((states) => ColorResources.primary200),
+                         columns: <DataColumn>[
+                           DataColumn(
+                             label: Expanded(
+                               child: Text(
+                                 'Date',
+                                 textAlign: TextAlign.center,
+                                 style: latoRegular,
+                               ),
+                             ),
+                           ),
+                           DataColumn(
+                             label: Expanded(
+                               child: Text(
+                                 'Day',
+                                 textAlign: TextAlign.center,
+                                 style: latoRegular,
+                               ),
+                             ),
+                           ),
+                           DataColumn(
+                             label: Flexible(
+                               child: Text(
+                                 'Leave Type',
+                                 textAlign: TextAlign.center,
+                                 style: latoRegular,
+                               ),
+                             ),
+                           ),
+                           DataColumn(
+                             label: Expanded(
+                               child: Text(
+                                 'Duration',
+                                 textAlign: TextAlign.center,
+                                 style: latoRegular,
+                               ),
+                             ),
+                           ),
+                         ],
+                         rows:
+                         List.generate(
+                             dateDetailList.length,
+                                 (index) =>
+                             DataRow(
+                               color: MaterialStateProperty.all<Color>(index%2==0?ColorResources.white:ColorResources.primary50),
+                               cells: <DataCell>[
+                                 DataCell(
+                                     Center(
+                                         child: Text(DateTime.parse(dateDetailList[index].leaveDate.toString()).dMY().toString(),
+                                             style: latoRegular))),
+                                 DataCell(
+                                     Center(
+                                         child: Text(dateDetailList[index].days.toString(), style: latoRegular))),
+                                 DataCell(
+                                     Center(
+                                         child: Text(dateDetailList[index].halfType.toString(),style: latoRegular))),
+                                 DataCell(
+                                     Center(
+                                         child: Text(dateDetailList[index].duration.toString(),style: latoRegular)))
+                               ],
+                             )
+                         ),
+                       ),
+                     ).paddingOnly(top: 10),
+                   ),
+                 ],
+               ).paddingOnly(top: 20),
               Text("Remark").paddingOnly(top: 20, bottom: 10),
               SimpleTextFormField(
                   controller: _remarkController,

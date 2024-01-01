@@ -1,10 +1,10 @@
-class ForgotPasswordData {
+class ResetPasswordData {
   String? empSysId;
   String? password;
   String? newPassword;
-  int? confirmPassword;
+  String? confirmPassword;
 
-  ForgotPasswordData(
+  ResetPasswordData(
       {
         this.empSysId,
         this.password,

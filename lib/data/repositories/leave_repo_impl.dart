@@ -1,7 +1,7 @@
 import 'package:etms/app/config/api_constants.dart';
 import 'package:etms/app/utils/api_link.dart';
+import 'package:etms/app/utils/response_code.dart';
 import 'package:etms/data/datasources/request/allowed_dates_data.dart';
-import 'package:etms/data/datasources/request/get_dates_data.dart';
 import 'package:etms/data/datasources/request/leave_report_data.dart';
 import 'package:etms/data/datasources/response/allowed_date_response.dart';
 import 'package:etms/domain/repositories/leave_repository.dart';
@@ -10,6 +10,7 @@ import '../../app/api/base_provider.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
 import '../../app/helpers/shared_preference_helper.dart';
 import '../datasources/request/leave_carry_data.dart';
+import '../datasources/request/leave_status_001_data.dart';
 import '../datasources/request/leave_status_data.dart';
 import '../datasources/response/apply_leave/apply_leave_response.dart';
 
@@ -25,7 +26,7 @@ class LeaveRepoImpl extends BaseProvider implements LeaveRepository{
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       }
-      else if(response.statusCode==200){
+      else if(response.statusCode!.codeSuccess){
 
         List<LeaveTypeData> list = [];
         for(var i=0;i<response.body.length;i++){
@@ -57,7 +58,7 @@ class LeaveRepoImpl extends BaseProvider implements LeaveRepository{
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       }
-      else if(response.statusCode==200){
+      else if(response.statusCode!.codeSuccess){
         List<LeaveReportDataResponse> list = [];
         for(var i=0;i<response.body.length;i++){
           list.add(LeaveReportDataResponse.fromJson(response.body[i]));
@@ -85,7 +86,32 @@ class LeaveRepoImpl extends BaseProvider implements LeaveRepository{
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       }
-      else if(response.statusCode==200){
+      else if(response.statusCode!.codeSuccess){
+        List<AllowedDateResponse> list = [];
+        for(var i=0;i<response.body.length;i++){
+          list.add(AllowedDateResponse.fromJson(response.body[i]));
+        }
+        return list;
+      }
+      else{
+        throw UnknownException(response.body['Message']);
+      }
+    }
+    catch(e){
+      throw UnknownException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<AllowedDateResponse>> getDateDetail({required AllowedDatesData data, required int start, required int end}) async {
+    try{
+      String apiLink = await ApiConstants.getDatesDetail.link();
+
+      final Response response  = await post('$apiLink?StartAMPM=$start&EndAMPM=$end',data.toJson());
+      if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
+      }
+      else if(response.statusCode!.codeSuccess){
         List<AllowedDateResponse> list = [];
         for(var i=0;i<response.body.length;i++){
           list.add(AllowedDateResponse.fromJson(response.body[i]));
@@ -112,7 +138,7 @@ class LeaveRepoImpl extends BaseProvider implements LeaveRepository{
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       }
-      else if(response.statusCode==200){
+      else if(response.statusCode!.codeSuccess){
         return LeaveCarryResponse.fromJson(response.body);
       }
       else{
@@ -135,7 +161,7 @@ class LeaveRepoImpl extends BaseProvider implements LeaveRepository{
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       }
-      else if(response.statusCode==200){
+      else if(response.statusCode!.codeSuccess){
         List<LeaveStatusResponse> list = [];
         for(var i=0;i<response.body.length;i++){
           list.add(LeaveStatusResponse.fromJson(response.body[i]));
@@ -162,7 +188,7 @@ class LeaveRepoImpl extends BaseProvider implements LeaveRepository{
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       }
-      else if(response.statusCode==200){
+      else if(response.statusCode!.codeSuccess){
         List<LeaveStatusResponse> list = [];
         for(var i=0;i<response.body.length;i++){
           list.add(LeaveStatusResponse.fromJson(response.body[i]));
@@ -188,7 +214,85 @@ class LeaveRepoImpl extends BaseProvider implements LeaveRepository{
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       }
-      else if(response.statusCode==200){
+      else if(response.statusCode!.codeSuccess){
+        List<LeaveStatusResponse> list = [];
+        for(var i=0;i<response.body.length;i++){
+          list.add(LeaveStatusResponse.fromJson(response.body[i]));
+        }
+        return list;
+      }
+      else{
+        throw UnknownException(response.body['Message']);
+      }
+    }
+    catch(e){
+      throw UnknownException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<LeaveStatusResponse>> getLeaveStatusDetail_001({required LeaveStatus001Data data}) async {
+    try{
+      String apiLink = await ApiConstants.getLeaveStatusDetail_001.link();
+      apiLink = '$apiLink?EmpSysID=${data.empSysId}&sdate=${data.sdate}&edate=${data.edate}';
+      print("And api Link is $apiLink");
+      final Response response  = await get(apiLink);
+      if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
+      }
+      else if(response.statusCode!.codeSuccess){
+        List<LeaveStatusResponse> list = [];
+        for(var i=0;i<response.body.length;i++){
+          list.add(LeaveStatusResponse.fromJson(response.body[i]));
+        }
+        return list;
+      }
+      else{
+        throw UnknownException(response.body['Message']);
+      }
+    }
+    catch(e){
+      throw UnknownException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<LeaveStatusResponse>> getLeaveStatusFirstApproval_001({required LeaveStatus001Data data}) async {
+    try{
+      String apiLink = await ApiConstants.getLeaveStatusFirstApproval_001.link();
+      apiLink = '$apiLink?EmpSysID=${data.empSysId}&sdate=${data.sdate}&edate=${data.edate}';
+
+      final Response response  = await get(apiLink);
+      if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
+      }
+      else if(response.statusCode!.codeSuccess){
+        List<LeaveStatusResponse> list = [];
+        for(var i=0;i<response.body.length;i++){
+          list.add(LeaveStatusResponse.fromJson(response.body[i]));
+        }
+        return list;
+      }
+      else{
+        throw UnknownException(response.body['Message']);
+      }
+    }
+    catch(e){
+      throw UnknownException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<LeaveStatusResponse>> getLeaveStatusSecondApproval_001({required LeaveStatus001Data data}) async {
+    try{
+      String apiLink = await ApiConstants.getLeaveStatusSecondApproval_001.link();
+      apiLink = '$apiLink?EmpSysID=${data.empSysId}&sdate=${data.sdate}&edate=${data.edate}';
+
+      final Response response  = await get(apiLink);
+      if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
+      }
+      else if(response.statusCode!.codeSuccess){
         List<LeaveStatusResponse> list = [];
         for(var i=0;i<response.body.length;i++){
           list.add(LeaveStatusResponse.fromJson(response.body[i]));

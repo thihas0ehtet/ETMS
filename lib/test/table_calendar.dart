@@ -1,20 +1,30 @@
-// Copyright 2019 Aleksander Woźniak
-// SPDX-License-Identifier: Apache-2.0
-
+// import 'dart:math';
+// import 'package:etms/test/utils.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
+// import 'table_calendar_base.dart';
+// import 'package:intl/intl.dart';
+// import 'package:simple_gesture_detector/simple_gesture_detector.dart';
+// import 'customization/calendar_builders.dart';
+// // import 'customization/calendar_style.dart';
+// import 'customization/days_of_week_style.dart';
+// import 'customization/header_style.dart';
+// import 'customization/cell_content.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_parse/calendar/custom/table_calendar_base.dart';
+import 'table_calendar_base.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_gesture_detector/simple_gesture_detector.dart';
 // import 'package:table_calendar/table_calendar.dart';
-import '../customization/calendar_builders.dart';
-import '../customization/calendar_style.dart';
-import '../customization/days_of_week_style.dart';
-import '../customization/header_style.dart';
-import '../shared/utils.dart';
-import '../widgets/calendar_header.dart';
-import '../widgets/cell_content.dart';
+import 'customization/calendar_builders.dart';
+import 'customization/calendar_style.dart';
+import 'customization/days_of_week_style.dart';
+import 'customization/header_style.dart';
+import 'utils.dart';
+import 'calendar_header.dart';
+import 'customization/cell_content.dart';
+
 
 /// Signature for `onDaySelected` callback. Contains the selected day and focused day.
 typedef OnDaySelected = void Function(

@@ -20,7 +20,7 @@ class CheckInOutWidget extends StatelessWidget {
         width: 170,
         // height: 90,
         padding: EdgeInsets.only(top: 17,bottom: 17),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(3))
         ),
@@ -35,26 +35,12 @@ class CheckInOutWidget extends StatelessWidget {
                 Flexible(child: Text(isCheckIn?'Check In':'Check Out', style: latoRegular.copyWith(color: ColorResources.text500, fontSize: 16),))
               ],
             ).paddingOnly(bottom: 15),
-            // Flexible(
-            //   child: ListView(
-            //     scrollDirection: Axis.horizontal,
-            //     physics: ScrollPhysics(),
-            //     shrinkWrap: true,
-            //     children: [
-            //       Flexible(
-            //         child: Text(checkInOutTime,
-            //           style: latoRegular.copyWith(color: ColorResources.text500, fontSize: 16),),
-            //       ),
-            //       if(checkInOutTime!='')
-            //         Flexible(child: CheckInOutStatus(isOnTime: isOnTime).paddingOnly(left: 10))
-            //     ],
-            //   ),
-            // ),
             Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 Flexible(
                   child: Text(checkInOutTime,
-                    style: latoRegular.copyWith(color: ColorResources.text500, fontSize: 16),),
+                    style: latoRegular.copyWith(color: ColorResources.text500, fontSize: 14),),
                 ),
                 if(checkInOutTime!='' && checkInOutTime!='--')
                   Flexible(child: CheckInOutStatus(isOnTime: isOnTime).paddingOnly(left: 10))

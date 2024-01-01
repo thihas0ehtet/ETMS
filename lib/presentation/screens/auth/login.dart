@@ -1,6 +1,7 @@
 import 'package:etms/app/config/font_family.dart';
 import 'package:etms/app/helpers/shared_preference_helper.dart';
 import 'package:etms/data/datasources/request/login_data.dart';
+import 'package:etms/presentation/widgets/custom_button.dart';
 import 'package:etms/presentation/widgets/custom_password_textform.dart';
 import 'package:etms/presentation/widgets/custom_textform.dart';
 import 'package:feather_icons/feather_icons.dart';
@@ -27,6 +28,14 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _companyCodeController = TextEditingController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   bool hidePassword=true;
+  bool showBioMetric = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkData();
+  }
 
   @override
   void dispose() {
@@ -34,6 +43,23 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
     _userNameController.dispose();
   }
+
+
+  checkData() async{
+    // await Future.delayed(const Duration(seconds: 3));
+    SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+    String companyCode= await _sharedPrefs.getCompanyCode;
+    String sysId= await _sharedPrefs.getEmpSysId;
+    bool enableFingerprint = await _sharedPrefs.getFingerprint;
+    print("ENAble fingerpirnt is $enableFingerprint");
+    if(companyCode!='' && enableFingerprint){
+      setState(() {
+        showBioMetric=true;
+      });
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -61,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(
                             width: 65,
                             height: 65,
-                            child: Image(image: AssetImage('assets/images/logo.png')),
+                            child: Image(image: AssetImage('assets/images/dm_logo.png')),
                           ),
                           Text("Welcome Back",style: latoSemibold
                               .copyWith(color: ColorResources.primary700, fontSize: 34),),
@@ -75,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               )
                             ],
                           ),
-                          SizedBox(height: 40,),
+                          SizedBox(height: 20,),
 
                           Form(
                               key: _key,
@@ -117,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ],
                               )
                           ),
-                          InkWell(
+                          CustomButton(
                             onTap: (){
                               if(_key.currentState!.validate()){
                                 // Get.offAllNamed(RouteName.dashboard);
@@ -127,35 +153,84 @@ class _LoginScreenState extends State<LoginScreen> {
                                     password: _passwordController.text
                                 );
                                 String companyCode = _companyCodeController.text.toString();
-                                // String apiLink = companyCode+'/api/'+ApiConstants.login;
                                 authController.logIn(data: loginData, code: companyCode);
-
-
-                                // SharedPreferenceHelper sharedData= Get.find<SharedPreferenceHelper>();
-                                // sharedData.saveCompanyCode(companyCode.toString());
-                                // Future.delayed(Duration(seconds: 1),(){
-                                //   authController.companyCode.value=companyCode;
-                                //   authController.companyCode.refresh();
-                                //   authController.logIn(data: loginData);
-                                // });
                               }
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: ColorResources.primary500,
-                                  borderRadius: BorderRadius.all(Radius.circular(5))
-                              ),
-                              padding: EdgeInsets.only(top: 10, bottom: 10),
-                              width: context.width,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              text: 'Login',
+                            icon: Icons.lock,
+                          ),
+                          // InkWell(
+                          //   onTap: (){
+                          //     if(_key.currentState!.validate()){
+                          //       // Get.offAllNamed(RouteName.dashboard);
+                          //       LogInData loginData=LogInData(
+                          //           loginName: _userNameController.text,
+                          //           loginDevice: 'ML',
+                          //           password: _passwordController.text
+                          //       );
+                          //       String companyCode = _companyCodeController.text.toString();
+                          //       authController.logIn(data: loginData, code: companyCode);
+                          //     }
+                          //   },
+                          //   child: Container(
+                          //     decoration: BoxDecoration(
+                          //         color: ColorResources.primary500,
+                          //         borderRadius: BorderRadius.all(Radius.circular(5))
+                          //     ),
+                          //     padding: EdgeInsets.only(top: 10, bottom: 10),
+                          //     width: context.width,
+                          //     child: Row(
+                          //       mainAxisAlignment: MainAxisAlignment.center,
+                          //       children: [
+                          //         Icon(Icons.lock, size: 18, color: ColorResources.background,).paddingOnly(right: 10),
+                          //         Text("Login",style: latoRegular.copyWith(color: ColorResources.background),)
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
+
+                          showBioMetric ?
+                              Column(
                                 children: [
-                                  Icon(Icons.lock, size: 18, color: ColorResources.background,).paddingOnly(right: 10),
-                                  Text("Login",style: latoRegular.copyWith(color: ColorResources.background),)
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child:  Container(
+                                          width: context.width/2-40,
+                                          height: 1,
+                                          color: ColorResources.secondary900,
+                                        )),
+                                      Text('OR', style: latoMedium.copyWith(fontSize: 17),).paddingOnly(top: 25, bottom: 25, left: 10, right: 10),
+                                      Expanded(
+                                        child: Container(
+                                          width: context.width/2-40,
+                                          height: 1,
+                                          color: ColorResources.secondary900,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  Container(
+                                    // alignment: Alignment.center,
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle
+                                      ),
+                                      child: IconButton(
+                                          onPressed: () async {
+                                            await authController.biometricAuth();
+                                          },
+                                          icon: Icon(Icons.fingerprint, size: 30, color: ColorResources.primary500,)
+                                      )
+                                  ),
+                                  Text('Login with Fingerprint / Face ID', style: latoMedium.copyWith(fontSize: 15),).paddingOnly(top: 10),
                                 ],
-                              ),
-                            ),
-                          )
+                              )
+                          :Container()
+
                         ],
                       ).paddingOnly(left: 26, right: 26),
                     ),

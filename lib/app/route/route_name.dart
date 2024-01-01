@@ -10,4 +10,7 @@ abstract class RouteName {
   static const payslip_detail = '/payslip_detail';
   static const profile_edit = '/profile_edit';
   static const next_kin_edit = '/next_kin_edit';
+  static const leave_calendar = '/leave_calendar';
+  static const reset_password = '/reset_password';
+  static const qrScan = '/qr_scan';
 }

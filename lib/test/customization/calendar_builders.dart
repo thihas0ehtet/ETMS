@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import 'package:flutter/widgets.dart';
-
-import '../shared/utils.dart' show DayBuilder, FocusedDayBuilder;
+import '../utils.dart' show DayBuilder, FocusedDayBuilder;
 
 /// Signature for a function that creates a single event marker for a given `day`.
 /// Contains a single `event` associated with that `day`.

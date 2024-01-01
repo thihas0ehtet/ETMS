@@ -77,7 +77,7 @@ class LeaveStatusList extends StatelessWidget {
                     ],
                   ).paddingOnly(left: 20, right: 20, top: 10,bottom: 5),
                   // if(index!=4)
-                  Divider(color: ColorResources.border,)
+                  index!=list.length-1?Divider(color: ColorResources.border,):Container()
                   // else
                   //   SizedBox(height: 10,)
                 ],

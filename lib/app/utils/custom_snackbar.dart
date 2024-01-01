@@ -14,7 +14,7 @@ extension CustomSnackBars on String{
         backgroundColor: ColorResources.errorSnackBar,
         titleText: Text(
           'Failed !',
-          style: latoRegular.copyWith(color: ColorResources.primary50, fontSize: 15),
+          style: latoRegular.copyWith(color: ColorResources.error, fontSize: 15),
         ),
         messageText: Text(
           this,
@@ -28,7 +28,7 @@ extension CustomSnackBars on String{
         '',
         '',
         duration: const Duration(seconds: 3),
-        backgroundColor: ColorResources.green.withOpacity(0.2),
+        backgroundColor: ColorResources.green.withOpacity(0.25),
         titleText: Text(
           'Success !',
           style: latoRegular.copyWith(color: ColorResources.primary50, fontSize: 15),

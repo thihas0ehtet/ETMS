@@ -11,8 +11,10 @@
 // import 'customization/header_style.dart';
 // import 'customization/cell_content.dart';
 import 'dart:math';
+import 'package:etms/app/config/color_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import '../../../data/datasources/response/apply_leave/leave_status_response.dart';
 import 'table_calendar_base.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_gesture_detector/simple_gesture_detector.dart';
@@ -39,7 +41,7 @@ typedef OnRangeSelected = void Function(
 enum RangeSelectionMode { disabled, toggledOff, toggledOn, enforced }
 
 /// Highly customizable, feature-packed Flutter calendar with gestures, animations and multiple formats.
-class TableCalendarOne<T> extends StatefulWidget {
+class TableCalendar<T> extends StatefulWidget {
   /// Locale to format `TableCalendar` dates with, for example: `'en_US'`.
   ///
   /// If nothing is provided, a default locale will be used.
@@ -215,7 +217,7 @@ class TableCalendarOne<T> extends StatefulWidget {
   final void Function(PageController pageController)? onCalendarCreated;
 
   /// Creates a `TableCalendar` widget.
-  TableCalendarOne({
+  TableCalendar({
     Key? key,
     required DateTime focusedDay,
     required DateTime firstDay,
@@ -283,10 +285,10 @@ class TableCalendarOne<T> extends StatefulWidget {
         super(key: key);
 
   @override
-  _TableCalendarOneState<T> createState() => _TableCalendarOneState<T>();
+  _TableCalendarState<T> createState() => _TableCalendarState<T>();
 }
 
-class _TableCalendarOneState<T> extends State<TableCalendarOne<T>> {
+class _TableCalendarState<T> extends State<TableCalendar<T>> {
   late final PageController _pageController;
   late final ValueNotifier<DateTime> _focusedDay;
   late RangeSelectionMode _rangeSelectionMode;
@@ -300,7 +302,7 @@ class _TableCalendarOneState<T> extends State<TableCalendarOne<T>> {
   }
 
   @override
-  void didUpdateWidget(TableCalendarOne<T> oldWidget) {
+  void didUpdateWidget(TableCalendar<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (_focusedDay.value != widget.focusedDay) {
@@ -657,6 +659,7 @@ class _TableCalendarOneState<T> extends State<TableCalendarOne<T>> {
 
         if (!isDisabled) {
           final events = widget.eventLoader?.call(day) ?? [];
+          // print("HELLO EVENT SIS $events and $day");
           Widget? markerWidget =
           widget.calendarBuilders.markerBuilder?.call(context, day, events);
 
@@ -672,20 +675,20 @@ class _TableCalendarOneState<T> extends State<TableCalendarOne<T>> {
                 (markerSize * widget.calendarStyle.markersAnchor);
 
             markerWidget = PositionedDirectional(
-              top: widget.calendarStyle.markersAutoAligned
-                  ? markerAutoAlignmentTop
-                  : widget.calendarStyle.markersOffset.top,
-              bottom: widget.calendarStyle.markersAutoAligned
-                  ? null
-                  : widget.calendarStyle.markersOffset.bottom,
-              start: widget.calendarStyle.markersAutoAligned
-                  ? null
-                  : widget.calendarStyle.markersOffset.start,
-              end: widget.calendarStyle.markersAutoAligned
-                  ? null
-                  : widget.calendarStyle.markersOffset.end,
-              child:
-              _buildSingleMarker(day, events.first, markerSize, events.length)
+                top: widget.calendarStyle.markersAutoAligned
+                    ? markerAutoAlignmentTop
+                    : widget.calendarStyle.markersOffset.top,
+                bottom: widget.calendarStyle.markersAutoAligned
+                    ? null
+                    : widget.calendarStyle.markersOffset.bottom,
+                start: widget.calendarStyle.markersAutoAligned
+                    ? null
+                    : widget.calendarStyle.markersOffset.start,
+                end: widget.calendarStyle.markersAutoAligned
+                    ? null
+                    : widget.calendarStyle.markersOffset.end,
+                child:
+                _buildSingleMarker(day, events.first, markerSize, events[0] as LeaveStatusResponse)
               // Row(
               //   mainAxisSize: MainAxisSize.min,
               //   children: events
@@ -712,7 +715,12 @@ class _TableCalendarOneState<T> extends State<TableCalendarOne<T>> {
     );
   }
 
-  Widget _buildSingleMarker(DateTime day, T event, double markerSize, int eventLength,) {
+  Widget _buildSingleMarker(DateTime day, T event, double markerSize, LeaveStatusResponse leaveStatus
+      // LeaveStatusResponse leaveStatus,
+      ) {
+
+    String status = leaveStatus.status!.toLowerCase();
+    print("HELLO DATE IS $day and ${leaveStatus.status!}");
     return widget.calendarBuilders.singleMarkerBuilder
         ?.call(context, day, event) ??
         Container(
@@ -724,11 +732,34 @@ class _TableCalendarOneState<T> extends State<TableCalendarOne<T>> {
           margin: widget.calendarStyle.markerMargin,
           // decoration: widget.calendarStyle.markerDecoration,
           decoration: BoxDecoration(
-              color: eventLength%2==0?Colors.red:Colors.green,
-            shape: BoxShape.circle
+              color:
+              status.contains('approve')?ColorResources.green:
+              status.contains('pending')?ColorResources.yellow: status.contains('reject')?ColorResources.red:
+              Colors.transparent,
+              // eventLength%2==0?Colors.red:Colors.green,
+              shape: BoxShape.circle
           ),
           // child: Text(event.toString(),style: TextStyle(fontSize: 13)),
         );
+    // return widget.calendarBuilders.singleMarkerBuilder
+    //     ?.call(context, day, event) ??
+    //     Container(
+    //       width: markerSize,
+    //       // width: 50,
+    //       // height:50,
+    //       height: markerSize,
+    //       alignment: Alignment.center,
+    //       margin: widget.calendarStyle.markerMargin,
+    //       // decoration: widget.calendarStyle.markerDecoration,
+    //       decoration: BoxDecoration(
+    //           color: status.contains('approve')?ColorResources.green:
+    //               status.contains('pending')?Colors.yellow: status.contains('reject')?ColorResources.red:
+    //                   Colors.transparent,
+    //           // eventLength%2==0?Colors.red:Colors.green,
+    //         shape: BoxShape.circle
+    //       ),
+    //       // child: Text(event.toString(),style: TextStyle(fontSize: 13)),
+    //     );
   }
 
   int _calculateWeekNumber(DateTime date) {

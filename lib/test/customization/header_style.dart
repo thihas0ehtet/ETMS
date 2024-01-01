@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../shared/utils.dart' show TextFormatter;
+import '../utils.dart' show TextFormatter;
 
 /// Class containing styling and configuration of `TableCalendar`'s header.
 class HeaderStyle {

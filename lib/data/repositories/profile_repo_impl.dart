@@ -1,13 +1,9 @@
 import 'dart:convert';
 
 import 'package:etms/app/utils/api_link.dart';
-import 'package:etms/data/datasources/request/emp_master_data.dart';
-import 'package:etms/data/datasources/request/next_of_kin_data.dart';
-import 'package:etms/data/datasources/response/profile/countries_response.dart';
-import 'package:etms/data/datasources/response/profile/emp_master_response.dart';
-import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
-import 'package:etms/data/datasources/response/profile/next_kin_response.dart';
-import 'package:etms/data/datasources/response/profile/relation_type_response.dart';
+import 'package:etms/app/utils/response_code.dart';
+import 'package:etms/data/datasources/request/request.dart';
+import 'package:etms/data/datasources/response/profile/profile_response.dart';
 import 'package:etms/domain/repositories/profile_repository.dart';
 import 'package:get/get.dart';
 import '../../app/api/base_provider.dart';
@@ -187,6 +183,26 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
         throw UnknownException(response.body['Message']);
       }
     } catch(e){
+      throw UnknownException(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> uploadPhoto(FormData data) async{
+    try{
+      String apiLink = await ApiConstants.upload.link();
+      print("FKDSJ K ${data.length} ${data.fields.first} and ${data.fields.last} and ${data.files}");
+      final Response response = await post(apiLink, data);
+      print("HELLO RESPONSE IS ${response.body} ${response.statusCode}");
+      if(response.statusCode==null){
+        throw UnknownException('There is something wrong!');
+      } else if(response.statusCode!.codeSuccess){
+        return true;
+      } else{
+        throw UnknownException(response.body['Message']);
+      }
+    } catch(e){
+      print("ERROR IS ${e.toString()}");
       throw UnknownException(e.toString());
     }
   }

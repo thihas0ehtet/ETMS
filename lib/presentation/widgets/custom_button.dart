@@ -6,7 +6,8 @@ class CustomButton extends StatelessWidget {
   VoidCallback onTap;
   String text;
   double? width;
-  CustomButton({super.key, required this.onTap, required this.text, this.width});
+  IconData? icon;
+  CustomButton({super.key, required this.onTap, required this.text, this.width, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,15 @@ class CustomButton extends StatelessWidget {
               border: Border.all(color: ColorResources.border)
           ),
           width: width??context.width,
-          child: Text(text, textAlign: TextAlign.center, style: latoRegular.copyWith(color: ColorResources.text50),),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if(icon!=null)
+              Icon(icon, size: 18, color: ColorResources.background,).paddingOnly(right: 10),
+              Text(text, textAlign: TextAlign.center, style: latoRegular.copyWith(color: ColorResources.text50),),
+            ],
+          )
+
         )
     );
   }

@@ -58,7 +58,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return SafeArea(
         child: Scaffold(
           // backgroundColor: Color(0xff161616).withOpacity(0.7),
-          backgroundColor: ColorResources.white,
+          // backgroundColor: selected?Color(0xff161616).withOpacity(0.7):ColorResources.white,
+          backgroundColor: ColorResources.secondary500,
           // backgroundColor: ColorResources.background,
           body: Stack(
             children: [
@@ -149,9 +150,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: Column(
                               children: [
                                 SvgPicture.asset('assets/images/attendance.svg',width: 20,height: 20,
-                                  color: ColorResources.primary700,),
+                                  color: ColorResources.primary500,),
                                 //Image.asset('assets/images/attendance.svg'),
-                                Text("Attendance",style: latoRegular.copyWith(color: ColorResources.primary700,fontSize: 14),)
+                                Text("Attendance",style: latoRegular.copyWith(color: ColorResources.black,fontSize: 14),)
                               ],
                             ),
                           )
@@ -174,8 +175,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: Column(
                               children: [
                                 SvgPicture.asset('assets/images/leave.svg',width: 20,height: 20,
-                                  color: ColorResources.primary700,),
-                                Text("Leave",style: latoRegular.copyWith(color: ColorResources.primary700,fontSize: 14),)
+                                  color: ColorResources.primary500,),
+                                Text("Leave",style: latoRegular.copyWith(color: ColorResources.black,fontSize: 14),)
                               ],
                             ),
                           )
@@ -201,9 +202,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: Column(
                               children: [
                                 SvgPicture.asset('assets/images/pay-slip.svg',width: 20,height: 20,
-                                  color: ColorResources.primary700,),
+                                  color: ColorResources.primary500,),
                                 //Image.asset('assets/images/attendance.svg'),
-                                Text("Pay-Slip",style: latoRegular.copyWith(color: ColorResources.primary700,fontSize: 14),)
+                                Text("Pay-Slip",style: latoRegular.copyWith(color: ColorResources.black,fontSize: 14),)
                               ],
                             ),
                           )
@@ -274,11 +275,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               height: 80,
                               width: context.width,
                               decoration: BoxDecoration(
-                                // color: Colors.white,
-                                color: ColorResources.white,
+                                // backgroundBlendMode: BlendMode.colorDodge,
+                                color: ColorResources.secondary500,
+                                // color: selected? Color(0xff161616).withOpacity(0.7):ColorResources.white,
+                                // // color: ColorResources.white,
                                 shape: BoxShape.circle,
                               ),
-                              child: Container(
+                              child:
+                              Container(
                                 height: 60,
                                 width: 60,
                                 // width: context.width,

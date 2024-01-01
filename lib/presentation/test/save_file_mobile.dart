@@ -20,6 +20,8 @@ Future<void> saveAndLaunchFile(List<int> bytes, String fileName) async {
   }
   final File file =
   File(Platform.isWindows ? '$path\\$fileName' : '$path/$fileName');
+  print("HELLO FILE IS ${file.path}");
+
   await file.writeAsBytes(bytes, flush: true);
   if (Platform.isAndroid || Platform.isIOS) {
     //Launch the file (used open_file package)

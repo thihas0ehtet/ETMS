@@ -22,4 +22,14 @@ class ApiConstants{
   static const getMaritalStatus = 'MaritalStatus';
   static const getCountries = 'Countries';
   static const getNextKin = 'EmpNextofKin';
+  static const upload = 'upload';
+  static const resetPassword = 'resetPassword';
+  static const getGeneralSetting = 'getGeneralSetting?KeyWord=CheckInType';
+  static const getQRCode = 'getQRCode';
+  static const getLeaveStatusFirstApproval_001= 'getLeaveStatusFirstApproval_001';
+  static const getLeaveStatusSecondApproval_001 = 'getLeaveStatusSecondApproval_001';
+  static const getLeaveStatusDetail_001 = 'getLeaveStatusDetail_001';
+  static const applyAttendance = 'MB_Att_Approval_Det';
+  static const saveLeaveApplication = 'LeaveApplication';
+  static const saveLeavePhoto = 'saveMcSlip';
 }

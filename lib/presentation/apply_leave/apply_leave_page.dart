@@ -1,3 +1,4 @@
+import 'package:etms/app/route/route_name.dart';
 import 'package:etms/presentation/apply_leave/leave.dart';
 import 'package:etms/presentation/apply_leave/leave_list.dart';
 import 'package:etms/presentation/apply_leave/leave_status.dart';
@@ -40,10 +41,14 @@ class _ApplyLeavePageState extends State<ApplyLeavePage>with SingleTickerProvide
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          backgroundColor: ColorResources.background,
+          // backgroundColor: ColorResources.background,
+          backgroundColor: ColorResources.secondary500,
           appBar: MyAppBar(title: 'Leave',
-            widget:  Text('Leave Calendar',style: latoRegular.copyWith(color: ColorResources.white,
-                decoration: TextDecoration.underline),),),
+            widget:  GestureDetector(
+              onTap: ()=> Get.toNamed(RouteName.leave_calendar),
+              child: Text('Leave Calendar',style: latoRegular.copyWith(color: ColorResources.white,
+                  decoration: TextDecoration.underline),),
+            ),),
           body: Column(
             children: [
               Align(
@@ -52,11 +57,8 @@ class _ApplyLeavePageState extends State<ApplyLeavePage>with SingleTickerProvide
                   padding: EdgeInsets.only(left: 15),
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicatorColor: ColorResources.primary500,
-                  indicator: UnderlineTabIndicator(
-                    borderSide: BorderSide(
-                      color: ColorResources.primary500,
-                    ),
-                  ),
+                  indicatorWeight: 1.5,
+                  dividerColor:  Colors.transparent,
                   controller: _tabController,
                   labelColor: ColorResources.primary500,
                   tabs: [

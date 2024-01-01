@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../shared/utils.dart';
+import 'utils.dart';
 import 'calendar_page.dart';
 
 typedef _OnCalendarPageChanged = void Function(

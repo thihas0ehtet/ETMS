@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       width: start ? 70 : 0,
                       curve: Curves.fastOutSlowIn,
                       duration: Duration(seconds: 2),
-                      child: Image(image: AssetImage('assets/images/logo.png')),
+                      child: Image(image: AssetImage('assets/images/dm_logo.png')),
                     ),
                     isLoadingStart==true?
                       SizedBox(

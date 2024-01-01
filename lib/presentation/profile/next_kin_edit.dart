@@ -68,17 +68,26 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
     setState(() {
       countriesList.addAll(controller.countriesList.map((element) => element.countryName.toString()).toList());
       countriesIdList.addAll(controller.countriesList.map((element) => element.countryID!).toList());
-      selectedCountry = countriesList[data!.nKNationality!];
-      _countryController.text = countriesList[data!.nKNationality!];
+      // selectedCountry = countriesList[data!.nKNationality!];
+      // _countryController.text = countriesList[data!.nKNationality!];
     });
-    print("LKFJSD IS $selectedCountry");
-    print(countriesList[data!.nKNationality!-1]);
+    int index = countriesIdList.indexOf(data!.nKNationality!);
+    setState(() {
+      selectedCountry =countriesList[index];
+      _countryController.text = countriesList[index];
+    });
+
     await controller.getRelationType();
     setState(() {
       relationList.addAll(controller.reTypeList.map((element) => element.relationName.toString()).toList());
       relationIdList.addAll(controller.reTypeList.map((element) => element.relationID!).toList());
-      selectedRelation = relationList[data!.nKRelationID!-1];
-      _relationController.text = relationList[data!.nKRelationID!];
+      // selectedRelation = relationList[data!.nKRelationID!];
+      // _relationController.text = relationList[data!.nKRelationID!];
+    });
+    index = relationIdList.indexOf(data!.nKRelationID!);
+    setState(() {
+      selectedRelation = relationList[index];
+      _relationController.text = relationList[index];
     });
   }
 
@@ -158,6 +167,7 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                                       content:  Wrap(
                                         children: [
                                           SfDateRangePicker(
+                                            initialDisplayDate: DateTime.parse(data!.nKBirthDate.toString()),
                                             todayHighlightColor: ColorResources.primary500,
                                             selectionColor: ColorResources.primary500,
                                             selectionTextStyle: TextStyle(color: ColorResources.white),
@@ -292,8 +302,6 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                               var offset = renderBox.localToGlobal(Offset.zero);
                               showMenu<String>(
                                 context: context,
-                                // position: RelativeRect.fromLTRB(0, 150, 0, 0),
-                                // position: RelativeRect.fromLTRB(0, _maritalStatusController..toDouble(), 0, 0),
                                 position: RelativeRect.fromLTRB(
                                   offset.dx,
                                   offset.dy + renderBox.size.height,

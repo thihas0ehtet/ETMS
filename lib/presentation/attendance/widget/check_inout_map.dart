@@ -1,3 +1,4 @@
+import 'package:etms/app/config/color_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
@@ -6,14 +7,15 @@ import 'package:latlong2/latlong.dart';
 class CheckInOutMapView extends StatelessWidget {
   double lat;
   double lon;
-  CheckInOutMapView({super.key, required this.lat, required this.lon});
+  bool isLocationMatch;
+  CheckInOutMapView({super.key, required this.lat, required this.lon, required this.isLocationMatch});
 
   @override
   Widget build(BuildContext context) {
     final mapController = MapController();
     return Column(
       children: [
-        Text('Check IN or OUT is allowed only in the designated area').paddingOnly(top: 20,bottom: 20),
+        Text('Check IN / OUT is allowed only in the designated area').paddingOnly(top: 20,bottom: 20),
 
         lat!=0.0 || lon!=0.0?
         SizedBox(
@@ -43,8 +45,8 @@ class CheckInOutMapView extends StatelessWidget {
                     point: LatLng(lat,lon), // center of 't Gooi
                     radius: 4000,
                     useRadiusInMeter: true,
-                    color: Color(0xff04FF2C).withOpacity(0.2),
-                    borderColor: Color(0xff04FF2C).withOpacity(0.2),
+                    color: isLocationMatch?Color(0xff04FF2C).withOpacity(0.25):ColorResources.red.withOpacity(0.25),
+                    borderColor: isLocationMatch?Color(0xff04FF2C).withOpacity(0.25):ColorResources.red.withOpacity(0.25),
                     borderStrokeWidth: 2,
                   )
                 ],

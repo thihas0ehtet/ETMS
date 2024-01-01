@@ -1,5 +1,5 @@
+import 'dart:io';
 import 'dart:typed_data';
-import 'package:etms/app/utils/custom_snackbar.dart';
 import 'package:etms/app/utils/dateTime_format.dart';
 import 'package:etms/data/datasources/request/emp_master_data.dart';
 import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
@@ -7,17 +7,19 @@ import 'package:etms/presentation/controllers/profile_controller.dart';
 import 'package:etms/presentation/profile/widget/profile_text_field.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../app/config/config.dart';
+import '../../app/helpers/shared_preference_helper.dart';
+import '../../app/utils/app_utils.dart';
 import '../../data/datasources/response/profile/emp_master_response.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/my_app_bar.dart';
+import 'package:path/path.dart' as path;
 
 class ProfileEditView extends StatefulWidget {
-  // EmpMasterResponse data;
-  // Uint8List photoBytes;
   const ProfileEditView({super.key});
 
   @override
@@ -25,7 +27,7 @@ class ProfileEditView extends StatefulWidget {
 }
 
 class _ProfileEditViewState extends State<ProfileEditView> {
-  EmpMasterResponse data = Get.arguments[0];
+  // EmpMasterResponse data = Get.arguments[0];
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _contactNoController = TextEditingController();
@@ -37,15 +39,17 @@ class _ProfileEditViewState extends State<ProfileEditView> {
   Uint8List? photoBytes;
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   ProfileController controller = Get.find();
-  List<MaritalStatusResponse> mStatusList = [];
+  // List<MaritalStatusResponse> mStatusList = [];
   List<String> mStringList=[];
   List mIdList=[];
   String selectedMStatus = '';
+  File? imageFile;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    EmpMasterResponse data = controller.empMaster.value;
     setState(() {
       _firstNameController.text = data.empFirstName.toString();
       _lastNameController.text = data.empLastName.toString();
@@ -54,7 +58,8 @@ class _ProfileEditViewState extends State<ProfileEditView> {
       _currentAddrController.text = data.empCurrentAddr.toString();
       _emailController.text = data.empEmail.toString();
       _passportExpController.text = data.empPassportExpDate==null?'':DateTime.parse(data.empPassportExpDate).dMY().toString();
-      photoBytes = Get.arguments[1];
+      photoBytes = controller.imageBytes.value;
+      // photoBytes = Get.arguments[1];
     });
     getMaritalStatus();
   }
@@ -62,14 +67,19 @@ class _ProfileEditViewState extends State<ProfileEditView> {
   getMaritalStatus() async{
     await controller.getMaritalStatus();
     setState(() {
-      mStatusList=controller.mStatusList;
+      // mStatusList=controller.mStatusList;
       mIdList.addAll(controller.mStatusList.map((element) => element.maritalStatusID).toList());
       mStringList.addAll(controller.mStatusList.map((element) => element.maritalStatusName.toString()).toList());
     });
-    if(!(data.empMaritalStatusID.toString()=='' || data.empMaritalStatusID.toString()=='null')){
+
+    if(!(controller.empMaster.value.empMaritalStatusID.toString()=='' || controller.empMaster.value.empMaritalStatusID.toString()=='null')){
+      int index = mIdList.indexOf(controller.empMaster.value.empMaritalStatusID!);
+      print(mStringList[index]);
+      print( mStringList[index]);
+      print("Finished");
       setState(() {
-        selectedMStatus = mStringList[data.empMaritalStatusID!];
-        _maritalStatusController.text = mStringList[data.empMaritalStatusID!];
+        selectedMStatus = mStringList[index];
+        _maritalStatusController.text = mStringList[index];
       });
     } else {
       selectedMStatus = mStringList[0];
@@ -77,9 +87,126 @@ class _ProfileEditViewState extends State<ProfileEditView> {
     }
   }
 
+  Future<void> pickImageFromCamera() async {
+    XFile? image = await _picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 70,
+    );
+    if(image!=null){
+      setState(() {
+        imageFile=File(image.path);
+      });
+    }
+  }
+
+  Future<void> _onImageButtonPressed({
+    required BuildContext context,
+  }) async {
+    _picker.pickImage(source: ImageSource.gallery, imageQuality: 80).then((value) {
+      setState(() {
+        imageFile=File(value!.path);
+      });
+    }).catchError((e) {
+      if (e.toString().contains('photo_access_denied')) {
+        Navigator.of(context).pop();
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text(
+                  "You need to accept permission to select image",
+                  style: TextStyle(
+                    color: Colors.indigo,
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: TextButton.styleFrom(
+                        primary: Colors.black, backgroundColor: Colors.grey.shade300),
+                  ),
+                  TextButton(
+                    child: Text("Accept"),
+                    onPressed: () {
+                      AppUtils.checkImagePermission(context).then((value) {
+                        if (value) {
+                          Navigator.of(context).pop();
+                          // AppUtils.showSnackChek("You accept permission");
+                        } else {
+                          Navigator.of(context).pop();
+                        }
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                        primary: Colors.white, backgroundColor: Colors.indigo),
+                  ),
+                ],
+              );
+            });
+      }
+    });
+  }
+
+  showPhotoOptions(){
+    showModalBottomSheet(
+        backgroundColor: ColorResources.white,
+        context: context,
+        elevation: 10,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0),)
+        ),
+        builder: (BuildContext context){
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 20,),
+              Text(
+                "Choose an action",
+                style: latoSemibold.copyWith(fontSize: 16),
+              ),
+              SizedBox(height: 30,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: (){
+                      Navigator.pop(context);
+                      pickImageFromCamera();
+                    },
+                    child: Column(
+                      children: [
+                        Icon(Icons.camera_alt_outlined,size: 30),
+                        Text('Camera')
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await _onImageButtonPressed(context: context);
+                    },
+                    child: Column(
+                      children: [
+                        Icon(Icons.image,size: 30,),
+                        Text('Gallery')
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(height: 30,),
+            ],
+          );
+        });
+  }
+
   saveProfile() async {
     EmpMasterData empMasterData = EmpMasterData(
-      code: data.empCode,
+      code: controller.empMaster.value.empCode,
       contactNo: _contactNoController.text,
       email: _emailController.text,
       maritalStatus: mIdList[mStringList.indexWhere((element) => element == selectedMStatus)],
@@ -87,7 +214,33 @@ class _ProfileEditViewState extends State<ProfileEditView> {
       permanentAddr: _permanentAddrController.text,
       currentAddr: _currentAddrController.text
     );
-    await controller.saveEmpMaster(empMasterData);
+
+    // print("HLJKLJFKJD IMAGE FILE IS ${imageFile!.path}");
+    if(imageFile!=null){
+      Uint8List bytes = await imageFile!.readAsBytes();
+      Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(
+          imageFile!.path,
+          format: CompressFormat.jpeg
+      );
+
+      // Write the compressed bytes to the output file
+      String fileType = path.basename(imageFile!.path).split('.')[1];
+      String outputFile = imageFile!.path.replaceAll(fileType, 'jpeg');
+      File file = await File(outputFile).writeAsBytes(compressedBytes!);
+      SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+      String sysId= await _sharedPrefs.getEmpSysId;
+      print("HELLO ${file.path}and ${file.path.split('/').last}");
+      FormData formData= FormData(
+          {
+            'file': MultipartFile(file.path, filename: file.path.split('/').last),
+            'id': sysId
+          }
+      );
+      await controller.saveEmpMaster(empMasterData,formData);
+    } else{
+      print("Here");
+      await controller.saveEmpMaster(empMasterData,null);
+    }
   }
 
   @override
@@ -95,7 +248,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
     return SafeArea(
         child: Scaffold(
           appBar: MyAppBar(title: 'Personal Information'),
-          body: mStatusList.isNotEmpty?
+          body: mStringList.isNotEmpty?
           Stack(
             children: [
               SingleChildScrollView(
@@ -110,20 +263,37 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                           children: [
                             // Text('Name'),
 
-                            Row(
-                              children: [
-                                Container(
-                                    height: 70,
-                                    width: 70,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: MemoryImage(photoBytes!)))
-                                )
-                                    .paddingOnly(right: 15),
-                                Expanded(child: ProfileTextField(controller: _firstNameController, label: 'First Name', isReadOnly: true,)),
-                              ],
+                            GestureDetector(
+                              onTap: ()=>showPhotoOptions(),
+                              child: Row(
+                                children: [
+                                  imageFile!=null?
+                                  Container(
+                                      height: 70,
+                                      width: 70,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: ColorResources.secondary700),
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: FileImage(imageFile!)
+                                          )
+                                      )
+                                  ):
+                                  Container(
+                                      height: 70,
+                                      width: 70,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: ColorResources.secondary700),
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: MemoryImage(photoBytes!)))
+                                  )
+                                      .paddingOnly(right: 15),
+                                  Expanded(child: ProfileTextField(controller: _firstNameController, label: 'First Name', isReadOnly: true,)),
+                                ],
+                              ),
                             ),
                             SizedBox(height: 10,),
 
