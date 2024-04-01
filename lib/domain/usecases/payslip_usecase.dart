@@ -1,5 +1,5 @@
 import 'package:etms/domain/repositories/payslip_respository.dart';
-import '../../data/datasources/request/payroll_detail_data.dart';
+import '../../data/datasources/request/payslip/payroll_detail_data.dart';
 import '../../data/datasources/response/payslip/payslip_response.dart';
 
 class PaySlipUsecase{

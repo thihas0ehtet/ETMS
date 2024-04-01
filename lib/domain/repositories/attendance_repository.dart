@@ -1,5 +1,5 @@
-import 'package:etms/data/datasources/request/attendance_approval_data.dart';
-import 'package:etms/data/datasources/request/attendance_report_data.dart';
+import 'package:etms/data/datasources/request/attendance/attendance_approval_data.dart';
+import 'package:etms/data/datasources/request/attendance/attendance_report_data.dart';
 import 'package:etms/data/datasources/response/attendance_report/attendance_report_response.dart';
 import '../../data/datasources/response/attendance_report/general_setting_response.dart';
 import '../../data/datasources/response/attendance_report/qr_code_response.dart';

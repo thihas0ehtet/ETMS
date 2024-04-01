@@ -25,65 +25,59 @@ class _FilterWidgetState extends State<FilterWidget> {
         GestureDetector(
           onTap: (){
             showModalBottomSheet(
+                isScrollControlled: true,
                 backgroundColor: ColorResources.white,
                 context: context,
                 elevation: 10,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20.0),)
-                ),
                 builder: (BuildContext context){
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: (){Navigator.pop(context);},
-                                child: SvgPicture.asset('assets/images/back.svg',width: 20,height: 20),
-                              ).paddingOnly(right: 10),
-                              Text('Filter')
-                            ],
-                          ),
-                          TextButton(
-                            onPressed:()=>widget.onFilterConfirm(),
-                              // onPressed: (){
-                              //   setState(() {
-                              //     filteredDate=_selectedDate;
-                              //   });
-                              //   Navigator.pop(context);
-                              // },
-                              child: Text('Done',
-                                style: latoSemibold.copyWith(color: ColorResources.primary600),)
-                          )
-                        ],
-                      ).paddingAll(10),
-                      SizedBox(
-                        height: 150,
-                        child: CupertinoTheme(
-                          data: CupertinoThemeData(
-                            textTheme: CupertinoTextThemeData(
-                                dateTimePickerTextStyle: latoRegular
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0),)
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: (){Navigator.pop(context);},
+                                  child: SvgPicture.asset('assets/images/back.svg',width: 20,height: 20),
+                                ).paddingOnly(right: 10),
+                                Text('Filter')
+                              ],
+                            ),
+                            TextButton(
+                              onPressed:()=>widget.onFilterConfirm(),
+                                child: Text('Done',
+                                  style: latoSemibold.copyWith(color: ColorResources.primary600),)
+                            )
+                          ],
+                        ).paddingAll(10),
+                        Container(
+                          color: Colors.white,
+                          height: 150,
+                          child: CupertinoTheme(
+                            data: CupertinoThemeData(
+                              textTheme: CupertinoTextThemeData(
+                                  dateTimePickerTextStyle: latoRegular
+                              ),
+                            ),
+                            child: CupertinoDatePicker(
+                              mode: CupertinoDatePickerMode.monthYear,
+                              initialDateTime: DateTime.now(),
+                              minimumYear: 2008,
+                              maximumYear: DateTime.now().year,
+                              dateOrder: DatePickerDateOrder.ymd,
+                              onDateTimeChanged:(DateTime newDate)=>widget.onDateTimeChanged(newDate),
                             ),
                           ),
-                          child: CupertinoDatePicker(
-                            mode: CupertinoDatePickerMode.monthYear,
-                            initialDateTime: DateTime.now(),
-                            minimumYear: 2008,
-                            maximumYear: DateTime.now().year,
-                            dateOrder: DatePickerDateOrder.ymd,
-                            onDateTimeChanged:(DateTime newDate)=>widget.onDateTimeChanged(newDate),
-                            // onDateTimeChanged: (DateTime newDate) {
-                            //   setState(() {
-                            //     _selectedDate = newDate;
-                            //   });
-                            // },
-                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 }
             );

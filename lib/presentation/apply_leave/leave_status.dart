@@ -1,6 +1,6 @@
 import 'package:etms/app/config/config.dart';
 import 'package:etms/app/utils/dateTime_format.dart';
-import 'package:etms/data/datasources/request/leave_status_data.dart';
+import 'package:etms/data/datasources/request/leave/leave_status_data.dart';
 import 'package:etms/presentation/apply_leave/widgets/leave_status_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -114,10 +114,6 @@ class _LeaveStatusViewState extends State<LeaveStatusView> {
                     SizedBox(height: 20,)
                   ],
                 ),
-              // if(statusFirstList.isNotEmpty)
-              //   LeaveStatusList(list: statusFirstList),
-              // if(statusSecondList.isNotEmpty)
-              //   LeaveStatusList(list: statusSecondList),
             ],
           ),
         )

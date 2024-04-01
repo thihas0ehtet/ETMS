@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../config/config.dart';
 
 class AppUtils {
   static Future<bool> checkImagePermission(BuildContext context) async {
@@ -43,7 +46,7 @@ class AppUtils {
       case PermissionStatus.restricted:
         break;
       case PermissionStatus.permanentlyDenied:
-      // openAppSettings();
+      openAppSettings();
 
         break;
       default:
@@ -60,6 +63,42 @@ class AppUtils {
       case PermissionStatus.restricted:
         break;
       case PermissionStatus.permanentlyDenied:
+        showDialog(
+            context: context,
+            builder: (context) {
+              return CupertinoAlertDialog(
+                title: Text('Camera services are off'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'You must enable in the camera Services settings',
+                      style: latoRegular,
+                    ),
+                  ],
+                ),
+                actions: [
+                  CupertinoDialogAction(
+                    child: Text(
+                      'Cancel',
+                      style: latoMedium.copyWith(color: ColorResources.red),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: Text(
+                        'Open Settings', style: latoMedium.copyWith(color: ColorResources.primary600)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      openAppSettings();
+                    },
+                  ),
+                ],
+              );
+            }
+        );
         break;
       default:
     }
@@ -71,6 +110,70 @@ class AppUtils {
     return storagePermission && photoPermission && camerPermission;
   }
 
+  static Future<bool> checkCameraPermission(BuildContext context) async {
+    Map<Permission, PermissionStatus> permissionRequestResult = await [
+      Permission.camera,
+    ].request();
+
+    bool locationPermission = false;
+
+    String deniedString = "";
+    switch (permissionRequestResult[Permission.camera]) {
+      case PermissionStatus.granted:
+        locationPermission = true;
+        break;
+      // case PermissionStatus.denied || :
+      //   deniedString = "camera";
+      //   break;
+      case PermissionStatus.restricted:
+        break;
+      case PermissionStatus.denied || PermissionStatus.permanentlyDenied:
+        deniedString = "camera";
+        showDialog(
+            context: context,
+            builder: (context) {
+              return CupertinoAlertDialog(
+                title: Text('Camera services are off'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'You must enable in the camera Services settings',
+                      style: latoRegular,
+                    ),
+                  ],
+                ),
+                actions: [
+                  CupertinoDialogAction(
+                    child: Text(
+                      'Cancel',
+                      style: latoMedium.copyWith(color: ColorResources.red),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: Text(
+                        'Open Settings', style: latoMedium.copyWith(color: ColorResources.primary600)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      openAppSettings();
+                    },
+                  ),
+                ],
+              );
+            }
+        );
+
+        // openAppSettings();
+        break;
+      default:
+    }
+
+    return locationPermission;
+  }
+
   static Future<bool> checkLocationPermission(BuildContext context) async {
     Map<Permission, PermissionStatus> permissionRequestResult = await [
       Permission.location,
@@ -79,19 +182,55 @@ class AppUtils {
     bool locationPermission = false;
 
     String deniedString = "";
-    print("LFKSDJ LOOK ${Permission.location} amm ${PermissionStatus}");
     switch (permissionRequestResult[Permission.location]) {
       case PermissionStatus.granted:
         locationPermission = true;
         break;
-      case PermissionStatus.denied:
-        deniedString = "location";
-        break;
+      // case PermissionStatus.denied:
+      //   deniedString = "location";
+      //   break;
       case PermissionStatus.restricted:
         break;
-      case PermissionStatus.permanentlyDenied:
+      case PermissionStatus.denied || PermissionStatus.permanentlyDenied:
         deniedString = "location";
-        openAppSettings();
+        showDialog(
+            context: context,
+            builder: (context) {
+              return CupertinoAlertDialog(
+                title: Text('Location services are off'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'You must enable in the location Services settings',
+                      style: latoRegular,
+                    ),
+                  ],
+                ),
+                actions: [
+                  CupertinoDialogAction(
+                    child: Text(
+                      'Cancel',
+                      style: latoMedium.copyWith(color: ColorResources.red),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: Text(
+                        'Open Settings', style: latoMedium.copyWith(color: ColorResources.primary600)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      openAppSettings();
+                    },
+                  ),
+                ],
+              );
+            }
+        );
+
+        // openAppSettings();
         break;
       default:
     }

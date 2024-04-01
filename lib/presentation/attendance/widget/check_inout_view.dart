@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import '../../../app/config/config.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/simple_text_form.dart';
-import 'check_inout_status.dart';
 
 class CheckInOutView extends StatelessWidget {
   TextEditingController? controller;
@@ -39,11 +38,7 @@ class CheckInOutView extends StatelessWidget {
           SimpleTextFormField(
             controller: controller!,
             hintText: 'your remark...',
-                // isLate!?'Why are you late?':'Why are you too early?',
-            maxLine: 5,).paddingOnly(top: 5)
-              // :SizedBox(width: 0, height: 0,)
-          ,
-
+            maxLine: 5,).paddingOnly(top: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

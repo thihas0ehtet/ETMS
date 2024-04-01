@@ -6,17 +6,19 @@ class SimpleTextFormField extends StatelessWidget {
   String hintText;
   String? validationText;
   int? maxLine;
-  SimpleTextFormField({super.key,required this.controller, required this.hintText,this.validationText, this.maxLine=1});
+  bool? isNumber;
+  SimpleTextFormField({super.key,required this.controller, required this.hintText,this.validationText, this.maxLine=1, this.isNumber=false});
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       maxLines: maxLine,
+      keyboardType: isNumber!?TextInputType.number:TextInputType.text,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(left: 15.0, top: 12.0, bottom: 12.0),
         hintText: hintText,
-        hintStyle: latoRegular,
+        hintStyle: latoRegular.copyWith(color: ColorResources.text200),
         filled: true,
         fillColor: ColorResources.white,
         enabledBorder: OutlineInputBorder(

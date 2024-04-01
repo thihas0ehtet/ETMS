@@ -15,7 +15,7 @@ Widget DataTableWidget({
 }
     ){
   return  DataTable(
-    // border: TableBorder.all(),
+    border: TableBorder.all(),
     horizontalMargin: 4,
     columnSpacing: 30,
     headingRowColor:   MaterialStateColor.resolveWith((states) => ColorResources.primary200),
@@ -43,34 +43,33 @@ Widget DataTableWidget({
     List.generate(
         dataList.length+1,
             (index) =>
-            index==dataList.length?
-            DataRow(
-              color: MaterialStateProperty.all<Color>(ColorResources.white),
-              cells: <DataCell>[
-                DataCell(
-                    SizedBox(
-                        width: context.width*0.6-40,
-                        child: Text(isAllowance?'Total Additions':'Total Deductions',
-                          textAlign: TextAlign.right,))),
-                DataCell(
-                    SizedBox(
-                        width: context.width*0.4-40,
-                        child: Text(total, textAlign: TextAlign.right))),
-              ],
-            ):
-            DataRow(
-              color: MaterialStateProperty.all<Color>(index%2==0?ColorResources.white:ColorResources.primary50),
-              cells: <DataCell>[
-                DataCell(
-                    SizedBox(
-                        width: context.width*0.6-40,
-                        child: Text(isAllowance?dataList[index].allowanceName.toString():dataList[index].deductionName.toString()))),
-                DataCell(
-                    SizedBox(
-                        width: context.width*0.4-40,
-                        child: Text(isAllowance?dataList[index].allowanceAmount.toString():dataList[index].deductionAmount.toString(), textAlign: TextAlign.right))),
-              ],
-            )
+        index==dataList.length?
+        DataRow(
+          cells: <DataCell>[
+            DataCell(
+                SizedBox(
+                    width: context.width*0.6-40,
+                    child: Text(isAllowance?'Total Additions':'Total Deductions',
+                      textAlign: TextAlign.right,))),
+            DataCell(
+                SizedBox(
+                    width: context.width*0.4-40,
+                    child: Text(total, textAlign: TextAlign.right).paddingOnly(right: 8))),
+          ],
+        ):
+        DataRow(
+          cells: <DataCell>[
+            DataCell(
+                SizedBox(
+                    width: context.width*0.6-40,
+                    child: Text(isAllowance?dataList[index].allowanceName.toString():dataList[index].deductionName.toString()).paddingOnly(left: 8))),
+            DataCell(
+                SizedBox(
+                    width: context.width*0.4-40,
+                    child: Text(isAllowance?dataList[index].allowanceAmount.toString():dataList[index].deductionAmount.toString(), textAlign: TextAlign.right)
+                        .paddingOnly(right: 8))),
+          ],
+        )
     ),
   );
 }

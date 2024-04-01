@@ -1,67 +1,83 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:etms/data/datasources/request/request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../app/config/config.dart';
 import '../../../app/helpers/shared_preference_helper.dart';
 import '../../../app/utils/app_utils.dart';
 import '../../controllers/profile_controller.dart';
 import '../../widgets/overlay_photo.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 
 class PhotoAttachmentView extends StatefulWidget {
-  const PhotoAttachmentView({super.key});
+  const PhotoAttachmentView({ Key? key}):super(key: key);
 
   @override
-  State<PhotoAttachmentView> createState() => _PhotoAttachmentViewState();
+  State<PhotoAttachmentView> createState() => PhotoAttachmentViewState();
 }
 
-class _PhotoAttachmentViewState extends State<PhotoAttachmentView> {
+class PhotoAttachmentViewState extends State<PhotoAttachmentView> {
   ProfileController profileController = Get.find();
   File? imageFile;
   final ImagePicker _picker = ImagePicker();
 
+  File? getImageFile(){
+    return imageFile;
+  }
+
+  clearImageFile(){
+    setState(() {
+      imageFile=null;
+    });
+  }
+
   Future<void> pickImageFromCamera() async {
-    XFile? image = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 70,
-    );
-    if(image!=null){
-      setState(() {
-        imageFile=File(image.path);
-      });
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      AppUtils.checkCameraPermission(context);
     }
-  }
-
-  Future<void> convertToJpg(String inputImagePath) async {
-    Uint8List bytes = await File(inputImagePath).readAsBytes();
-
-    // Compress and convert the image to JPG
-    Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(
-      inputImagePath,
-      format: CompressFormat.jpeg
-    );
-
-    // Write the compressed bytes to the output file
-    String fileType = path.basename(inputImagePath).split('.')[1];
-    String outputFile = inputImagePath.replaceAll(fileType, 'jpeg');
-    File file = await File(outputFile).writeAsBytes(compressedBytes!);
-    SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
-    String sysId= await _sharedPrefs.getEmpSysId;
-    FormData formData= FormData(
-        {
-          'file': MultipartFile(file!.path, filename: file.path.split('/').last),
-          'id': sysId
-        }
-    );
-    await profileController.uploadPhoto(formData);
+    else{
+      XFile? image = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 70,
+      );
+      if(image!=null){
+        setState(() {
+          imageFile=File(image.path);
+        });
+      }
+    }
 
   }
+
+  // Future<void> convertToJpg(String inputImagePath) async {
+  //   Uint8List bytes = await File(inputImagePath).readAsBytes();
+  //
+  //   // Compress and convert the image to JPG
+  //   Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(
+  //     inputImagePath,
+  //     format: CompressFormat.jpeg
+  //   );
+  //
+  //   // Write the compressed bytes to the output file
+  //   String fileType = path.basename(inputImagePath).split('.')[1];
+  //   String outputFile = inputImagePath.replaceAll(fileType, 'jpeg');
+  //   File file = await File(outputFile).writeAsBytes(compressedBytes!);
+  //   // SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+  //   // String sysId= await _sharedPrefs.getEmpSysId;
+  //   FormData formData= FormData(
+  //       {
+  //         'file': MultipartFile(file.path, filename: file.path.split('/').last),
+  //         // 'id': sysId
+  //       }
+  //   );
+  //   // await profileController.uploadPhoto(formData);
+  //
+  // }
 
   Future<void> _onImageButtonPressed({
     required BuildContext context,
@@ -98,11 +114,8 @@ class _PhotoAttachmentViewState extends State<PhotoAttachmentView> {
                       AppUtils.checkImagePermission(context).then((value) {
                         if (value) {
                           Navigator.of(context).pop();
-                          // AppUtils.showSnackChek("You accept permission");
                         } else {
                           Navigator.of(context).pop();
-                          // AppUtils.showSnackChek("You do not accept permission",
-                          //     color: Colors.red);
                         }
                       });
                     },
@@ -121,51 +134,54 @@ class _PhotoAttachmentViewState extends State<PhotoAttachmentView> {
         backgroundColor: ColorResources.white,
         context: context,
         elevation: 10,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0),)
-        ),
         builder: (BuildContext context){
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 20,),
-              Text(
-                "Choose an action",
-                style: latoSemibold.copyWith(fontSize: 16),
-              ),
-              SizedBox(height: 30,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: (){
-                      Navigator.pop(context);
-                      pickImageFromCamera();
-                    },
-                    child: Column(
-                      children: [
-                        Icon(Icons.camera_alt_outlined,size: 30),
-                        Text('Camera')
-                      ],
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20.0),)
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 20,),
+                Text(
+                  "Choose an action",
+                  style: latoSemibold.copyWith(fontSize: 16),
+                ),
+                SizedBox(height: 30,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: (){
+                        Navigator.pop(context);
+                        pickImageFromCamera();
+                      },
+                      child: Column(
+                        children: [
+                          Icon(Icons.camera_alt_outlined,size: 30),
+                          Text('Camera')
+                        ],
+                      ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      Navigator.pop(context);
-                      await _onImageButtonPressed(context: context);
-                    },
-                    child: Column(
-                      children: [
-                        Icon(Icons.image,size: 30,),
-                        Text('Gallery')
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: 30,),
-            ],
+                    InkWell(
+                      onTap: () async {
+                        Navigator.pop(context);
+                        await _onImageButtonPressed(context: context);
+                      },
+                      child: Column(
+                        children: [
+                          Icon(Icons.image,size: 30,),
+                          Text('Gallery')
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 30,),
+              ],
+            ),
           );
         });
   }
@@ -173,6 +189,7 @@ class _PhotoAttachmentViewState extends State<PhotoAttachmentView> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Photo Attachment").paddingOnly(top: 20, bottom: 10),
         if(imageFile!=null)
@@ -185,8 +202,7 @@ class _PhotoAttachmentViewState extends State<PhotoAttachmentView> {
               children: [
                 GestureDetector(
                     onTap: (){
-                      Navigator.of(context).push(PhotoViewOverlay(image: imageFile!.path.toString()
-                      ));
+                      Navigator.of(context).push(PhotoViewOverlay(image: imageFile!.path.toString()));
                     },
                     child: Image.file(imageFile!, fit: BoxFit.fitWidth, width: context.width, height: 150,)),
                 Positioned(
@@ -233,14 +249,6 @@ class _PhotoAttachmentViewState extends State<PhotoAttachmentView> {
                 ),
               )
           ),
-
-
-        TextButton(
-            onPressed: ()=>
-                // pickImageFromGallary(),
-                convertToJpg(imageFile!.path.toString()),
-            child: Text("Click Here"))
-
       ],
     );
   }

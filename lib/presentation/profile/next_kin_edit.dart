@@ -1,5 +1,5 @@
 import 'package:etms/app/utils/dateTime_format.dart';
-import 'package:etms/data/datasources/request/next_of_kin_data.dart';
+import 'package:etms/data/datasources/request/profile/next_of_kin_data.dart';
 import 'package:etms/data/datasources/response/profile/next_kin_response.dart';
 import 'package:etms/presentation/controllers/profile_controller.dart';
 import 'package:etms/presentation/profile/widget/profile_text_field.dart';
@@ -8,7 +8,6 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-
 import '../../app/config/color_resources.dart';
 import '../../app/config/font_family.dart';
 import '../../app/helpers/shared_preference_helper.dart';
@@ -54,16 +53,19 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
 
   getData() async{
     await controller.getNextKin();
-    setState(() {
-      data=controller.nextKin.value;
-      _firstNameController.text = data!.nKFirstName!;
-      _lastNameController.text = data!.nKLastName!;
-      _contactNoController.text = data!.nKContactNo!;
-      _addressController.text = data!.nKAddress!;
-      _emailController.text = data!.nKEmail!;
-      _dobController.text = data!.nKBirthDate==null?'':DateTime.parse(data!.nKBirthDate.toString()).dMY()!;
-      _genderController.text = data!.nKGender=='M'?'Male':'Female';
-    });
+    if(controller.nextKin.value.toString()!='null' && controller.nextKin.value.toString()!=''){
+      setState(() {
+        data=controller.nextKin.value;
+        _firstNameController.text = data!.nKFirstName!;
+        _lastNameController.text = data!.nKLastName!;
+        _contactNoController.text = data!.nKContactNo!;
+        _addressController.text = data!.nKAddress!;
+        _emailController.text = data!.nKEmail!;
+        _dobController.text = data!.nKBirthDate==null?'':DateTime.parse(data!.nKBirthDate.toString()).dMY()!;
+        _genderController.text = data!.nKGender=='M'?'Male':'Female';
+      });
+    }
+
     await controller.getCountries();
     setState(() {
       countriesList.addAll(controller.countriesList.map((element) => element.countryName.toString()).toList());
@@ -95,9 +97,6 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
     SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
     String sysId= await _sharedPrefs.getEmpSysId;
 
-    // print("KFJDSKJF KFDJ ");
-    // print(countriesIdList[countriesList.indexWhere((element) => element == selectedCountry)]);
-    // print(relationIdList[relationList.indexWhere((element) => element == selectedRelation)]);
     NextOfKinData data = NextOfKinData(
       empSysId: sysId,
       firstName: _firstNameController.text,
@@ -111,6 +110,9 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
       address: _addressController.text
     );
     await controller.saveNextKin(data);
+    if(controller.updateNextKinSuccess.value){
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -118,7 +120,8 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
     return SafeArea(
       child: Scaffold(
         appBar: MyAppBar(title: 'Next of Kin'),
-        body: data!=null?
+        body: controller.getNextOfKinLoading.value?
+        Container():
         Stack(
           children: [
             SingleChildScrollView(
@@ -138,7 +141,7 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                           ProfileTextField(controller: _lastNameController, label: 'Last Name'),
                           SizedBox(height: 10,),
 
-                          ProfileTextField(controller: _contactNoController, label: 'Contact No.'),
+                          ProfileTextField(controller: _contactNoController, label: 'Contact No.', isNumber: true),
                           SizedBox(height: 10,),
 
                           ProfileTextField(controller: _addressController, label: 'Address'),
@@ -212,8 +215,8 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                               var offset = renderBox.localToGlobal(Offset.zero);
                               showMenu<String>(
                                 context: context,
-                                // position: RelativeRect.fromLTRB(0, 150, 0, 0),
-                                // position: RelativeRect.fromLTRB(0, _maritalStatusController..toDouble(), 0, 0),
+                                color: ColorResources.white,
+                                surfaceTintColor: ColorResources.white,
                                 position: RelativeRect.fromLTRB(
                                   offset.dx,
                                   offset.dy + renderBox.size.height,
@@ -225,7 +228,7 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                                       value: gender,
                                       child:  SizedBox(
                                           width: context.width,
-                                          child: Text(gender, style: latoRegular,))
+                                          child: Text(gender, style: latoRegular.copyWith(color: ColorResources.text500),))
                                   );
                                 }).toList(),
                               ).then((String? value) {
@@ -256,9 +259,9 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                               RenderBox renderBox = context.findRenderObject() as RenderBox;
                               var offset = renderBox.localToGlobal(Offset.zero);
                               showMenu<String>(
+                                color: ColorResources.white,
+                                surfaceTintColor: ColorResources.white,
                                 context: context,
-                                // position: RelativeRect.fromLTRB(0, 150, 0, 0),
-                                // position: RelativeRect.fromLTRB(0, _maritalStatusController..toDouble(), 0, 0),
                                 position: RelativeRect.fromLTRB(
                                   offset.dx,
                                   offset.dy + renderBox.size.height,
@@ -270,7 +273,7 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                                       value: country,
                                       child:  SizedBox(
                                           width: context.width,
-                                          child: Text(country, style: latoRegular,))
+                                          child: Text(country, style: latoRegular.copyWith(color: ColorResources.text500),))
                                   );
                                 }).toList(),
                               ).then((String? value) {
@@ -301,6 +304,8 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                               RenderBox renderBox = context.findRenderObject() as RenderBox;
                               var offset = renderBox.localToGlobal(Offset.zero);
                               showMenu<String>(
+                                color: ColorResources.white,
+                                surfaceTintColor: ColorResources.white,
                                 context: context,
                                 position: RelativeRect.fromLTRB(
                                   offset.dx,
@@ -313,7 +318,7 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                                       value: relation,
                                       child:  SizedBox(
                                           width: context.width,
-                                          child: Text(relation, style: latoRegular,))
+                                          child: Text(relation, style: latoRegular.copyWith(color: ColorResources.text500),))
                                   );
                                 }).toList(),
                               ).then((String? value) {
@@ -338,8 +343,7 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
                 child: CustomButton(onTap: (){saveNextOfKin();}, text: 'Submit',).paddingOnly(bottom: 20)
             )
           ],
-        ).paddingOnly(left: 20, right: 20):
-        Container(),
+        ).paddingOnly(left: 20, right: 20),
       ),
     );
   }

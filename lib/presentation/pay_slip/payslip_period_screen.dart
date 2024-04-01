@@ -18,6 +18,7 @@ class PaySlipPeriodScreen extends StatefulWidget {
 class _PaySlipPeriodScreenState extends State<PaySlipPeriodScreen> {
   PaySlipController controller = Get.find();
   List<PayrollPeriodResponse> payPeriodList=[];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -30,6 +31,7 @@ class _PaySlipPeriodScreenState extends State<PaySlipPeriodScreen> {
     await controller.getPayPeriod();
     setState(() {
       payPeriodList=controller.payPeriodList;
+      isLoading = false;
     });
   }
   @override
@@ -40,6 +42,8 @@ class _PaySlipPeriodScreenState extends State<PaySlipPeriodScreen> {
           appBar: MyAppBar(title: 'PaySlip'),
           body: SingleChildScrollView(
             child:
+            isLoading? Container():
+            payPeriodList.isEmpty? Center(child: Text('There is no data.')).paddingOnly(top: 30):
                 ListView.builder(
                   physics: ScrollPhysics(),
                   shrinkWrap: true,
@@ -49,7 +53,7 @@ class _PaySlipPeriodScreenState extends State<PaySlipPeriodScreen> {
                     return GestureDetector(
                       onTap: (){
                         Get.toNamed(RouteName.payslip_detail,
-                        arguments: data.payrollPeriodID);
+                        arguments: [data.payrollPeriodID, data.payrollPeriodDescription]);
                       },
                       child: Container(
                         color: ColorResources.white,

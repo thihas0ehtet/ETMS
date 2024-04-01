@@ -111,7 +111,6 @@ class _TableCalendarBaseState extends State<TableCalendarBase> {
   @override
   void didUpdateWidget(TableCalendarBase oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print("JFKSDJF DID UPDATE");
 
     if (_focusedDay != widget.focusedDay ||
         widget.calendarFormat != oldWidget.calendarFormat ||
@@ -267,7 +266,6 @@ class _TableCalendarBaseState extends State<TableCalendarBase> {
 
   int _calculateFocusedPage(
       CalendarFormat format, DateTime startDay, DateTime focusedDay) {
-    print("HTIS ISISIIS CALCUI");
     switch (format) {
       case CalendarFormat.month:
         return _getMonthCount(startDay, focusedDay);

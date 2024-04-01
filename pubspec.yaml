@@ -50,7 +50,8 @@ dependencies:
   flutter_easyloading: ^3.0.5
 
   #date picker
-  syncfusion_flutter_datepicker: ^23.1.38
+#  syncfusion_flutter_datepicker:
+  syncfusion_flutter_datepicker:
   scroll_date_picker: ^3.7.3
 
   #photo
@@ -95,6 +96,15 @@ dependencies:
   #qr scanner
   qr_code_scanner: ^1.0.1
 
+  # refresh
+  pull_to_refresh: ^2.0.0
+
+  #internet conection check
+  internet_connection_checker: ^0.0.1
+
+  sentry_flutter: ^7.14.0
+  dio: ^5.4.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -128,6 +138,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - shorebird.yaml
   fonts:
     - family: Lato
       fonts:

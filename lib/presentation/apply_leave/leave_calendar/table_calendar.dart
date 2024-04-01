@@ -337,7 +337,6 @@ class _TableCalendarState<T> extends State<TableCalendar<T>> {
           widget.calendarFormat == CalendarFormat.month;
 
   void _swipeCalendarFormat(SwipeDirection direction) {
-    print("CHANGE FORMAT");
     if (widget.onFormatChanged != null) {
       final formats = widget.availableCalendarFormats.keys.toList();
 
@@ -519,7 +518,6 @@ class _TableCalendarState<T> extends State<TableCalendar<T>> {
             sixWeekMonthsEnforced: widget.sixWeekMonthsEnforced,
             onVerticalSwipe: _swipeCalendarFormat,
             onPageChanged: (focusedDay) async {
-              print("This is on page change");
               EasyLoading.show();
               await Future.delayed(const Duration(milliseconds: 300));
               EasyLoading.dismiss();
@@ -659,7 +657,6 @@ class _TableCalendarState<T> extends State<TableCalendar<T>> {
 
         if (!isDisabled) {
           final events = widget.eventLoader?.call(day) ?? [];
-          // print("HELLO EVENT SIS $events and $day");
           Widget? markerWidget =
           widget.calendarBuilders.markerBuilder?.call(context, day, events);
 
@@ -720,13 +717,10 @@ class _TableCalendarState<T> extends State<TableCalendar<T>> {
       ) {
 
     String status = leaveStatus.status!.toLowerCase();
-    print("HELLO DATE IS $day and ${leaveStatus.status!}");
     return widget.calendarBuilders.singleMarkerBuilder
         ?.call(context, day, event) ??
         Container(
           width: markerSize,
-          // width: 50,
-          // height:50,
           height: markerSize,
           alignment: Alignment.center,
           margin: widget.calendarStyle.markerMargin,

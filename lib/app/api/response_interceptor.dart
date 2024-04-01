@@ -5,7 +5,6 @@ import 'package:get/get_connect/http/src/request/request.dart';
 
 Future<dynamic> responseInterceptor(
     Request request, Response response) async {
-  print("HEYY THIS IS REsponse");
   // EasyLoading.dismiss();
 
   // if (response.statusCode != 200) {

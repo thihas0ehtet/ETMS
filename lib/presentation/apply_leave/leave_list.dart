@@ -1,5 +1,5 @@
 import 'package:etms/app/config/config.dart';
-import 'package:etms/data/datasources/request/leave_report_data.dart';
+import 'package:etms/data/datasources/request/leave/leave_report_data.dart';
 import 'package:etms/data/datasources/response/apply_leave/apply_leave_response.dart';
 import 'package:etms/presentation/apply_leave/widgets/leave_status_item_list.dart';
 import 'package:feather_icons/feather_icons.dart';
@@ -19,7 +19,6 @@ class LeaveListView extends StatefulWidget {
 
 class _LeaveListViewState extends State<LeaveListView> {
   String selectedLeaveType = '';
-  // List<String> leaveTypeList = ['','Annual Leave', 'Child Care Leave', 'Sick Leave', 'No Pay Leave'];
   List<String> typeStringList = [''];
   List<LeaveTypeData> leaveTypeList=[];
   String selectedYear = DateTime.now().year.toString();
@@ -36,7 +35,6 @@ class _LeaveListViewState extends State<LeaveListView> {
     super.initState();
     controller.clearLeaveReportList();
     getLeaveTypes();
-    // getLeaveReportList();
   }
 
   getLeaveTypes() async{
@@ -51,7 +49,6 @@ class _LeaveListViewState extends State<LeaveListView> {
     SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
     String sysId= await _sharedPrefs.getEmpSysId;
     String typeId = leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].leaveTypeID.toString();
-    print("TYPE ID IS $typeId");
     LeaveReportData leaveReportData=LeaveReportData(
         emp_sys_id: sysId,
         ltype: typeId,
@@ -207,27 +204,21 @@ class _LeaveListViewState extends State<LeaveListView> {
                             child:   Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                // Text(DateTime.parse(leaveList[index].leaveDate.toString()).toString()),
                                 Text(DateFormat('dd/MM/yyyy').format(DateTime.parse(leaveList[index].leaveDate.toString())).toString()),
-                                // Text(DateFormat('dd/MM/yyyy').format(DateFormat('dd-MM-yyyy').parse(leaveList[index].leaveDate.toString()))),
                                 Text(leaveList[index].duration.toString())
                               ],
                             ),
-                            // Text('${leaveList[index].carry.toString()} and ${leaveList.length}'),
                           ):Container(
                             height: 40,
                             color: index%2==0?ColorResources.secondary500:ColorResources.primary50,
                             child:   Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                // Text(DateTime.parse(leaveList[index].leaveDate.toString()).toString()),
                                 Text('-'),
                                 Text('-')
                               ],
                             ),
-                            // Text('${leaveList[index].carry.toString()} and ${leaveList.length}'),
                           )
-                          // Text('${leaveList[index].carry.toString()} and ${leaveList.length}')
                         ;
                       }),
                 ],

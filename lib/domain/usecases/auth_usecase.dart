@@ -1,8 +1,7 @@
-import 'package:etms/data/datasources/request/login_data.dart';
-import 'package:etms/data/datasources/request/reset_password_data.dart';
+import 'package:etms/data/datasources/request/auth/reset_password_data.dart';
 import 'package:etms/data/datasources/response/auth/login_response.dart';
 import 'package:etms/domain/repositories/auth_repository.dart';
-import 'package:get/get.dart';
+import '../../data/datasources/request/auth/login_data.dart';
 
 class AuthUseCase{
   final AuthRepository respository;

@@ -1,12 +1,13 @@
-import 'package:etms/data/datasources/request/allowed_dates_data.dart';
-import 'package:etms/data/datasources/request/leave_carry_data.dart';
-import 'package:etms/data/datasources/request/leave_report_data.dart';
-import 'package:etms/data/datasources/request/leave_status_data.dart';
+import 'package:etms/data/datasources/request/leave/allowed_dates_data.dart';
+import 'package:etms/data/datasources/request/leave/leave_carry_data.dart';
+import 'package:etms/data/datasources/request/leave/leave_report_data.dart';
+import 'package:etms/data/datasources/request/leave/leave_status_data.dart';
 import 'package:etms/data/datasources/response/allowed_date_response.dart';
 import 'package:etms/data/datasources/response/apply_leave/apply_leave_response.dart';
 import 'package:etms/domain/repositories/leave_repository.dart';
-
-import '../../data/datasources/request/leave_status_001_data.dart';
+import 'package:get/get.dart';
+import '../../data/datasources/request/apply_leave/apply_leave_data.dart';
+import '../../data/datasources/request/leave/leave_status_001_data.dart';
 
 class LeaveUseCase{
   final LeaveRepository respository;
@@ -50,5 +51,17 @@ class LeaveUseCase{
   }
   Future<List<LeaveStatusResponse>> getLeaveStatusSecondApproval_001({required LeaveStatus001Data data}) async{
     return respository.getLeaveStatusSecondApproval_001(data: data);
+  }
+
+  Future<String> saveLeaveApplication({required ApplyLeaveData data}) async{
+    return respository.saveLeaveApplication(data: data);
+  }
+
+  Future<bool> uploadLeavePhoto(FormData data) async{
+    return respository.uploadLeavePhoto(data);
+  }
+
+  Future<String> getLeavePhoto({required String id}) async{
+    return respository.getLeavePhoto(id: id);
   }
 }

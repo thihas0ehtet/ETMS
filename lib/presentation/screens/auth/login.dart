@@ -1,17 +1,15 @@
 import 'package:etms/app/config/font_family.dart';
 import 'package:etms/app/helpers/shared_preference_helper.dart';
-import 'package:etms/data/datasources/request/login_data.dart';
+import 'package:etms/presentation/controllers/profile_controller.dart';
 import 'package:etms/presentation/widgets/custom_button.dart';
 import 'package:etms/presentation/widgets/custom_password_textform.dart';
 import 'package:etms/presentation/widgets/custom_textform.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-
-import '../../../app/config/api_constants.dart';
 import '../../../app/config/color_resources.dart';
 import '../../../app/route/route_name.dart';
+import '../../../data/datasources/request/auth/login_data.dart';
 import '../../controllers/auth_controller.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,6 +21,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   AuthController authController = Get.find();
+  ProfileController profileController = Get.find();
   TextEditingController _userNameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _companyCodeController = TextEditingController();
@@ -33,15 +32,17 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     checkData();
+    super.initState();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     _userNameController.dispose();
+    _passwordController.dispose();
+    _companyCodeController.dispose();
+    super.dispose();
   }
 
 
@@ -51,7 +52,6 @@ class _LoginScreenState extends State<LoginScreen> {
     String companyCode= await _sharedPrefs.getCompanyCode;
     String sysId= await _sharedPrefs.getEmpSysId;
     bool enableFingerprint = await _sharedPrefs.getFingerprint;
-    print("ENAble fingerpirnt is $enableFingerprint");
     if(companyCode!='' && enableFingerprint){
       setState(() {
         showBioMetric=true;
@@ -78,168 +78,142 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Align(
                   alignment: Alignment.center,
-                  child: Flexible(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 65,
-                            height: 65,
-                            child: Image(image: AssetImage('assets/images/dm_logo.png')),
-                          ),
-                          Text("Welcome Back",style: latoSemibold
-                              .copyWith(color: ColorResources.primary700, fontSize: 34),),
-                          Row(
-                            children: [
-                              Text("to",style: latoSemibold
-                                  .copyWith(color: ColorResources.primary700, fontSize: 34),).paddingOnly(right: 10),
-                              SizedBox(
-                                width: 145,
-                                child: Image(image: AssetImage('assets/images/datamine.png')),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 20,),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 65,
+                          height: 65,
+                          child: Image(image: AssetImage('assets/images/dm_logo.png')),
+                        ),
+                        Text("Welcome Back",style: latoSemibold
+                            .copyWith(color: ColorResources.primary700, fontSize: 34),),
+                        Row(
+                          children: [
+                            Text("to",style: latoSemibold
+                                .copyWith(color: ColorResources.primary700, fontSize: 34),).paddingOnly(right: 10),
+                            SizedBox(
+                              width: 145,
+                              child: Image(image: AssetImage('assets/images/datamine.png')),
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 20,),
 
-                          Form(
-                              key: _key,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomTextForm(
-                                    controller: _userNameController,
-                                    hintText: 'User Name',
-                                    validationText: 'enter user name',
-                                    icon: FeatherIcons.user,
-                                  ),
-                                  SizedBox(height: 22,),
-                                  CustomPasswordTextForm(
-                                      controller: _passwordController,
-                                      hidePassword: hidePassword,
-                                      onPress: (){
-                                        setState(() {
-                                          hidePassword=!hidePassword;
-                                        });
-                                      },
-                                      hintText: 'Password',
-                                      validationText: 'enter password',
-                                    onChange: (value){
-                                        setState(() {
-                                          _passwordController.text=value;
-                                        });
+                        Form(
+                            key: _key,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CustomTextForm(
+                                  controller: _userNameController,
+                                  hintText: 'User Name',
+                                  validationText: 'enter user name',
+                                  icon: FeatherIcons.user,
+                                ),
+                                SizedBox(height: 22,),
+                                CustomPasswordTextForm(
+                                    controller: _passwordController,
+                                    hidePassword: hidePassword,
+                                    onPress: (){
+                                      setState(() {
+                                        hidePassword=!hidePassword;
+                                      });
                                     },
-                                  ),
-                                  SizedBox(height: 22,),
-                                  CustomTextForm(
-                                    controller: _companyCodeController,
-                                    hintText: 'Company Code',
-                                    validationText: 'enter company code',
-                                    svgIcon: 'assets/images/company.svg',
-                                    isNumber: true,
-                                  ),
-                                  SizedBox(height: 25,),
-                                ],
-                              )
-                          ),
-                          CustomButton(
-                            onTap: (){
-                              if(_key.currentState!.validate()){
-                                // Get.offAllNamed(RouteName.dashboard);
-                                LogInData loginData=LogInData(
-                                    loginName: _userNameController.text,
-                                    loginDevice: 'ML',
-                                    password: _passwordController.text
-                                );
-                                String companyCode = _companyCodeController.text.toString();
-                                authController.logIn(data: loginData, code: companyCode);
+                                    hintText: 'Password',
+                                    validationText: 'enter password',
+                                  onChange: (value){
+                                      setState(() {
+                                        _passwordController.text=value;
+                                      });
+                                  },
+                                ),
+                                SizedBox(height: 22,),
+                                CustomTextForm(
+                                  controller: _companyCodeController,
+                                  hintText: 'Company Code',
+                                  validationText: 'enter company code',
+                                  svgIcon: 'assets/images/company.svg',
+                                  isNumber: true,
+                                ),
+                                SizedBox(height: 25,),
+                              ],
+                            )
+                        ),
+                        CustomButton(
+                          onTap: () async{
+                            if(_key.currentState!.validate()){
+                              // Get.offAllNamed(RouteName.dashboard);
+                              LogInData loginData=LogInData(
+                                  loginName: _userNameController.text,
+                                  loginDevice: 'ML',
+                                  password: _passwordController.text
+                              );
+                              String companyCode = _companyCodeController.text.toString();
+                              bool loginSuccess = await authController.logIn(data: loginData, code: companyCode);
+                              if(loginSuccess){
+                                bool empMasterSuccess = await profileController.getEmpMaster();
+                                if(empMasterSuccess){
+                                  Get.offNamed(RouteName.dashboard);
+                                }
                               }
-                            },
-                              text: 'Login',
-                            icon: Icons.lock,
-                          ),
-                          // InkWell(
-                          //   onTap: (){
-                          //     if(_key.currentState!.validate()){
-                          //       // Get.offAllNamed(RouteName.dashboard);
-                          //       LogInData loginData=LogInData(
-                          //           loginName: _userNameController.text,
-                          //           loginDevice: 'ML',
-                          //           password: _passwordController.text
-                          //       );
-                          //       String companyCode = _companyCodeController.text.toString();
-                          //       authController.logIn(data: loginData, code: companyCode);
-                          //     }
-                          //   },
-                          //   child: Container(
-                          //     decoration: BoxDecoration(
-                          //         color: ColorResources.primary500,
-                          //         borderRadius: BorderRadius.all(Radius.circular(5))
-                          //     ),
-                          //     padding: EdgeInsets.only(top: 10, bottom: 10),
-                          //     width: context.width,
-                          //     child: Row(
-                          //       mainAxisAlignment: MainAxisAlignment.center,
-                          //       children: [
-                          //         Icon(Icons.lock, size: 18, color: ColorResources.background,).paddingOnly(right: 10),
-                          //         Text("Login",style: latoRegular.copyWith(color: ColorResources.background),)
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
-
-                          showBioMetric ?
-                              Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child:  Container(
-                                          width: context.width/2-40,
-                                          height: 1,
-                                          color: ColorResources.secondary900,
-                                        )),
-                                      Text('OR', style: latoMedium.copyWith(fontSize: 17),).paddingOnly(top: 25, bottom: 25, left: 10, right: 10),
-                                      Expanded(
-                                        child: Container(
-                                          width: context.width/2-40,
-                                          height: 1,
-                                          color: ColorResources.secondary900,
-                                        ),
+                            }
+                          },
+                            text: 'Login',
+                          icon: Icons.lock,
+                        ),
+                        showBioMetric ?
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child:  Container(
+                                        width: context.width/2-40,
+                                        height: 1,
+                                        color: ColorResources.secondary900,
+                                      )),
+                                    Text('OR', style: latoMedium.copyWith(fontSize: 17),).paddingOnly(top: 25, bottom: 25, left: 10, right: 10),
+                                    Expanded(
+                                      child: Container(
+                                        width: context.width/2-40,
+                                        height: 1,
+                                        color: ColorResources.secondary900,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
+                                ),
 
-                                  Container(
-                                    // alignment: Alignment.center,
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle
-                                      ),
-                                      child: IconButton(
-                                          onPressed: () async {
-                                            await authController.biometricAuth();
-                                          },
-                                          icon: Icon(Icons.fingerprint, size: 30, color: ColorResources.primary500,)
-                                      )
-                                  ),
-                                  Text('Login with Fingerprint / Face ID', style: latoMedium.copyWith(fontSize: 15),).paddingOnly(top: 10),
-                                ],
-                              )
-                          :Container()
+                                Container(
+                                  // alignment: Alignment.center,
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle
+                                    ),
+                                    child: IconButton(
+                                        onPressed: () async {
+                                          await authController.biometricAuth();
+                                        },
+                                        icon: Icon(Icons.fingerprint, size: 30, color: ColorResources.primary500,)
+                                    )
+                                ),
+                                Text('Login with Fingerprint / Face ID', style: latoMedium.copyWith(fontSize: 15),).paddingOnly(top: 10),
+                              ],
+                            )
+                        :Container()
 
-                        ],
-                      ).paddingOnly(left: 26, right: 26),
-                    ),
+                      ],
+                    ).paddingOnly(left: 26, right: 26),
                   ),
                 ).paddingOnly(bottom: 35),
                 Align(
                   alignment: Alignment.bottomCenter,
                   // alignment: Alignment.bottomCenter,
-                  child: Text("Version 1.0"),
+                  child: Text("Version 1.0.0"),
                 ).paddingOnly(bottom: 10),
               ],
             ),

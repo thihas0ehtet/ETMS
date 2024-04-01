@@ -12,41 +12,26 @@ class LeaveStatusItemList extends StatelessWidget {
   required this.forfeit, required this.taken, required this.balance});
 
   Widget statusItem(String count, String text){
-    return  Card(
-      elevation: 1,
-      color: Colors.white,
-      // decoration: BoxDecoration(
-      //     color: Colors.white,
-      //     borderRadius: BorderRadius.all(Radius.circular(5)),
-      //     border: Border.all(color: ColorResources.border)
-      // ),
-      child: Container(
-        // width: 70,
+    return
+      Material(
+        elevation: 1,
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(text),
             Text(count)
-            // Container(
-            //     padding: EdgeInsets.only(left: 22, right: 22),
-            //     child: Text(leaveList[0].carry.toString()))
           ],
         )
             .paddingOnly(left: 10,right: 10,top: 5,bottom: 5),
-      ),
-    );
-    //   Column(
-    //   children: [
-    //     Text(count),
-    //     Text(text)
-    //   ],
-    // );
+      ).paddingOnly(right: 6,bottom: 3, top: 3);
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80,
+      height: 85,
       child: ListView(
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
@@ -59,33 +44,6 @@ class LeaveStatusItemList extends StatelessWidget {
           statusItem(balance.toString(),'Balance'),
         ],
       ),
-    )
-    //   Card(
-    //     elevation: 2,
-    //     child: Row(
-    //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-    //       children: [
-    //         Column(
-    //           children: [
-    //             statusItem(carry.toString(),'Carry').paddingOnly(bottom: 20),
-    //             statusItem(forfeit.toString(),'Forfeit'),
-    //           ],
-    //         ),
-    //         Column(
-    //           children: [
-    //             statusItem(entitled.toString(),'Entitled').paddingOnly(bottom: 20),
-    //             statusItem(taken.toString(),'Taken'),
-    //           ],
-    //         ),
-    //         Column(
-    //           children: [
-    //             statusItem(additional.toString(),'Additional').paddingOnly(bottom: 20),
-    //             statusItem(balance.toString(),'Balance'),
-    //           ],
-    //         )
-    //       ],
-    //     ).paddingOnly(top: 10,bottom: 10)
-    // )
-    ;
+    );
   }
 }

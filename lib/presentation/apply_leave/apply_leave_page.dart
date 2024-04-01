@@ -4,6 +4,7 @@ import 'package:etms/presentation/apply_leave/leave_list.dart';
 import 'package:etms/presentation/apply_leave/leave_status.dart';
 import 'package:etms/presentation/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../app/config/config.dart';
 
@@ -41,13 +42,18 @@ class _ApplyLeavePageState extends State<ApplyLeavePage>with SingleTickerProvide
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          // backgroundColor: ColorResources.background,
-          backgroundColor: ColorResources.secondary500,
+          backgroundColor: ColorResources.secondaryBackground,
           appBar: MyAppBar(title: 'Leave',
             widget:  GestureDetector(
               onTap: ()=> Get.toNamed(RouteName.leave_calendar),
-              child: Text('Leave Calendar',style: latoRegular.copyWith(color: ColorResources.white,
-                  decoration: TextDecoration.underline),),
+              child: Row(
+                children: [
+                  Text('Leave Calendar',style: latoRegular.copyWith(color: ColorResources.white,
+                      decoration: TextDecoration.underline,decorationColor: ColorResources.white),).paddingOnly(right: 10),
+                  SvgPicture.asset('assets/images/leave_calendar.svg',width: 16,height: 16,
+                    color: ColorResources.white,)
+                ],
+              ),
             ),),
           body: Column(
             children: [
@@ -63,26 +69,19 @@ class _ApplyLeavePageState extends State<ApplyLeavePage>with SingleTickerProvide
                   labelColor: ColorResources.primary500,
                   tabs: [
                     Tab(
-                      // height: 70,
                       child:
                       Text('Apply Leave',style: tabIndex==0?
-                          latoBold:latoRegular.copyWith(color: ColorResources.primary600))
-                      // TextStyle(fontFamily: 'Inter',
-                      //     fontWeight: tabIndex==0?FontWeight.bold:FontWeight.normal,color:ColorResources.primary500,fontSize: 16),
+                          latoBold.copyWith(color: ColorResources.primary500):latoRegular.copyWith(color: ColorResources.primary600))
                     ),
 
                     Tab(
-                      // height: 70,
-                      child:
-                      Text('Leave List',style: tabIndex==1?
-                      latoBold:latoRegular.copyWith(color: ColorResources.primary600)),
+                      child: Text('Leave List',style: tabIndex==1?
+                      latoBold.copyWith(color: ColorResources.primary500):latoRegular.copyWith(color: ColorResources.primary600)),
                     ),
 
                     Tab(
-                      // height: 70,
-                      child:
-                      Text('Leave Status',style: tabIndex==2?
-                      latoBold:latoRegular.copyWith(color: ColorResources.primary600)),
+                      child: Text('Leave Status',style: tabIndex==2?
+                      latoBold.copyWith(color: ColorResources.primary500):latoRegular.copyWith(color: ColorResources.primary600)),
                     ),
                   ],
                 ),

@@ -9,7 +9,6 @@ extension ApiLink on String{
     SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
     String companyCode= await _sharedPrefs.getCompanyCode;
     String link= companyCode+'/api/'+this;
-    print("LIK IS $link");
     return link;
   }
 }

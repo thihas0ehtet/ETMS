@@ -1,4 +1,4 @@
-import 'package:etms/data/datasources/request/payroll_detail_data.dart';
+import 'package:etms/data/datasources/request/payslip/payroll_detail_data.dart';
 import 'package:etms/data/datasources/response/payslip/payslip_response.dart';
 
 abstract class PaySlipRepository {

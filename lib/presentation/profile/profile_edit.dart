@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:etms/app/utils/dateTime_format.dart';
-import 'package:etms/data/datasources/request/emp_master_data.dart';
-import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
+import 'package:etms/data/datasources/request/profile/emp_master_data.dart';
 import 'package:etms/presentation/controllers/profile_controller.dart';
 import 'package:etms/presentation/profile/widget/profile_text_field.dart';
 import 'package:feather_icons/feather_icons.dart';
@@ -39,7 +38,6 @@ class _ProfileEditViewState extends State<ProfileEditView> {
   Uint8List? photoBytes;
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   ProfileController controller = Get.find();
-  // List<MaritalStatusResponse> mStatusList = [];
   List<String> mStringList=[];
   List mIdList=[];
   String selectedMStatus = '';
@@ -54,12 +52,11 @@ class _ProfileEditViewState extends State<ProfileEditView> {
       _firstNameController.text = data.empFirstName.toString();
       _lastNameController.text = data.empLastName.toString();
       _contactNoController.text = data.empContactNo.toString();
-      _permanentAddrController.text = data.empPermanentAddr.toString();
-      _currentAddrController.text = data.empCurrentAddr.toString();
+      _permanentAddrController.text = data.empPermanentAddr??'';
+      _currentAddrController.text = data.empCurrentAddr??'';
       _emailController.text = data.empEmail.toString();
       _passportExpController.text = data.empPassportExpDate==null?'':DateTime.parse(data.empPassportExpDate).dMY().toString();
       photoBytes = controller.imageBytes.value;
-      // photoBytes = Get.arguments[1];
     });
     getMaritalStatus();
   }
@@ -74,9 +71,6 @@ class _ProfileEditViewState extends State<ProfileEditView> {
 
     if(!(controller.empMaster.value.empMaritalStatusID.toString()=='' || controller.empMaster.value.empMaritalStatusID.toString()=='null')){
       int index = mIdList.indexOf(controller.empMaster.value.empMaritalStatusID!);
-      print(mStringList[index]);
-      print( mStringList[index]);
-      print("Finished");
       setState(() {
         selectedMStatus = mStringList[index];
         _maritalStatusController.text = mStringList[index];
@@ -159,47 +153,53 @@ class _ProfileEditViewState extends State<ProfileEditView> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0),)
         ),
         builder: (BuildContext context){
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 20,),
-              Text(
-                "Choose an action",
-                style: latoSemibold.copyWith(fontSize: 16),
-              ),
-              SizedBox(height: 30,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: (){
-                      Navigator.pop(context);
-                      pickImageFromCamera();
-                    },
-                    child: Column(
-                      children: [
-                        Icon(Icons.camera_alt_outlined,size: 30),
-                        Text('Camera')
-                      ],
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20.0),)
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 20,),
+                Text(
+                  "Choose an action",
+                  style: latoSemibold.copyWith(fontSize: 16),
+                ),
+                SizedBox(height: 30,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: (){
+                        Navigator.pop(context);
+                        pickImageFromCamera();
+                      },
+                      child: Column(
+                        children: [
+                          Icon(Icons.camera_alt_outlined,size: 30),
+                          Text('Camera')
+                        ],
+                      ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      Navigator.pop(context);
-                      await _onImageButtonPressed(context: context);
-                    },
-                    child: Column(
-                      children: [
-                        Icon(Icons.image,size: 30,),
-                        Text('Gallery')
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: 30,),
-            ],
+                    InkWell(
+                      onTap: () async {
+                        Navigator.pop(context);
+                        await _onImageButtonPressed(context: context);
+                      },
+                      child: Column(
+                        children: [
+                          Icon(Icons.image,size: 30,),
+                          Text('Gallery')
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 30,),
+              ],
+            ),
           );
         });
   }
@@ -215,9 +215,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
       currentAddr: _currentAddrController.text
     );
 
-    // print("HLJKLJFKJD IMAGE FILE IS ${imageFile!.path}");
     if(imageFile!=null){
-      Uint8List bytes = await imageFile!.readAsBytes();
       Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(
           imageFile!.path,
           format: CompressFormat.jpeg
@@ -227,9 +225,9 @@ class _ProfileEditViewState extends State<ProfileEditView> {
       String fileType = path.basename(imageFile!.path).split('.')[1];
       String outputFile = imageFile!.path.replaceAll(fileType, 'jpeg');
       File file = await File(outputFile).writeAsBytes(compressedBytes!);
+
       SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
       String sysId= await _sharedPrefs.getEmpSysId;
-      print("HELLO ${file.path}and ${file.path.split('/').last}");
       FormData formData= FormData(
           {
             'file': MultipartFile(file.path, filename: file.path.split('/').last),
@@ -237,9 +235,14 @@ class _ProfileEditViewState extends State<ProfileEditView> {
           }
       );
       await controller.saveEmpMaster(empMasterData,formData);
+      if(controller.updateProfileSuccess.value==true){
+        Navigator.pop(context);
+      }
     } else{
-      print("Here");
       await controller.saveEmpMaster(empMasterData,null);
+      if(controller.updateProfileSuccess.value==true){
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -262,7 +265,6 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Text('Name'),
-
                             GestureDetector(
                               onTap: ()=>showPhotoOptions(),
                               child: Row(
@@ -279,6 +281,15 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                                               image: FileImage(imageFile!)
                                           )
                                       )
+                                  ):
+                                  photoBytes!.isEmpty?
+                                  Container(
+                                      height: 70,
+                                      width: 70,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: ColorResources.secondary700)),
+                                    child: Icon(Icons.camera_alt),
                                   ):
                                   Container(
                                       height: 70,
@@ -300,7 +311,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                             ProfileTextField(controller: _lastNameController, label: 'Last Name', isReadOnly: true),
                             SizedBox(height: 10,),
 
-                            ProfileTextField(controller: _contactNoController, label: 'Contact No.'),
+                            ProfileTextField(controller: _contactNoController, label: 'Contact No.', isNumber: true),
                             SizedBox(height: 10,),
 
                             ProfileTextField(controller: _permanentAddrController, label: 'Permanent Address / Overseas Address'),
@@ -329,6 +340,8 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return  AlertDialog(
+                                        backgroundColor: ColorResources.white,
+                                        surfaceTintColor: ColorResources.white,
                                       content:  Wrap(
                                         children: [
                                           SfDateRangePicker(
@@ -375,6 +388,8 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                                 RenderBox renderBox = context.findRenderObject() as RenderBox;
                                 var offset = renderBox.localToGlobal(Offset.zero);
                                 showMenu<String>(
+                                  color: ColorResources.white,
+                                  surfaceTintColor: ColorResources.white,
                                   context: context,
                                   // position: RelativeRect.fromLTRB(0, 150, 0, 0),
                                   // position: RelativeRect.fromLTRB(0, _maritalStatusController..toDouble(), 0, 0),
@@ -389,7 +404,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                                         value: type,
                                         child:  SizedBox(
                                             width: context.width,
-                                            child: Text(type, style: latoRegular,))
+                                            child: Text(type, style: latoRegular.copyWith(color: ColorResources.text400),))
                                     );
                                   }).toList(),
                                 ).then((String? value) {

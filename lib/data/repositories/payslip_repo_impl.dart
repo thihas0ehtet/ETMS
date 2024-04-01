@@ -1,17 +1,20 @@
 import 'package:etms/app/utils/api_link.dart';
-import 'package:etms/data/datasources/request/payroll_detail_data.dart';
+import 'package:etms/data/datasources/request/payslip/payroll_detail_data.dart';
 import 'package:etms/data/datasources/response/payslip/payslip_response.dart';
 import 'package:etms/domain/repositories/payslip_respository.dart';
 import 'package:get/get.dart';
 import '../../app/api/base_provider.dart';
 import '../../app/config/api_constants.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
+import '../../app/helpers/helper.dart';
 import '../../app/helpers/shared_preference_helper.dart';
 
 class PaySlipRepoImpl extends BaseProvider implements PaySlipRepository{
+  Helper helper = Helper();
   @override
   Future<List<PayrollPeriodResponse>> getPayPeriod() async{
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getPayrollPayPeriod.link();
       SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
       String sysId= await _sharedPrefs.getEmpSysId;
@@ -40,6 +43,7 @@ class PaySlipRepoImpl extends BaseProvider implements PaySlipRepository{
   @override
   Future<PayrollDetailResponse> getPayDetail(PayrollDetailData data) async {
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getPayrollDetail.link();
       apiLink = '$apiLink?Emp_Sys_ID=${data.empSysId}&unit_id=${data.unitId}&Payroll_Period_ID=${data.id}';
       final Response response  = await get(apiLink);
@@ -61,6 +65,7 @@ class PaySlipRepoImpl extends BaseProvider implements PaySlipRepository{
   @override
   Future<List<PayslipAllowanceResponse>> getPayslipAllowance(PayrollDetailData data) async {
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getPayslipAllowance.link();
       apiLink = '$apiLink?Emp_Sys_ID=${data.empSysId}&unit_id=${data.unitId}&Payroll_Period_ID=${data.id}';
       final Response response  = await get(apiLink);
@@ -86,6 +91,7 @@ class PaySlipRepoImpl extends BaseProvider implements PaySlipRepository{
   @override
   Future<List<PayslipDeductionResponse>> getPayslipDeduction(PayrollDetailData data) async {
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getPayslipDeduction.link();
       apiLink = '$apiLink?Emp_Sys_ID=${data.empSysId}&unit_id=${data.unitId}&Payroll_Period_ID=${data.id}';
       final Response response  = await get(apiLink);

@@ -335,7 +335,6 @@ class _TableCalendarOneState<T> extends State<TableCalendarOne<T>> {
           widget.calendarFormat == CalendarFormat.month;
 
   void _swipeCalendarFormat(SwipeDirection direction) {
-    print("CHANGE FORMAT");
     if (widget.onFormatChanged != null) {
       final formats = widget.availableCalendarFormats.keys.toList();
 
@@ -517,7 +516,6 @@ class _TableCalendarOneState<T> extends State<TableCalendarOne<T>> {
             sixWeekMonthsEnforced: widget.sixWeekMonthsEnforced,
             onVerticalSwipe: _swipeCalendarFormat,
             onPageChanged: (focusedDay) async {
-              print("This is on page change");
               EasyLoading.show();
               await Future.delayed(const Duration(milliseconds: 300));
               EasyLoading.dismiss();

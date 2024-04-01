@@ -2,9 +2,17 @@ import 'package:etms/app/app_binding.dart';
 import 'package:etms/app/route/route_name.dart';
 import 'package:etms/presentation/apply_leave/apply_leave_page.dart';
 import 'package:etms/presentation/apply_leave/leave_calendar/leave_calendar_view.dart';
+import 'package:etms/presentation/approval/leave_approval/leave_proposal_detail.dart';
+import 'package:etms/presentation/approval/approval_page.dart';
 import 'package:etms/presentation/attendance/attendance_report.dart';
 import 'package:etms/presentation/attendance/attendance_screen.dart';
 import 'package:etms/presentation/attendance/widget/scan_qr.dart';
+import 'package:etms/presentation/claim/claim.dart';
+import 'package:etms/presentation/claim/comp-off/compoff_claim.dart';
+import 'package:etms/presentation/claim/ot/ot_claim_list.dart';
+import 'package:etms/presentation/claim/ot/ot_history.dart';
+import 'package:etms/presentation/claim/other_claim/other_claim_history.dart';
+import 'package:etms/presentation/claim/other_claim/other_claim_request_view.dart';
 import 'package:etms/presentation/pay_slip/payslip_detail.dart';
 import 'package:etms/presentation/pay_slip/payslip_period_screen.dart';
 import 'package:etms/presentation/profile/next_kin_edit.dart';
@@ -76,6 +84,38 @@ class AppPages {
     GetPage(
         name: RouteName.qrScan,
         page: () => ScanQRView()
+    ),
+    GetPage(
+        name: RouteName.claim,
+        page: () => ClaimScreen()
+    ),
+    GetPage(
+        name: RouteName.otClaimList,
+        page: () => OtClaimListView()
+    ),
+    GetPage(
+        name: RouteName.compOffClaim,
+        page: () => CompOffClaimView()
+    ),
+    GetPage(
+        name: RouteName.otHistory,
+        page: () => OTHistoryView()
+    ),
+    // GetPage(
+    //     name: RouteName.leaveProposalDetail,
+    //     page: () => LeaveProposalDetailView()
+    // ),
+    GetPage(
+        name: RouteName.approval,
+        page: () => ApprovalPage()
+    ),
+    GetPage(
+        name: RouteName.other_claim,
+        page: () => OtherClaimRequestView()
+    ),
+    GetPage(
+        name: RouteName.other_claim_history,
+        page: () => OtherClaimHistoryView()
     ),
   ];
 }

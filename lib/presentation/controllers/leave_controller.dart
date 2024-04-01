@@ -1,18 +1,26 @@
 import 'dart:core';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:etms/app/utils/custom_snackbar.dart';
-import 'package:etms/data/datasources/request/allowed_dates_data.dart';
-import 'package:etms/data/datasources/request/leave_carry_data.dart';
-import 'package:etms/data/datasources/request/leave_report_data.dart';
-import 'package:etms/data/datasources/request/leave_status_data.dart';
+import 'package:etms/data/datasources/request/leave/allowed_dates_data.dart';
+import 'package:etms/data/datasources/request/leave/leave_carry_data.dart';
+import 'package:etms/data/datasources/request/leave/leave_report_data.dart';
+import 'package:etms/data/datasources/request/leave/leave_status_data.dart';
 import 'package:etms/data/datasources/response/allowed_date_response.dart';
 import 'package:etms/data/datasources/response/apply_leave/apply_leave_response.dart';
+import 'package:etms/data/datasources/response/approval/leave_proposal_detail.dart';
+import 'package:etms/data/datasources/response/approval/leave_proposal_response.dart';
 import 'package:etms/domain/repositories/leave_repository.dart';
 import 'package:etms/domain/usecases/leave_usecase.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../app/helpers/error_handling/InternetException.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
-import '../../data/datasources/request/leave_status_001_data.dart';
+import '../../data/datasources/request/apply_leave/apply_leave_data.dart';
+import '../../data/datasources/request/leave/leave_status_001_data.dart';
+import 'package:path/path.dart' as path;
 
 class LeaveController extends GetxController with StateMixin{
   final LeaveRepository repository;
@@ -20,6 +28,7 @@ class LeaveController extends GetxController with StateMixin{
 
   // Rx<LeaveTypeResponse> leaveTypeResponse = LeaveTypeResponse().obs;
   RxList<LeaveTypeData> leaveTypes=  RxList<LeaveTypeData>();
+  RxList<LeaveProposalResponse> leaveProposalList=  RxList<LeaveProposalResponse>();
   RxList<LeaveReportDataResponse> leaveReportList=  RxList<LeaveReportDataResponse>();
   RxList<AllowedDateResponse> allowedDateList=  RxList<AllowedDateResponse>();
   RxList<AllowedDateResponse> allowedDateDetail =  RxList<AllowedDateResponse>();
@@ -31,23 +40,32 @@ class LeaveController extends GetxController with StateMixin{
   RxList<LeaveStatusResponse> statusDetailList_001=  RxList<LeaveStatusResponse>();
   RxList<LeaveStatusResponse> statusFirstList_001=  RxList<LeaveStatusResponse>();
   RxList<LeaveStatusResponse> statusSecondList_001=  RxList<LeaveStatusResponse>();
+  RxList<LeaveProposalDetailResponse> leaveProposalDetailList=  RxList<LeaveProposalDetailResponse>();
 
   RxBool isStatusListLoading = false.obs;
   RxBool isStatusList_001Loading = true.obs;
   RxMap<dynamic, List<LeaveStatusResponse>> kEvents = <dynamic, List<LeaveStatusResponse>>{}.obs;
 
   LeaveUseCase useCase = LeaveUseCase(Get.find());
+  RxString proposeId = ''.obs;
+  RxBool isLeaveProposalDetailLoading = false.obs;
+
+  RxString leavePhoto = ''.obs;
+
 
   Future<void> getLeaveTypes() async{
     try{
       await EasyLoading.show();
-     List<LeaveTypeData> response = await useCase.getLeaveTypes();
+      List<LeaveTypeData> response = await useCase.getLeaveTypes();
       leaveTypes.value=response;
       leaveTypes.refresh();
       refresh();
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }
@@ -63,6 +81,9 @@ class LeaveController extends GetxController with StateMixin{
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }
@@ -96,22 +117,11 @@ class LeaveController extends GetxController with StateMixin{
     }on UnknownException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
     }
   }
-
-  // Future<void> getDateDetail({required AllowedDatesData data, required int start, required int end}) async{
-  //   try{
-  //     await EasyLoading.show();
-  //     List<AllowedDateResponse> response = await useCase.getAllowedDates(data: data, start: start, end: end);
-  //     allowedDateDetail.value=response;
-  //     allowedDateDetail.refresh();
-  //     await EasyLoading.dismiss();
-  //
-  //   }on UnknownException catch(e){
-  //     e.toString().error();
-  //     await EasyLoading.dismiss();
-  //   }
-  // }
 
   Future<void> getLeaveCarry({required LeaveCarryData data}) async{
     try{
@@ -123,7 +133,9 @@ class LeaveController extends GetxController with StateMixin{
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){
-      print("ERROR IS $e");
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }
@@ -166,26 +178,10 @@ class LeaveController extends GetxController with StateMixin{
         List<LeaveStatusResponse> list = detailList+firstList+secondList;
         for(var i=0;i<list.length;i++){
           String leaveDate = DateFormat('dd-MMM-yyyy').format(DateTime.parse(list[i].leaveDate!));
-
-          // kEvents.value={};
           kEventTemp[leaveDate]!.add(list[i]);
-          // kEvents.addAll({leaveDate: list[i]});
-
-          // if(dateTimeList.contains(leaveDate)){
-          //
-          // }
         }
 
         kEventTemp.removeWhere((key, value) => value.isEmpty);
-        print("HELLO kEventTemp is $kEventTemp");
-
-        // if(kEvents.containsKey(data.selectDate)){
-        //   kEvents[data.selectDate]=detailList+firstList+secondList;
-        // } else{
-        //   kEvents.addAll({
-        //     data.selectDate:detailList+firstList+secondList
-        //   });
-        // }
         kEvents.value=kEventTemp;
         kEvents.refresh();
         refresh();
@@ -204,6 +200,9 @@ class LeaveController extends GetxController with StateMixin{
       await EasyLoading.dismiss();
       isStatusListLoading.value = false;
       refresh();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
     }
   }
 
@@ -231,44 +230,75 @@ class LeaveController extends GetxController with StateMixin{
       await EasyLoading.dismiss();
       isStatusList_001Loading.value = false;
       refresh();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
     }
   }
 
-  // Future<void> getLeaveStatusFirst({required LeaveStatusData data}) async{
-  //   try{
-  //     isStatusFirstLoading = true;
-  //     await EasyLoading.show();
-  //     List<LeaveStatusResponse> response = await useCase.getLeaveStatusFirst(data: data);
-  //     statusFirstList.value=response;
-  //     statusFirstList.refresh();
-  //     refresh();
-  //     await EasyLoading.dismiss();
-  //     isStatusFirstLoading = false;
-  //
-  //   }on UnknownException catch(e){
-  //     e.toString().error();
-  //     await EasyLoading.dismiss();
-  //     isStatusFirstLoading = false;
-  //   }
-  // }
+  Future<bool> saveLeaveApplication({required ApplyLeaveData data, File? imageFile}) async{
+    try{
+      await EasyLoading.show();
+      String result = await useCase.saveLeaveApplication(data: data);
+      proposeId.value=result;
+      proposeId.refresh();
 
-  // Future<void> getLeaveStatusSecond2({required LeaveStatusData data}) async{
-  //   try{
-  //     isStatusSecondLoading = true;
-  //     await EasyLoading.show();
-  //     List<LeaveStatusResponse> response = await useCase.getLeaveStatusSecond(data: data);
-  //     statusSecondList.value=response;
-  //     statusSecondList.refresh();
-  //     refresh();
-  //     await EasyLoading.dismiss();
-  //     isStatusSecondLoading = false;
-  //
-  //   }on UnknownException catch(e){
-  //     e.toString().error();
-  //     await EasyLoading.dismiss();
-  //     isStatusSecondLoading = false;
-  //   }
-  // }
+      if(imageFile!=null){
+        Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(
+            imageFile.path,
+            format: CompressFormat.jpeg
+        );
 
+        // Write the compressed bytes to the output file
+        String fileType = path.basename(imageFile.path).split('.')[1];
+        String outputFile = imageFile.path.replaceAll(fileType, 'jpeg');
+        File file = await File(outputFile).writeAsBytes(compressedBytes!);
+        FormData formData= FormData(
+            {
+              'file': MultipartFile(file.path, filename: file.path.split('/').last),
+              'Leave_Propose_ID': proposeId.value,
+              'LeaveType_ID': data.leaveTypeId
+            }
+        );
+        bool success = await useCase.uploadLeavePhoto(formData);
+        if(success){
+          'Leave request is successfully submitted'.success();
+          return true;
+        } else{
+          'Leave request failed'.error();
+          return false;
+        }
+      } else{
+        'Leave request is successfully submitted'.success();
+        return true;
+      }
+      await EasyLoading.dismiss() ;
+      refresh();
+    }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+      return false;
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+      return false;
+    }
+  }
 
+  Future<void> getLeavePhoto({required String id}) async{
+    try{
+      await EasyLoading.show();
+      String photo = await useCase.getLeavePhoto(id: id);
+      leavePhoto.value=photo;
+      leavePhoto.refresh();
+      await EasyLoading.dismiss() ;
+      refresh();
+    }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }
+  }
 }

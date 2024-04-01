@@ -8,6 +8,7 @@ class SharedPreferenceHelper {
   String companyCode = 'companyCode';
   String empSysId = 'empSysId';
   String fingerprint = 'fingerprint';
+  String supFlag = 'supFlag';
 
   static Future<SharedPreferenceHelper?> getInstance() async {
     _instance ??= SharedPreferenceHelper();
@@ -21,10 +22,8 @@ class SharedPreferenceHelper {
   }
 
   Future<String> get getCompanyCode async {
-    print("THIS IS GET CODE");
     _sharedPreferences = await SharedPreferences.getInstance();
     String? result =  _sharedPreferences!.getString(companyCode);
-    print("COMPANJFJ CODE IS $companyCode");
     return result.toString();
   }
 
@@ -51,5 +50,16 @@ class SharedPreferenceHelper {
       return false;
     }
     return result;
+  }
+
+  void saveSupFlag(bool flag) async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+    await _sharedPreferences!.setBool(supFlag, flag);
+  }
+
+  Future<bool> get getSupFlag async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+    bool? result =  _sharedPreferences!.getBool(supFlag);
+    return result!;
   }
 }

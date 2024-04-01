@@ -1,10 +1,12 @@
 import 'package:etms/app/utils/dateTime_format.dart';
-import 'package:etms/data/datasources/request/payroll_detail_data.dart';
+import 'package:etms/data/datasources/request/payslip/payroll_detail_data.dart';
 import 'package:etms/data/datasources/response/payslip/payslip_allowance_response.dart';
 import 'package:etms/data/datasources/response/payslip/payslip_deduciton_response.dart';
 import 'package:etms/presentation/pay_slip/widget/data_table.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import '../../app/config/config.dart';
 import '../../app/helpers/shared_preference_helper.dart';
@@ -39,7 +41,7 @@ class _PaySlipDetailState extends State<PaySlipDetail> {
     PayrollDetailData data = PayrollDetailData(
         empSysId: sysId,
         unitId: '0',
-        id: Get.arguments.toString()
+        id: Get.arguments[0].toString()
     );
     await controller.getPayDetail(data);
     setState(() {
@@ -68,7 +70,8 @@ class _PaySlipDetailState extends State<PaySlipDetail> {
     ).paddingOnly(bottom: 15);
   }
 
-  Future<void> generateInvoice() async {
+  Future<void> generateInvoice() async
+  {
     //Create a PDF document.
     final PdfDocument document = PdfDocument();
     //Add page to the PDF
@@ -93,11 +96,10 @@ class _PaySlipDetailState extends State<PaySlipDetail> {
     //Dispose the document.
     document.dispose();
     //Save and launch the file.
-    await saveAndLaunchFile(bytes, 'payslip.pdf');
+    await saveAndLaunchFile(bytes, 'payslip_${Get.arguments[1].toString()}.pdf');
   }
   //Draws the invoice header
   PdfLayoutResult drawHeader(PdfPage page, Size pageSize) {
-
     final PdfFont contentFont = PdfStandardFont(PdfFontFamily.helvetica, 9);
     final PdfFont contentFontTitle = PdfStandardFont(PdfFontFamily.helvetica, 15, style: PdfFontStyle.bold);
 
@@ -179,7 +181,6 @@ class _PaySlipDetailState extends State<PaySlipDetail> {
         bounds: Rect.fromLTRB(130, 160,
             0, pageSize.height - 80)
     )!;
-
   }
 
   void drawSummary(PdfPage page, PdfLayoutResult result){
@@ -298,11 +299,28 @@ class _PaySlipDetailState extends State<PaySlipDetail> {
         appBar:  MyAppBar(
           title: 'Payroll Summary',
           widget: InkWell(
-            onTap: (){
-              // PdfGeneratorView();
-              generateInvoice();
+            onTap: () async{
+              PermissionStatus status = await Permission.manageExternalStorage.status;
+              if (!status.isGranted) {
+                Map<Permission, PermissionStatus> permissionRequestResult = await [
+                  Permission.manageExternalStorage
+                ].request();
+                if (permissionRequestResult[Permission.manageExternalStorage] == PermissionStatus.granted) {
+                  generateInvoice();
+                }
+
+                switch (permissionRequestResult[Permission.manageExternalStorage]) {
+                  case PermissionStatus.granted:
+                    generateInvoice();
+                    break;
+                  default:
+                }
+              }
+              else{
+                generateInvoice();
+              }
             },
-            child: Icon(Icons.download),
+            child: SvgPicture.asset('assets/images/download.svg',width: 22,height: 22, color: ColorResources.white,)
           )
         ),
         body: SingleChildScrollView(

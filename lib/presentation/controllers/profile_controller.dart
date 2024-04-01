@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:etms/app/utils/custom_snackbar.dart';
-import 'package:etms/data/datasources/request/emp_master_data.dart';
-import 'package:etms/data/datasources/request/next_of_kin_data.dart';
-import 'package:etms/data/datasources/request/request.dart';
+import 'package:etms/data/datasources/request/profile/emp_master_data.dart';
+import 'package:etms/data/datasources/request/profile/next_of_kin_data.dart';
 import 'package:etms/data/datasources/response/profile/countries_response.dart';
 import 'package:etms/data/datasources/response/profile/emp_master_response.dart';
 import 'package:etms/data/datasources/response/profile/marital_status_response.dart';
@@ -13,8 +12,9 @@ import 'package:etms/domain/repositories/profile_repository.dart';
 import 'package:etms/domain/usecases/profile_usecase.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-
+import '../../app/helpers/error_handling/InternetException.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
+import '../../app/helpers/shared_preference_helper.dart';
 
 class ProfileController extends GetxController with StateMixin{
   final ProfileRepository repository;
@@ -28,38 +28,64 @@ class ProfileController extends GetxController with StateMixin{
   RxList<MaritalStatusResponse> mStatusList=  RxList<MaritalStatusResponse>();
   Rx<EmpMasterResponse> empMaster = EmpMasterResponse().obs;
   Rx<NextKinResponse> nextKin = NextKinResponse().obs;
+  RxBool getPhotoLoading = false.obs;
+  RxBool getNextOfKinLoading = true.obs;
+  RxBool updateProfileSuccess = false.obs;
+  RxBool updateNextKinSuccess = false.obs;
 
   Future<void> getMyPhoto()async{
     try{
-      await EasyLoading.show();
+      if(getPhotoLoading.value){
+        await EasyLoading.show();
+      }
       String response = await useCase.getMyPhoto();
-      Uint8List bytes = base64.decode(response.split(',').last);
-      imageBytes.value = bytes;
-      imageBytes.refresh();
+      if(response.toString()!='null'){
+        Uint8List bytes = base64.decode(response.split(',').last);
+        imageBytes.value = bytes;
+        imageBytes.refresh();
+      }
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }
   }
 
-  Future<void> getEmpMaster()async{
+  Future<bool> getEmpMaster()async{
     try{
       await EasyLoading.show();
       EmpMasterResponse response = await useCase.getEmpMaster();
       empMaster.value=response;
       empMaster.refresh();
+      refresh();
+
+      SharedPreferenceHelper sharedData= Get.find<SharedPreferenceHelper>();
+      sharedData.saveSupFlag(response.supFlag!);
+
       await EasyLoading.dismiss();
+      refresh();
+      return true;
     }on UnknownException catch(e){
       e.toString().error();
+      refresh();
       await EasyLoading.dismiss();
+      return false;
+    }on InternetException catch(e){
+      e.toString().error();
+      refresh();
+      await EasyLoading.dismiss();
+      return false;
     }
   }
-
 
   Future<void> saveEmpMaster(EmpMasterData data, FormData? photoForm)async{
     try{
       await EasyLoading.show();
+      updateProfileSuccess.value = false;
+      updateProfileSuccess.refresh();
       bool success = await useCase.saveEmpMaster(data);
       if(success==true){
         await getEmpMaster();
@@ -70,17 +96,24 @@ class ProfileController extends GetxController with StateMixin{
           if(photoSuccess==true){
             await getMyPhoto();
             'saved profile information'.success();
+            updateProfileSuccess.value = true;
+            updateProfileSuccess.refresh();
           } else{
             'failed to save photo'.error();
           }
         } else{
           'saved profile information'.success();
+          updateProfileSuccess.value = true;
+          updateProfileSuccess.refresh();
         }
       } else{
         'failed to save profile information'.error();
       }
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }
@@ -97,6 +130,9 @@ class ProfileController extends GetxController with StateMixin{
     }on UnknownException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
     }
   }
 
@@ -109,6 +145,9 @@ class ProfileController extends GetxController with StateMixin{
       refresh();
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }
@@ -125,35 +164,56 @@ class ProfileController extends GetxController with StateMixin{
     }on UnknownException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
     }
   }
 
   Future<void> getNextKin()async{
     try{
+      getNextOfKinLoading.value = true;
+      refresh();
       await EasyLoading.show();
       NextKinResponse response = await useCase.getNextKin();
       nextKin.value=response;
       nextKin.refresh();
       refresh();
       await EasyLoading.dismiss();
+      getNextOfKinLoading.value = false;
+      refresh();
     }on UnknownException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
+      getNextOfKinLoading.value = false;
+      refresh();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+      getNextOfKinLoading.value = false;
+      refresh();
     }
   }
 
   Future<void> saveNextKin(NextOfKinData data)async{
     try{
       await EasyLoading.show();
+      updateNextKinSuccess.value = false;
+      updateNextKinSuccess.refresh();
       bool success = await useCase.saveNextKin(data);
       if(success==true){
         'saved Next of Kin data'.success();
+        updateNextKinSuccess.value = true;
+        updateNextKinSuccess.refresh();
         // await getNextKin();
       } else{
         'failed to save Next of Kin data'.error();
       }
       await EasyLoading.dismiss();
     }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }
@@ -174,6 +234,10 @@ class ProfileController extends GetxController with StateMixin{
     }on UnknownException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
     }
   }
+
 }

@@ -1,10 +1,9 @@
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:etms/app/config/config.dart';
 import 'package:etms/app/route/route_name.dart';
 import 'package:etms/data/datasources/response/profile/emp_master_response.dart';
-import 'package:etms/presentation/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../app/helpers/shared_preference_helper.dart';
 import '../controllers/profile_controller.dart';
@@ -18,31 +17,27 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   ProfileController profileController = Get.find();
-  AuthController authController = Get.find();
   EmpMasterResponse? data;
-  // Uint8List? photoBytes;
   bool enableFingerprint = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    print("HELLO TIS I S ${profileController.empMaster.value.empFirstName}");
+    // TODO: implement initState
+    getFingerprint();
     if(profileController.empMaster.value.empFirstName==null){
       getData();
     } else{
       setState(() {
         data=profileController.empMaster.value;
       });
+      if(profileController.imageBytes.value.isEmpty){
+        getPhoto();
+      }
     }
-    if(profileController.imageBytes.value.isEmpty){
-      getPhoto();
-    }
-
-    // getEmpMaster();
   }
 
-  getData() async{
+  getFingerprint() async{
     SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
     bool enable = await _sharedPrefs.getFingerprint;
     if(mounted){
@@ -50,38 +45,25 @@ class _ProfileViewState extends State<ProfileView> {
         enableFingerprint = enable;
       });
     }
+  }
 
+  getData() async{
     await profileController.getEmpMaster();
-    if(mounted){
-      setState(() {
-        data=profileController.empMaster.value;
-      });
+    setState(() {
+      data=profileController.empMaster.value;
+    });
+    if(profileController.imageBytes.value.isEmpty){
+      await getPhoto();
     }
     if(profileController.imageBytes.value.isEmpty){
       getPhoto();
-      // await profileController.getMyPhoto();
-      // getPhoto();
     }
-    // else{
-    //   setProfilePhoto();
-    // }
   }
 
   getPhoto() async{
+    profileController.getPhotoLoading.value=true;
     await profileController.getMyPhoto();
   }
-
-  // getPhoto() async{
-  //   await profileController.getMyPhoto();
-  //   // setProfilePhoto();
-  // }
-
-  // setProfilePhoto(){
-  //   Uint8List bytes = base64.decode(profileController.photo.value.split(',').last);
-  //   setState(() {
-  //     photoBytes=bytes;
-  //   });
-  // }
 
   Widget widgetInfo(String title, String info){
     return Row(
@@ -91,7 +73,7 @@ class _ProfileViewState extends State<ProfileView> {
         SizedBox(
           width: context.width*0.25,
             child: Text(title, style: latoRegular.copyWith(color: ColorResources.text300),)),
-        Flexible(child: Text(info,style: latoRegular.copyWith(color: ColorResources.text500),))
+        Flexible(child: Text(info.toString()=='null' || info.toString()==''? '-':info,style: latoRegular.copyWith(color: ColorResources.text500),))
       ],
     ).paddingOnly(bottom: 15);
   }
@@ -118,7 +100,7 @@ class _ProfileViewState extends State<ProfileView> {
         child: Scaffold(
           backgroundColor: ColorResources.white,
           body:
-          data!=null?
+          data!=null && profileController.empMaster.value.empFirstName.toString()!='null'?
               Obx(()=>
                   Column(
                     children: [
@@ -151,8 +133,10 @@ class _ProfileViewState extends State<ProfileView> {
                                   },
                                   child: Row(
                                     children: [
-                                      Text('Edit ', style: latoSemibold.copyWith(color: ColorResources.primary500, decoration: TextDecoration.underline)),
-                                      Icon(Icons.edit_note, color: ColorResources.primary500,size: 25,)
+                                      Text('Edit ', style: latoSemibold.copyWith(color: ColorResources.primary500, decoration: TextDecoration.underline)).paddingOnly(right: 5),
+                                      SvgPicture.asset('assets/images/edit.svg',width: 16,height: 16,
+                                        color: ColorResources.primary500,)
+                                      // Icon(Icons.edit_note, color: ColorResources.primary500,size: 25,)
                                     ],
                                   ),
                                 )
@@ -171,10 +155,10 @@ class _ProfileViewState extends State<ProfileView> {
                             widget: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Next of Kin'),
+                                Text('Next of Kin', style: latoRegular.copyWith(color: ColorResources.text500),),
                                 SizedBox(
                                   height: 20,
-                                    child: Icon(Icons.arrow_forward_ios, size: 17,)).paddingOnly(right: 10)
+                                    child: Icon(Icons.arrow_forward_ios, size: 17, color: ColorResources.primary800)).paddingOnly(right: 10)
                               ],
                             )
                         ),
@@ -183,33 +167,21 @@ class _ProfileViewState extends State<ProfileView> {
                           widget: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Fingerprint'),
-                              Container(
-                                height: 20,
-                                child: Switch(
-                                  value: enableFingerprint,
-                                  activeColor: ColorResources.primary700,
-                                  activeTrackColor: ColorResources.primary700.withOpacity(0.3),
-                                  inactiveThumbColor: ColorResources.secondary700.withOpacity(0.8),
-                                  inactiveTrackColor: ColorResources.secondary600,
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  // inactiveThumbColor: ColorResources.secondary700,
-                                  // inactiveTrackColor: Colors.grey[200],
-                                  // trackOutlineColor: MaterialStateProperty.all<Color>(enableFingerprint?Colors.transparent:ColorResources.secondary800),
-                                  // thumbIcon:MaterialStateProperty.resolveWith<Icon?>((Set<MaterialState> states) {
-                                  //   if (states.contains(MaterialState.disabled)) {
-                                  //     return const Icon(Icons.close);
-                                  //   }
-                                  //   return null; // All other states will use the default thumbIcon.
-                                  // }),
-                                  onChanged: (bool value) {
-                                    SharedPreferenceHelper _sharedPrefs = Get.find<SharedPreferenceHelper>();
-                                    setState(() {
-                                      enableFingerprint = !enableFingerprint;
-                                    });
-                                    _sharedPrefs.saveEnableFingerprint(enableFingerprint);
-                                  },
-                                ),
+                              Text('Fingerprint', style: latoRegular.copyWith(color: ColorResources.text500)),
+                              Switch(
+                                value: enableFingerprint,
+                                activeColor: ColorResources.primary700,
+                                activeTrackColor: ColorResources.primary700.withOpacity(0.3),
+                                inactiveThumbColor: ColorResources.secondary700.withOpacity(0.8),
+                                inactiveTrackColor: ColorResources.secondary600,
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                onChanged: (bool value) {
+                                  SharedPreferenceHelper _sharedPrefs = Get.find<SharedPreferenceHelper>();
+                                  setState(() {
+                                    enableFingerprint = !enableFingerprint;
+                                  });
+                                  _sharedPrefs.saveEnableFingerprint(enableFingerprint);
+                                },
                               ),
                               // Icon(Icons.toggle_off, size: 25)
                             ],
@@ -221,26 +193,35 @@ class _ProfileViewState extends State<ProfileView> {
                             widget: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Password'),
-                                Icon(Icons.key_sharp, size: 25).paddingOnly(right: 10)
+                                Text('Password', style: latoRegular.copyWith(color: ColorResources.text500)),
+                                SvgPicture.asset('assets/images/password.svg',width: 20,height: 20,
+                                  color: ColorResources.primary800,)
                               ],
                             )
                         ),
                       ),
                       SizedBox(height: 10,),
                       GestureDetector(
-                        onTap: ()=> Get.offNamed(RouteName.login),
+                        onTap: () async {
+                          await EasyLoading.show();
+                          await Future.delayed(Duration(seconds: 1));
+                          await EasyLoading.dismiss();
+                          Get.offAllNamed(RouteName.login);
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Log Out ', style: latoLight.copyWith(decoration: TextDecoration.underline)),
-                            Icon(Icons.lock_open, size: 17,)
+                            Text('Log Out ', style: latoLight.copyWith(decoration: TextDecoration.underline,
+                            color: ColorResources.text500)),
+                            SvgPicture.asset('assets/images/Login.svg',width: 17,height: 17,
+                              color: ColorResources.text300,)
                           ],
                         ),
                       )
                     ],
                   ).paddingOnly(left: 20, right: 20)
-              ) :Container(),
+              )
+              :Container(),
         ));
   }
 }

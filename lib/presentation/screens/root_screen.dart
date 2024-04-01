@@ -1,9 +1,9 @@
 import 'package:etms/app/route/route_name.dart';
-import 'package:etms/presentation/controllers/auth_controller.dart';
 import 'package:etms/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../app/helpers/shared_preference_helper.dart';
+import '../controllers/profile_controller.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});
@@ -13,6 +13,7 @@ class RootScreen extends StatefulWidget {
 }
 
 class _RootScreenState extends State<RootScreen> {
+  ProfileController profileController = Get.find();
   @override
   void initState() {
     checkState();
@@ -20,28 +21,16 @@ class _RootScreenState extends State<RootScreen> {
   }
 
   void checkState()async{
-    await Future.delayed(const Duration(seconds: 3));
+    SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+    String companyCode= await _sharedPrefs.getCompanyCode;
+    if(companyCode!='' && companyCode!='null'){
+      if(profileController.imageBytes.value.isEmpty){
+        await profileController.getMyPhoto();
+      }
+    } else{
+      await Future.delayed(const Duration(seconds: 3));
+    }
     Get.offAllNamed(RouteName.login);
-    // Get.offAll(RouteName.payslip_period);
-    // SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
-    // String companyCode= await _sharedPrefs.getCompanyCode;
-    // String sysId= await _sharedPrefs.getEmpSysId;
-    // print("Code is $companyCode and $sysId");
-    // if(companyCode==''){
-    //   AuthController authController = Get.find();
-    //   if(authController.companyCode.toString()==''){
-    //     Get.offAllNamed(RouteName.login);
-    //   }
-    //   else{
-    //     _sharedPrefs.saveCompanyCode(authController.companyCode.toString());
-    //     Get.offAllNamed(RouteName.dashboard);
-    //     // Get.offAllNamed(RouteName.login);
-    //   }
-    // }
-    // else{
-    //   // Get.offAllNamed(RouteName.login);
-    //   Get.offAllNamed(RouteName.dashboard);
-    // }
   }
   @override
   Widget build(BuildContext context) {

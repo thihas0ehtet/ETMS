@@ -7,6 +7,8 @@ class LeaveTypeData {
   int? maximumPersonByDept;
   bool? calculateProrated;
   dynamic minimumDays;
+  bool? availableOnline;
+  bool? fileUploadable;
 
   LeaveTypeData(
       {this.leaveTypeID,
@@ -16,7 +18,10 @@ class LeaveTypeData {
         this.allowedUnderProbation,
         this.maximumPersonByDept,
         this.calculateProrated,
-        this.minimumDays});
+        this.minimumDays,
+        this.availableOnline,
+        this.fileUploadable
+      });
 
   LeaveTypeData.fromJson(Map<String, dynamic> json) {
     leaveTypeID = json['LeaveType_ID'];
@@ -27,6 +32,8 @@ class LeaveTypeData {
     maximumPersonByDept = json['Maximum_Person_By_Dept'];
     calculateProrated = json['Calculate_Prorated'];
     minimumDays = json['Minimum_Days'];
+    availableOnline = json['Available_Online'];
+    fileUploadable = json['File_Uploadable'];
   }
 
   Map<String, dynamic> toJson() {
@@ -39,6 +46,8 @@ class LeaveTypeData {
     data['Maximum_Person_By_Dept'] = this.maximumPersonByDept;
     data['Calculate_Prorated'] = this.calculateProrated;
     data['Minimum_Days'] = this.minimumDays;
+    data['Available_Online'] = this.availableOnline;
+    data['File_Uploadable'] = this.fileUploadable;
     return data;
   }
 }

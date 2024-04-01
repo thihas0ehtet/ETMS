@@ -13,4 +13,12 @@ abstract class RouteName {
   static const leave_calendar = '/leave_calendar';
   static const reset_password = '/reset_password';
   static const qrScan = '/qr_scan';
+  static const claim = '/claim';
+  static const otClaimList = '/ot_claim_list';
+  static const compOffClaim = '/comp_off_claim';
+  static const otHistory = '/ot_history';
+  static const leaveProposalDetail = '/leave_proposal_detail';
+  static const approval = '/approval';
+  static const other_claim = '/other_claim';
+  static const other_claim_history = '/other_claim_history';
 }

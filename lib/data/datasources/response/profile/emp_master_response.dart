@@ -10,6 +10,7 @@ class EmpMasterResponse {
   String? empPermanentAddr;
   int? empMaritalStatusID;
   dynamic empPassportExpDate;
+  bool? supFlag;
 
   EmpMasterResponse(
       {this.empSysId,
@@ -22,7 +23,8 @@ class EmpMasterResponse {
         this.empCurrentAddr,
         this.empPermanentAddr,
         this.empMaritalStatusID,
-        this.empPassportExpDate
+        this.empPassportExpDate,
+        this.supFlag
       });
 
   EmpMasterResponse.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,7 @@ class EmpMasterResponse {
     empPermanentAddr = json['Emp_Permanent_Addr'];
     empMaritalStatusID = json['Emp_Marital_Status_ID'];
     empPassportExpDate = json['Emp_Passport_Exp_Date'];
+    supFlag = json['Sup_Flag'];
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +55,7 @@ class EmpMasterResponse {
     data['Emp_Permanent_Addr'] = this.empPermanentAddr;
     data['Emp_Marital_Status_ID'] = this.empMaritalStatusID;
     data['Emp_Passport_Exp_Date'] = this.empPassportExpDate;
+    data['Sup_Flag'] = this.supFlag;
     return data;
   }
 }

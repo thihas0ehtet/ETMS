@@ -1,18 +1,28 @@
 import 'package:etms/app/app_binding.dart';
 import 'package:etms/app/route/route_name.dart';
-import 'package:etms/presentation/screens/auth/login.dart';
 import 'package:etms/presentation/screens/root_screen.dart';
-import 'package:etms/presentation/screens/splash_screen.dart';
-import 'package:etms/presentation/test/test_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'app/config/config.dart';
 import 'app/route/route_path.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppBinding().dependencies();
+
+
+  // await SentryFlutter.init(
+  //       (options) {
+  //     options.dsn = 'https://5b9181bed0430a106bcfa820f4826b41@o1396938.ingest.sentry.io/4506531399925760';
+  //     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+  //     // We recommend adjusting this value in production.
+  //     options.tracesSampleRate = 1.0;
+  //   },
+  //   appRunner: () => runApp(MyApp()),
+  // );
+
   runApp(const MyApp());
 }
 
@@ -33,18 +43,12 @@ class MyApp extends StatelessWidget {
     ;
 
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'ETMS',
       debugShowCheckedModeBanner: false,
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      //   useMaterial3: true,
-      // ),
       initialRoute: RouteName.splash,
       getPages: AppPages.routes,
       theme: ThemeConfig.lightTheme,
       home: const RootScreen(),
-      // home: LoginScreen(),
-      // home: TestView(),
       initialBinding: AppBinding(),
       builder: EasyLoading.init(),
     );

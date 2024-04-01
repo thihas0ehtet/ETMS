@@ -4,8 +4,9 @@ import 'package:etms/domain/repositories/payslip_respository.dart';
 import 'package:etms/domain/usecases/payslip_usecase.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import '../../app/helpers/error_handling/InternetException.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
-import '../../data/datasources/request/payroll_detail_data.dart';
+import '../../data/datasources/request/payslip/payroll_detail_data.dart';
 
 class PaySlipController extends GetxController with StateMixin{
   final PaySlipRepository repository;
@@ -31,6 +32,9 @@ class PaySlipController extends GetxController with StateMixin{
     }on UnknownException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
     }
   }
 
@@ -44,6 +48,9 @@ class PaySlipController extends GetxController with StateMixin{
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }
@@ -61,6 +68,9 @@ class PaySlipController extends GetxController with StateMixin{
     }on UnknownException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
+    }on InternetException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
     }
   }
 
@@ -74,6 +84,9 @@ class PaySlipController extends GetxController with StateMixin{
       await EasyLoading.dismiss();
 
     }on UnknownException catch(e){
+      e.toString().error();
+      await EasyLoading.dismiss();
+    }on InternetException catch(e){
       e.toString().error();
       await EasyLoading.dismiss();
     }

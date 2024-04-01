@@ -1,31 +1,43 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart' as open_file;
-import 'package:path_provider/path_provider.dart' as path_provider;
-// ignore: depend_on_referenced_packages
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 ///To save the pdf file in the device
 Future<void> saveAndLaunchFile(List<int> bytes, String fileName) async {
-  //Get the storage folder location using path_provider package.
   String? path;
-  if (Platform.isAndroid ||
-      Platform.isIOS ||
-      Platform.isLinux ||
-      Platform.isWindows) {
-    final Directory directory =
-    await path_provider.getApplicationSupportDirectory();
-    path = directory.path;
-  } else {
-    path = await PathProviderPlatform.instance.getApplicationSupportPath();
+  Directory? directory;
+  if (Platform.isIOS) {
+    directory = await getApplicationDocumentsDirectory();
+  } else if(Platform.isAndroid) {
+    directory = Directory('/storage/emulated/0/Download');
+    if (!await directory.exists()){
+      directory = await getExternalStorageDirectory();
+    }
+  } else{
+    directory = await getExternalStorageDirectory();
   }
-  final File file =
-  File(Platform.isWindows ? '$path\\$fileName' : '$path/$fileName');
-  print("HELLO FILE IS ${file.path}");
+  path = directory!.path;
+
+  if (!directory.existsSync()) {
+    return;
+  }
+  final filePath = '${directory.path}/$fileName';
+  final File file = File(Platform.isWindows ? '$path\\$fileName' : '$path/$fileName');
 
   await file.writeAsBytes(bytes, flush: true);
+  if (!File(filePath).existsSync()) {
+    debugPrint('PDF file not found.');
+    return;
+  }
+
   if (Platform.isAndroid || Platform.isIOS) {
-    //Launch the file (used open_file package)
-    await open_file.OpenFile.open('$path/$fileName');
+    try{
+      await open_file.OpenFile.open(filePath);
+    } catch(e){
+      debugPrint("errror $e");
+    }
+
   } else if (Platform.isWindows) {
     await Process.run('start', <String>['$path\\$fileName'], runInShell: true);
   } else if (Platform.isMacOS) {

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:etms/app/config/config.dart';
 import 'package:etms/presentation/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +15,6 @@ class _ScanQRViewState extends State<ScanQRView> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  // OrderController orderController =  Get.put(OrderController(repository: Get.find()));
 
   @override
   void reassemble() {
@@ -31,19 +29,9 @@ class _ScanQRViewState extends State<ScanQRView> {
       this.controller = controller;
     });
     controller.scannedDataStream.listen((scanData) async {
-      debugPrint("Result is ${scanData.code} aand  and then ${scanData}${Get.arguments.toString()}");
       if(scanData.code!.contains(Get.arguments.toString()) && Get.arguments.toString()!=''){
-        // Get.off(true);
         Get.back(result: true);
       }
-      // FormData formData= FormData(
-      //     {
-      //       'coupon_code': scanData.code
-      //     }
-      // );
-      // if(orderController.finishScan==true){
-      //   orderController.checkCouponCode(formData: formData);
-      // }
     });
   }
 
@@ -89,6 +77,7 @@ class _ScanQRViewState extends State<ScanQRView> {
               Expanded(flex: 4, child: _buildQrView(context)),
             ],
           ),
-        ));
+        )
+    );
   }
 }

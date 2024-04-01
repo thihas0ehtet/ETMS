@@ -2,7 +2,7 @@ class CompOffRequestData {
   String? empSysId;
   String? attDate;
   String? remark;
-  String? duration;
+  double? duration;
 
   CompOffRequestData(
       {

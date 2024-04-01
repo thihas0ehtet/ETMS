@@ -1,21 +1,21 @@
 import 'package:etms/app/config/config.dart';
 import 'package:etms/app/utils/custom_snackbar.dart';
 import 'package:etms/app/utils/dateTime_format.dart';
-import 'package:etms/data/datasources/request/allowed_dates_data.dart';
-import 'package:etms/data/datasources/request/leave_carry_data.dart';
-import 'package:etms/data/datasources/response/apply_leave/leave_carry_response.dart';
+import 'package:etms/data/datasources/request/leave/allowed_dates_data.dart';
+import 'package:etms/data/datasources/request/leave/leave_carry_data.dart';
 import 'package:etms/presentation/apply_leave/widgets/leave_status_item_list.dart';
 import 'package:etms/presentation/apply_leave/widgets/photo_attachement.dart';
 import 'package:etms/presentation/controllers/leave_controller.dart';
 import 'package:etms/presentation/widgets/widgets.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../app/helpers/shared_preference_helper.dart';
+import '../../data/datasources/request/apply_leave/apply_leave_data.dart';
 import '../../data/datasources/response/allowed_date_response.dart';
-import '../../data/datasources/response/apply_leave/leave_list_response.dart';
 import '../../data/datasources/response/apply_leave/apply_leave_response.dart';
 
 class LeaveView extends StatefulWidget {
@@ -27,8 +27,6 @@ class LeaveView extends StatefulWidget {
 
 class _LeaveViewState extends State<LeaveView> {
   String selectedLeaveType = '';
-  // List<String> leaveTypeList = ['','Annual Leave', 'Child Care Leave', 'Sick Leave', 'No Pay Leave'];
-  // List<String> leaveTypeList = [''];
   List<String> typeStringList = [''];
   List<LeaveTypeData> leaveTypeList=[];
   TextEditingController _remarkController = TextEditingController();
@@ -48,6 +46,7 @@ class _LeaveViewState extends State<LeaveView> {
   List<AllowedDateResponse> dateDetailList = [];
   double sumOfDates = 0.0;
   bool isExpanded=true;
+  var attachmentStateKey = GlobalKey<PhotoAttachmentViewState>();
 
   @override
   void initState() {
@@ -90,17 +89,7 @@ class _LeaveViewState extends State<LeaveView> {
     SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
     String sysId= await _sharedPrefs.getEmpSysId;
     String typeId = leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].leaveTypeID.toString();
-    print("ALLOW DDFD DATA $start and $end}");
-    print(_startDateController.text);
-    // AllowedDatesData data1=AllowedDatesData(
-    //     leaveStartDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_startDateController.text)),
-    //     leaveEndDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_endDateController.text)),
-    //     unitId: '1',
-    //     leaveTypeId: typeId,
-    //     empSysId: sysId
-    // );
-    // print("FDLKSJFK DATA ${data1.toJson()}");
-    // // print("HELLO ${DateTime.parse(_startDateController.text)}");
+
     AllowedDatesData data=AllowedDatesData(
         leaveStartDate: DateFormat('dd/MM/yyyy').parse(_startDateController.text).dMY(),
         leaveEndDate: DateFormat('dd/MM/yyyy').parse(_endDateController.text).dMY(),
@@ -108,7 +97,6 @@ class _LeaveViewState extends State<LeaveView> {
         leaveTypeId: typeId,
         empSysId: sysId
     );
-    print("DATEE IS ${data.toJson()}");
     await controller.getAllowedDates(data: data, start: start, end: end);
     setState(() {
       dateList = controller.allowedDateList;
@@ -121,34 +109,6 @@ class _LeaveViewState extends State<LeaveView> {
     setState(() {
       sumOfDates = sum;
     });
-
-    // SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
-    // String sysId= await _sharedPrefs.getEmpSysId;
-    // String typeId = leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].leaveTypeID.toString();
-    //
-    // DateTime leaveStart = DateFormat('dd/MM/yyyy').parse(_startDateController.text);
-    // String formattedLeaveStart = DateFormat('dd MMM yyyy').format(leaveStart);
-    // DateTime leaveEnd = DateFormat('dd/MM/yyyy').parse(_endDateController.text);
-    // String formattedLeaveEnd = DateFormat('dd MMM yyyy').format(leaveEnd);
-
-    // AllowedDatesData data=AllowedDatesData(
-    //     leaveStartDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_startDateController.text)),
-    //   leaveEndDate: DateFormat('dd MMM yyyy').format(DateFormat('dd/MM/yyyy').parse(_endDateController.text)),
-    //   unitId: '1',
-    //   leaveTypeId: typeId,
-    //   empSysId: sysId
-    // );
-    //
-    // AllowedDatesData data1=AllowedDatesData(
-    //     leaveStartDate: DateTime.parse(_startDateController.text).dMY(),
-    //     leaveEndDate: DateTime.parse(_endDateController.text).dMY(),
-    //     unitId: '1',
-    //     leaveTypeId: typeId,
-    //     empSysId: sysId
-    // );
-    // print(data.toJson());
-    // print("HELLO DAFJDFK JIS ${data1.toJson()} and $start and $end");
-    // await controller.getAllowedDates(data: data, start: start, end: end);
   }
 
   getLeaveCarry() async{
@@ -182,6 +142,8 @@ class _LeaveViewState extends State<LeaveView> {
   required bool isFromDate}){
     String pickedDate=dateController.text;
     return AlertDialog(
+        backgroundColor: ColorResources.white,
+        surfaceTintColor: ColorResources.white,
         content: StatefulBuilder(
           builder: (context,setState){
             return Wrap(
@@ -207,6 +169,7 @@ class _LeaveViewState extends State<LeaveView> {
                     Checkbox(
                       value: checkFirst,
                       activeColor: ColorResources.primary800,
+                      checkColor: ColorResources.white,
                       onChanged: (bool? value){
                         setState(() {
                           checkFirst=value!;
@@ -224,6 +187,7 @@ class _LeaveViewState extends State<LeaveView> {
                     Checkbox(
                       value: checkSecond,
                       activeColor: ColorResources.primary800,
+                      checkColor: ColorResources.white,
                       onChanged: (value){
                         setState(() {
                           checkSecond=value!;
@@ -252,7 +216,6 @@ class _LeaveViewState extends State<LeaveView> {
                             color: ColorResources.secondary700,
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                           ),
-                          // width: context.width/2,
                           child: Text('Cancel', textAlign: TextAlign.center,
                             style: latoRegular.copyWith(color: ColorResources.text50),),
                         )
@@ -307,7 +270,6 @@ class _LeaveViewState extends State<LeaveView> {
                         },
                         child: Container(
                           width: 100,
-                          // alignment: Alignment.center,
                           padding: EdgeInsets.only(top: 12, bottom: 12),
                           // margin: EdgeInsets.only(left: 20,right: 20),
                           decoration: BoxDecoration(
@@ -315,7 +277,6 @@ class _LeaveViewState extends State<LeaveView> {
                               borderRadius: BorderRadius.all(Radius.circular(5)),
                               border: Border.all(color: ColorResources.border)
                           ),
-                          // width: context.width/2,
                           child: Text('Confirm', textAlign: TextAlign.center, style: latoRegular.copyWith(color: ColorResources.text50),),
                         )
                     )
@@ -325,99 +286,20 @@ class _LeaveViewState extends State<LeaveView> {
             );
           },
         )
-      // actions: <Widget>[
-      //   Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //     children: [
-      //       InkWell(
-      //           onTap: (){  Navigator.of(context).pop();},
-      //           child: Container(
-      //             width: 100,
-      //             padding: EdgeInsets.only(top: 12, bottom: 12),
-      //             decoration: BoxDecoration(
-      //                 color: ColorResources.secondary700,
-      //                 borderRadius: BorderRadius.all(Radius.circular(5)),
-      //             ),
-      //             // width: context.width/2,
-      //             child: Text('Cancel', textAlign: TextAlign.center,
-      //               style: latoRegular.copyWith(color: ColorResources.text50),),
-      //           )
-      //       ),
-      //       InkWell(
-      //           onTap: (){
-      //             // if use don't select one of these, show warning
-      //             print("FIRST AND SECOND $checkFirst and $checkSecond and $fromCheckFirstHalf and $fromCheckSecondHalf");
-      //             if(!checkFirst && !checkSecond){
-      //               setState((){
-      //                 requireHalfLeaveSelect=true;
-      //               });
-      //             } else{
-      //               print("HFJSD $isFromDate");
-      //               if(isFromDate){
-      //                 setState((){
-      //                   fromCheckFirstHalf=checkFirst;
-      //                   fromCheckSecondHalf=checkSecond;
-      //                 });
-      //               } else{
-      //                 setState((){
-      //                   toCheckFirstHalf=checkFirst;
-      //                   toCheckSecondHalf=checkSecond;
-      //                 });
-      //               }
-      //               print("JKDLSJFKL THIS IS $fromCheckFirstHalf and $fromCheckSecondHalf and $checkFirst and $checkSecond");
-      //               setState((){
-      //                 dateController.text=pickedDate.toString();
-      //                 requireHalfLeaveSelect=false;
-      //               });
-      //
-      //               // check to date and work api automatically
-      //               if(isFromDate!=true){
-      //                 DateTime start = DateFormat('dd/MM/yyyy').parseStrict(_startDateController.text);
-      //                 DateTime end = DateFormat('dd/MM/yyyy').parseStrict(_endDateController.text);
-      //                 if(end.isBefore(start)){
-      //                   'Please select the valid date range'.alert();
-      //                 }
-      //                 else{
-      //                   getAllowedDates();
-      //
-      //                   Navigator.of(context).pop();
-      //                 }
-      //               } else{
-      //                 Navigator.of(context).pop();
-      //               }
-      //             }
-      //           },
-      //           child: Container(
-      //             width: 100,
-      //             // alignment: Alignment.center,
-      //             padding: EdgeInsets.only(top: 12, bottom: 12),
-      //             // margin: EdgeInsets.only(left: 20,right: 20),
-      //             decoration: BoxDecoration(
-      //                 color: ColorResources.primary800,
-      //                 borderRadius: BorderRadius.all(Radius.circular(5)),
-      //                 border: Border.all(color: ColorResources.border)
-      //             ),
-      //             // width: context.width/2,
-      //             child: Text('Confirm', textAlign: TextAlign.center, style: latoRegular.copyWith(color: ColorResources.text50),),
-      //           )
-      //       )
-      //     ],
-      //   )
-      //
-      //   // TextButton(
-      //   //   onPressed: () {
-      //   //     Navigator.of(context).pop();
-      //   //   },
-      //   //   child: Text('Close'),
-      //   // ),
-      //   // TextButton(
-      //   //   onPressed: () {
-      //   //     Navigator.of(context).pop();
-      //   //   },
-      //   //   child: Text('Close'),
-      //   // ),
-      // ],
     );
+  }
+
+  resetData(){
+    _remarkController.clear();
+    _startDateController.clear();
+    _endDateController.clear();
+    selectedLeaveType=='';
+    dateList.clear();
+    attachmentStateKey.currentState!.clearImageFile();
+    _startDateController.text=DateFormat('dd/MM/yyyy').format(DateTime.now()).toString();
+    _endDateController.text=DateFormat('dd/MM/yyyy').format(DateTime.now()).toString();
+    setState(() {});
+    getLeaveCarry();
   }
   
   Widget datePick({required TextEditingController controller, required bool checkFirst, required bool checkSecond, required bool isFromDate}){
@@ -442,7 +324,9 @@ class _LeaveViewState extends State<LeaveView> {
                   borderRadius: BorderRadius.circular(5),
                   borderSide: BorderSide(color: ColorResources.border)
               ),
-              suffixIcon: Icon(Icons.calendar_month, color: ColorResources.black,)
+              suffixIcon: Container(
+                padding: EdgeInsets.only(top: 16, bottom: 16),
+                  child: SvgPicture.asset('assets/images/date picker.svg'))
           ),
           onTap: (){
             if(selectedLeaveType.isEmpty){
@@ -488,8 +372,6 @@ class _LeaveViewState extends State<LeaveView> {
                     icon: Icon(FeatherIcons.chevronDown, color: ColorResources.black,),
                     items: typeStringList.map((leaveType) {
                       return DropdownMenuItem<String>(
-                        // enabled: township != leaveTypeList[0],
-                        // enabled: true,
                         value: leaveType,
                         child: Text(leaveType.toString()==''?'Select Leave Type':leaveType.toString(),
                           style: latoRegular.copyWith(color: selectedLeaveType==''
@@ -507,40 +389,20 @@ class _LeaveViewState extends State<LeaveView> {
                     }),
               ),
               if(leaveCarry.balance!=null)
-                // Text("HELKRJKLERJ"),
               LeaveStatusItemList(
                   carry: leaveCarry.leaveCarry!.toDouble(),
                   entitled: leaveCarry.entitled!.toDouble(),
                   additional: leaveCarry.leaveAdditional!.toDouble(),
                   forfeit: leaveCarry.leaveForfeit!.toDouble(),
                   taken: leaveCarry.leaveTaken!.toDouble(),
-                  balance: leaveCarry.balance!.toDouble()),
-                // LeaveStatusItemList(
-                //     carry: leaveList[0].carry!,
-                //     entitled: leaveList[0].entitled!,
-                //     additional: leaveList[0].additional!,
-                //     forfeit: leaveList[0].forfeit!,
-                //     taken: leaveList[0].taken!,
-                //     balance: leaveList[0].balance!),
-
-              // if(selectedLeaveType!='')
-              //   LeaveStatusItemList(
-              //     carry: 1,
-              //     forfeit: 3,
-              //     entitled: 5,
-              //     taken: 3,
-              //     additional: 7,
-              //     balance: 9,
-              //   ).paddingOnly(top: 20, bottom: 10),
-              if(selectedLeaveType.isNotEmpty && leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].leaveTypeID==2)
-                PhotoAttachmentView(),
-              // Text("${leaveTypeList}"),
-              // if(leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].leaveTypeID==2)
-              //   PhotoAttachmentView(),
-
-              // if(selectedLeaveType.toLowerCase().contains('sick'))
-              //   PhotoAttachmentView(),
-
+                  balance: leaveCarry.balance!.toDouble()).paddingOnly(top: 10,bottom: 5),
+              if(selectedLeaveType.isNotEmpty && leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].fileUploadable==true)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PhotoAttachmentView(key: attachmentStateKey,),
+                  ],
+                ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -587,11 +449,8 @@ class _LeaveViewState extends State<LeaveView> {
                    if(!isExpanded)
                    SingleChildScrollView(
                      scrollDirection: Axis.horizontal,
-                     // constrained: false,
                      child: FittedBox(
                        child: DataTable(
-                         // border: TableBorder.all(),
-                         horizontalMargin: 4,
                          columnSpacing: 10,
                          headingRowColor:   MaterialStateColor.resolveWith((states) => ColorResources.primary200),
                          columns: <DataColumn>[
@@ -670,7 +529,62 @@ class _LeaveViewState extends State<LeaveView> {
         ),
         Align(
           alignment: Alignment.bottomCenter,
-          child: CustomButton(onTap: (){}, text: 'Submit',).paddingOnly(bottom: 20)
+          child: CustomButton(onTap: () async {
+            if(sumOfDates>0){
+              String typeId = leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].leaveTypeID.toString();
+              List<LeaveProposalDetail> detailList=[];
+              detailList.addAll(
+                  dateList.map((element) =>
+                  LeaveProposalDetail(
+                    leaveProposeDetailID: element.leaveApplicationDetailID,
+                    leaveProposeID: element.leaveAppID,
+                    leaveTypeID: typeId,
+                    leaveDate: element.leaveDate,
+                    leaveAMPM: element.leaveAMPM,
+                    leaveDuration: element.duration,
+                    leaveStatus: 0,
+                    leaveStatus2: 0)
+                  ).toList());
+
+              SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
+              String sysId= await _sharedPrefs.getEmpSysId;
+              ApplyLeaveData data = ApplyLeaveData(
+                leaveProposeID: 1,
+                empSysID: sysId,
+                leaveStartDate: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSSSSZ').format(DateTime.parse(DateFormat('dd/MM/yyyy').parse(_startDateController.text).toString())).toString(),
+                leaveEndDate: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSSSSZ').format(DateTime.parse(DateFormat('dd/MM/yyyy').parse(_endDateController.text).toString())).toString(),
+                duration: sumOfDates,
+                notifiedTo: 2,
+                notifiedTo2: 1,
+                leaveProposeDate: DateTime.now().toString(),
+                remark: _remarkController.text,
+                leaveTypeId: typeId,
+                leaveProposalDetail: detailList
+              );
+              if(sumOfDates>leaveCarry.balance!.toDouble()){
+                'You have only ${leaveCarry.balance} days left for carry forward.'.error();
+              } else{
+                if(selectedLeaveType.isNotEmpty && leaveTypeList[typeStringList.indexOf(selectedLeaveType)-1].fileUploadable==true){
+                  if(attachmentStateKey.currentState!.getImageFile()==null){
+                    'Please take the attachment photo'.error();
+                  } else{
+                    bool success = await controller.saveLeaveApplication(data: data, imageFile: attachmentStateKey.currentState!.getImageFile());
+                    if(success){
+                      resetData();
+                    }
+                  }
+
+                } else{
+                  bool success = await controller.saveLeaveApplication(data: data);
+                  if(success){
+                    resetData();
+                  }
+                }
+              }
+            } else{
+              'There are no available dates left for leave during the selected period.'.error();
+            }
+          }, text: 'Submit',).paddingOnly(bottom: 20)
         )
       ],
     );

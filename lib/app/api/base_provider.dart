@@ -12,26 +12,6 @@ class BaseProvider extends GetConnect{
     httpClient.addAuthenticator(authInterceptor);
     httpClient.addRequestModifier(requestInterceptor);
     httpClient.addResponseModifier(responseInterceptor);
-
-// Enable logging for all API requests and responses
-//     httpClient.addResponseModifier((request, response) {
-//       print("Request is $request");
-//       print('API Response:');
-//         print('Status Code: ${response.statusCode}');
-//     print('Body: ${response.bodyString}');
-//     });
-    // httpClient.addResponseModifier((Response response) {
-    //   print('API Response:');
-    //   print('Status Code: ${response.statusCode}');
-    //   print('Body: ${response.bodyString}');
-    //   return response;
-    // });
-
-
+    httpClient.timeout = const Duration(seconds: 30);
   }
 }
-//
-// httpClient.baseUrl = ApiConstants.baseUrl;
-// httpClient.addAuthenticator(authInterceptor);
-// httpClient.addRequestModifier(requestInterceptor);
-// httpClient.addResponseModifier(responseInterceptor);

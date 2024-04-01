@@ -60,8 +60,6 @@ class LeaveStatusList extends StatelessWidget {
                             ).paddingOnly(bottom: 5),
                             Text('(${data.halfType})',
                               style: latoRegular.copyWith(color: ColorResources.primary500),)
-                            // Text('(Evening-half)',
-                            //   style: latoRegular.copyWith(color: ColorResources.primary500),)
 
                           ],
                         ).paddingOnly(right: 10),
@@ -76,8 +74,9 @@ class LeaveStatusList extends StatelessWidget {
                         ),
                     ],
                   ).paddingOnly(left: 20, right: 20, top: 10,bottom: 5),
-                  // if(index!=4)
-                  index!=list.length-1?Divider(color: ColorResources.border,):Container()
+                  index!=list.length-1?
+                  Divider(color: ColorResources.secondaryBackground,thickness: 2,)
+                      :Container()
                   // else
                   //   SizedBox(height: 10,)
                 ],

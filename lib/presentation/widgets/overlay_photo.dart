@@ -1,11 +1,13 @@
 import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
 class PhotoViewOverlay extends ModalRoute<void>{
-  String image;
-  PhotoViewOverlay({required this.image});
+  String? image;
+  Uint8List? imageBytes;
+
+  PhotoViewOverlay({this.image, this.imageBytes});
   @override
   // TODO: implement barrierColor
   Color get barrierColor => Colors.black.withOpacity(0.7);
@@ -34,17 +36,46 @@ class PhotoViewOverlay extends ModalRoute<void>{
   Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
     // TODO: implement buildPage
     return
-      Center(
-        child:
-          PhotoView(
-              initialScale: PhotoViewComputedScale.contained,
-              backgroundDecoration: BoxDecoration(
-                  color: Colors.transparent
+      Material(
+        type: MaterialType.transparency,
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Center(
+                child: image!=null?
+                PhotoView(
+                    initialScale: PhotoViewComputedScale.contained,
+                    backgroundDecoration: BoxDecoration(
+                        color: Colors.transparent
+                    ),
+                    tightMode: true,
+                    filterQuality: FilterQuality.high,
+                    imageProvider: FileImage(File(image!))
+                ):
+                PhotoView.customChild(
+                  child: Image.memory(imageBytes!),
+                  backgroundDecoration: BoxDecoration(
+                      color: Colors.transparent
+                  ),
+                  tightMode: true,
+                  initialScale: PhotoViewComputedScale.contained,
+                ),
               ),
-              tightMode: true,
-              filterQuality: FilterQuality.high,
-              imageProvider: FileImage(File(image))
+              Positioned(
+                right: 10,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
           ),
+        ),
       );
   }
 }

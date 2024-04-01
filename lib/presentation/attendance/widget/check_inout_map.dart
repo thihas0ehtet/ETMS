@@ -29,9 +29,6 @@ class CheckInOutMapView extends StatelessWidget {
                 flags: ~InteractiveFlag.doubleTapZoom,
               ),
               onTap: (_, latLng) {
-                // final point = mapController.camera
-                //     .latLngToScreenPoint(tappedCoords = latLng);
-                // setState(() => tappedPoint = Point(point.x, point.y));
               },
             ),
             children: [
@@ -43,7 +40,7 @@ class CheckInOutMapView extends StatelessWidget {
                 circles: [
                   CircleMarker(
                     point: LatLng(lat,lon), // center of 't Gooi
-                    radius: 4000,
+                    radius: 2000,
                     useRadiusInMeter: true,
                     color: isLocationMatch?Color(0xff04FF2C).withOpacity(0.25):ColorResources.red.withOpacity(0.25),
                     borderColor: isLocationMatch?Color(0xff04FF2C).withOpacity(0.25):ColorResources.red.withOpacity(0.25),

@@ -1,4 +1,4 @@
-import 'package:etms/data/datasources/request/reset_password_data.dart';
+import 'package:etms/data/datasources/request/auth/reset_password_data.dart';
 import 'package:etms/presentation/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -29,7 +29,6 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
   required String validationText}){
     return  TextFormField(
       controller: controller,
-      // maxLines: 1,
       style:  latoRegular.copyWith(color: ColorResources.text500, fontSize: 15),
       obscureText: hidePassword?true:false,
       decoration: InputDecoration(

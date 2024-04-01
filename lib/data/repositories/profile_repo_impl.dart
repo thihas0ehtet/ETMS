@@ -1,21 +1,22 @@
-import 'dart:convert';
-
 import 'package:etms/app/utils/api_link.dart';
 import 'package:etms/app/utils/response_code.dart';
-import 'package:etms/data/datasources/request/request.dart';
 import 'package:etms/data/datasources/response/profile/profile_response.dart';
 import 'package:etms/domain/repositories/profile_repository.dart';
 import 'package:get/get.dart';
 import '../../app/api/base_provider.dart';
 import '../../app/config/api_constants.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
+import '../../app/helpers/helper.dart';
 import '../../app/helpers/shared_preference_helper.dart';
-import 'package:http/http.dart' as http;
+import '../datasources/request/profile/emp_master_data.dart';
+import '../datasources/request/profile/next_of_kin_data.dart';
 
 class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
+  Helper helper = Helper();
   @override
   Future<String> getMyPhoto() async{
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getMyPhoto.link();
       SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
       String sysId= await _sharedPrefs.getEmpSysId;
@@ -23,8 +24,8 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
       final Response response = await get('$apiLink/$sysId');
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
-      } else if(response.statusCode==200){
-        return response.body;
+      } else if(response.statusCode!.codeSuccess){
+        return response.body.toString();
       } else{
         throw UnknownException(response.body['Message']);
       }
@@ -37,6 +38,7 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
   @override
   Future<EmpMasterResponse> getEmpMaster() async {
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getEmpMaster.link();
       SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
       String sysId= await _sharedPrefs.getEmpSysId;
@@ -56,21 +58,11 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
   @override
   Future<bool> saveEmpMaster(EmpMasterData data) async {
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getEmpMaster.link();
       SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
       String sysId= await _sharedPrefs.getEmpSysId;
       final Response response = await put('$apiLink/$sysId',data.toJson());
-      print("JFLKDSJLKF JDATAER IS ${data.toJson()}");
-
-      // final http.Response response1 = await http.post(
-      //   Uri.parse('https://etms.com.sg:99/api/EmpMaster/2882'),
-      //   headers: <String, String>{
-      //     'Content-Type': 'application/json',
-      //     // Add any other headers as needed
-      //   },
-      //   body: json.encode(data),
-      // );
-
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       } else if(response.statusCode==204){
@@ -86,6 +78,7 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
   @override
   Future<List<RelationTypeResponse>> getRelationType() async {
    try{
+     await helper.checkInternetConnection();
      String apiLink = await ApiConstants.getRelationTypes.link();
      final Response response = await get(apiLink);
      if(response.statusCode==null){
@@ -108,6 +101,7 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
   @override
   Future<List<CountriesResponse>> getCountries() async {
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getCountries.link();
       final Response response = await get(apiLink);
       if(response.statusCode==null){
@@ -130,6 +124,7 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
   @override
   Future<List<MaritalStatusResponse>> getMaritalStatus() async {
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getMaritalStatus.link();
       final Response response = await get(apiLink);
       if(response.statusCode==null){
@@ -171,6 +166,7 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
   @override
   Future<bool> saveNextKin(NextOfKinData data) async {
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.getNextKin.link();
       SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
       String sysId= await _sharedPrefs.getEmpSysId;
@@ -190,10 +186,9 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
   @override
   Future<bool> uploadPhoto(FormData data) async{
     try{
+      await helper.checkInternetConnection();
       String apiLink = await ApiConstants.upload.link();
-      print("FKDSJ K ${data.length} ${data.fields.first} and ${data.fields.last} and ${data.files}");
       final Response response = await post(apiLink, data);
-      print("HELLO RESPONSE IS ${response.body} ${response.statusCode}");
       if(response.statusCode==null){
         throw UnknownException('There is something wrong!');
       } else if(response.statusCode!.codeSuccess){
@@ -202,9 +197,7 @@ class ProfileRepoImpl extends BaseProvider implements ProfileRepository{
         throw UnknownException(response.body['Message']);
       }
     } catch(e){
-      print("ERROR IS ${e.toString()}");
       throw UnknownException(e.toString());
     }
   }
-
 }

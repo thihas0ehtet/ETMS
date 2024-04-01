@@ -9,10 +9,11 @@ class ColorResources{
   static Color primary500 = Color(0xff009CD9);
   static Color primary600 = Color(0xff0075A3);
   static Color primary700 = Color(0xff004E6D);
-  static Color primary800 = Color(0xff002736);
+  static const Color primary800 = Color(0xff002736);
   static Color primary900 = Color(0xff001016);
 
   static Color background = Color(0xffEFEFEF);
+  static Color secondaryBackground = Color(0xffF4F4F4);
   static Color secondary100 = Color(0xffFEFEFE);
   static Color secondary200 = Color(0xffFDFDFD);
   static Color secondary300 = Color(0xffFBFBFB);

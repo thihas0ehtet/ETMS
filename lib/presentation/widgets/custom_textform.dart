@@ -18,7 +18,6 @@ class CustomTextForm extends StatelessWidget {
       controller: controller,
       maxLines: 1,
       keyboardType: isNumber?TextInputType.number:TextInputType.text,
-      // textInputAction: TextInputAction.go,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(left: 15.0, top: 12.0, bottom: 12.0),
         hintText: hintText,
@@ -27,7 +26,6 @@ class CustomTextForm extends StatelessWidget {
         fillColor: Colors.transparent,
         prefixIcon: Container(
           width: 50,
-          // color: Colors.amber,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

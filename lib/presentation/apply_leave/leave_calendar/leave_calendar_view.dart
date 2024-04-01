@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../app/helpers/shared_preference_helper.dart';
-import '../../../data/datasources/request/leave_status_data.dart';
+import '../../../data/datasources/request/leave/leave_status_data.dart';
 import '../../../data/datasources/response/apply_leave/leave_list_response.dart';
 import '../../../data/datasources/response/apply_leave/leave_status_response.dart';
 import '../../controllers/leave_controller.dart';
@@ -117,7 +117,6 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
         empSysId: sysId,
         selectDate: inputDate
     );
-    print("HELLOO SYS ID ${sysId} and $inputDate");
 
     await controller.getLeaveStatusList(data: leaveStatusData);
     setState(() {
@@ -158,14 +157,9 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
   }
   @override
   Widget build(BuildContext context) {
-    print("This is $kFirstDay and $kLastDay and $_focusedDay");
     return Scaffold(
       backgroundColor: Color(0xffF4F4F4),
-      // backgroundColor: ColorResources.secondary500,
       appBar: MyAppBar(title: 'Leave Calendar'),
-      // appBar: AppBar(
-      //   title: const Text('TableCalendar - Events'),
-      // ),
       body: Column(
         children: [
           Material(
@@ -182,33 +176,13 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
                   statusWiget('Pending', ColorResources.yellow),
                   statusWiget('Approved', ColorResources.green),
                   statusWiget('Reject', ColorResources.red),
-                  // Row(
-                  //   // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  //   children: [
-                  //     Icon(Icons.circle,color: ColorResources.yellow, size: 12,).paddingOnly(right: 8),
-                  //     Text('Pending'),
-                  //   ],
-                  // ),
-                  // Row(
-                  //   // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  //   children: [
-                  //     Icon(Icons.circle,color: ColorResources.yellow, size: 12,).paddingOnly(right: 8),
-                  //     Text('Pending'),
-                  //   ],
-                  // ),
-                  // Row(
-                  //   // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  //   children: [
-                  //     Icon(Icons.circle,color: ColorResources.yellow, size: 12,).paddingOnly(right: 8),
-                  //     Text('PendingPendingPendingPendingPendingPendingPendingPending'),
-                  //   ],
-                  // )
                 ],
               ).paddingAll(10),
             ).paddingOnly(left: 10, right: 10),
           ).paddingOnly(left: 20, right: 20),
           TableCalendar<LeaveStatusResponse>(
             // rowHeight: _getEventsForDay1.length.toDouble(),
+            rowHeight: 45,
             firstDay: kFirstDay,
             lastDay: kLastDay,
             focusedDay: _focusedDay,
@@ -244,10 +218,8 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
             //   }
             // },
             onPageChanged: (focusedDay) {
-              print("Focus day is $focusedDay");
               String parsedMonth = DateFormat('yyyy / MMMM').format(focusedDay);
               String startOfMonth = DateTime(focusedDay.year, focusedDay.month, 1).dMY().toString();
-              print("Paresed Month123 $parsedMonth and $startOfMonth");
               _focusedDay = focusedDay;
               getData(startOfMonth);
             },
@@ -265,7 +237,7 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
                     return Container(
                       margin: const EdgeInsets.symmetric(
                         // horizontal: 12.0,
-                        vertical: 4.0,
+                        vertical: 2.0,
                       ),
                       color: ColorResources.white,
                       // decoration: BoxDecoration(
@@ -273,7 +245,7 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
                       //   borderRadius: BorderRadius.circular(12.0),
                       // ),
                       child: GestureDetector(
-                        onTap: () => print('${value[index]}'),
+                        onTap: () => debugPrint('${value[index]}'),
                         child:  Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,7 +286,7 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
                               child: Text(data.status.toString(),style: latoRegular.copyWith(color: generateTextColor(data.status.toString())),),
                             ),
                           ],
-                        ).paddingOnly(left: 20, right: 20, top: 10,bottom: 5),
+                        ).paddingOnly(left: 20, right: 20, top: 5,bottom: 5),
                       ),
                     );
                   },
