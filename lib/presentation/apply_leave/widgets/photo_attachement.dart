@@ -106,7 +106,7 @@ class PhotoAttachmentViewState extends State<PhotoAttachmentView> {
                       Navigator.of(context).pop();
                     },
                     style: TextButton.styleFrom(
-                        primary: Colors.black, backgroundColor: Colors.grey.shade300),
+                        foregroundColor: Colors.black, backgroundColor: Colors.grey.shade300),
                   ),
                   TextButton(
                     child: Text("Accept"),
@@ -120,7 +120,7 @@ class PhotoAttachmentViewState extends State<PhotoAttachmentView> {
                       });
                     },
                     style: TextButton.styleFrom(
-                        primary: Colors.white, backgroundColor: Colors.indigo),
+                        foregroundColor: Colors.white, backgroundColor: Colors.indigo),
                   ),
                 ],
               );

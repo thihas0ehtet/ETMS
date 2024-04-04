@@ -399,15 +399,28 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                     ),
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Hello! ${
-                                (DateTime.now().hour >= 6 && DateTime.now().hour<12)?'Good Morning':
-                                (DateTime.now().hour >= 12 && DateTime.now().hour < 18)?'Good Afternoon': 'Good Evening'
-                            }",style: latoRegular,),
-                            Text(DateFormat('hh:mm a').format(DateTime.now()),style: latoBold.copyWith(color: ColorResources.primary700),)
-                          ],
+                        StreamBuilder(
+                          stream: Stream.periodic(Duration(seconds: 1), (i) => DateTime.now()),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              DateTime currentTime = snapshot.data!;
+                              String hour = currentTime.hour.toString().padLeft(2, '0');
+                              return
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+
+                                    Text("Hello! ${
+                                        (int.parse(hour) >= 6 && DateTime.now().hour<12)?'Good Morning':
+                                        (int.parse(hour) >= 12 && DateTime.now().hour < 18)?'Good Afternoon': 'Good Evening'
+                                    }",style: latoRegular,),
+                                    Text(DateFormat('hh:mm a').format(DateTime.now()),style: latoBold.copyWith(color: ColorResources.primary700),)
+                                  ],
+                                );
+                            } else {
+                              return CircularProgressIndicator();
+                            }
+                          },
                         ),
                         Text(
                           // "Saturday 23 September 2023",

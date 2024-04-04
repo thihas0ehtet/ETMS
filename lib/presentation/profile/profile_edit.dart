@@ -115,14 +115,15 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                 ),
                 actions: [
                   TextButton(
+                    child: Text("Cancel"),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                     style: TextButton.styleFrom(
                         foregroundColor: Colors.black, backgroundColor: Colors.grey.shade300),
-                    child: const Text("Cancel"),
                   ),
                   TextButton(
+                    child: Text("Accept"),
                     onPressed: () {
                       AppUtils.checkImagePermission(context).then((value) {
                         if (value) {
@@ -135,7 +136,6 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                     },
                     style: TextButton.styleFrom(
                         foregroundColor: Colors.white, backgroundColor: Colors.indigo),
-                    child: const Text("Accept"),
                   ),
                 ],
               );

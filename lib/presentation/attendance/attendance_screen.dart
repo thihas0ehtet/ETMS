@@ -346,7 +346,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                               SizedBox(height: 20,),
                               GestureDetector(
                                 onTap: () async {
-                                  if(!isLocationMatched){
+                                  if(!isLocationMatched && allowLocation){
                                     'QR scanning is currently unavailable as you are not within the permitted area.'.error();
                                   } else{
                                     var result =await Get.toNamed(RouteName.qrScan,

@@ -119,13 +119,13 @@ class _OTApprovalListViewState extends State<OTApprovalListView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('From', style: latoSemibold,).paddingOnly(right: 10),
-                                Flexible(child: Text(DateTime.parse(data.oTSTime.toString()).dMY().toString(), style: latoRegular.copyWith(fontSize: 14),)),
+                                Flexible(child: Text(DateFormat('h:mm a').format(DateTime.parse(data.oTSTime.toString())), style: latoRegular.copyWith(fontSize: 14),)),
                               ],).paddingOnly(bottom: 10),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Flexible(child: Text('To', style: latoSemibold,).paddingOnly(right: 10)),
-                                Flexible(child: Text(DateTime.parse(data.oTETime.toString()).dMY().toString(), style: latoRegular.copyWith(fontSize: 14),)),
+                                Flexible(child:  Text(DateFormat('h:mm a').format(DateTime.parse(data.oTETime.toString())), style: latoRegular.copyWith(fontSize: 14),)),
                               ],
                             ).paddingOnly(bottom: 10),
                             Row(
