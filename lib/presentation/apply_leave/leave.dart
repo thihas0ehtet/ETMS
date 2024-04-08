@@ -555,7 +555,7 @@ class _LeaveViewState extends State<LeaveView> {
                 leaveEndDate: DateFormat('yyyy-MM-ddTHH:mm:ss.SSSSSSZ').format(DateTime.parse(DateFormat('dd/MM/yyyy').parse(_endDateController.text).toString())).toString(),
                 duration: sumOfDates,
                 notifiedTo: 2,
-                notifiedTo2: 1,
+                notifiedTo2: null,
                 leaveProposeDate: DateTime.now().toString(),
                 remark: _remarkController.text,
                 leaveTypeId: typeId,
