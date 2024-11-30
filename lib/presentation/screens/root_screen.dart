@@ -1,4 +1,5 @@
 import 'package:etms/app/route/route_name.dart';
+import 'package:etms/presentation/screens/auth/login.dart';
 import 'package:etms/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,6 +35,7 @@ class _RootScreenState extends State<RootScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return const SplashScreen();
+    // return const SplashScreen();
+    return const LoginScreen();
   }
 }

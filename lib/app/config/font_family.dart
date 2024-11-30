@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'color_resources.dart';
 
 final latoLight = TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.w300, fontSize: 14, color: ColorResources.text500);

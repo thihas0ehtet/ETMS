@@ -15,3 +15,5 @@ class BaseProvider extends GetConnect{
     httpClient.timeout = const Duration(seconds: 30);
   }
 }
+
+
