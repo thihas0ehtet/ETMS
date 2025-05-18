@@ -66,7 +66,6 @@ class _ApprovalPageState extends State<ApprovalPage>with SingleTickerProviderSta
     return SafeArea(
         child: Scaffold(
           backgroundColor: ColorResources.secondaryBackground,
-          // backgroundColor: ColorResources.secondary500,
           appBar: MyAppBar(title: 'Approval'),
           body: Obx(()=>
               Column(

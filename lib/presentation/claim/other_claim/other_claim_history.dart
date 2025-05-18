@@ -37,6 +37,7 @@ class _OtherClaimHistoryViewState extends State<OtherClaimHistoryView> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+          backgroundColor: ColorResources.white,
           appBar: MyAppBar(title: 'Other Claim History'),
           body: Column(
             children: [

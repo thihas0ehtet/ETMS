@@ -249,6 +249,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+          backgroundColor: ColorResources.white,
           appBar: MyAppBar(title: 'Personal Information'),
           body: mStringList.isNotEmpty?
           Stack(

@@ -1,3 +1,4 @@
+import 'package:etms/app/utils/custom_snackbar.dart';
 import 'package:etms/presentation/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,6 +44,8 @@ class _ScanQRViewState extends State<ScanQRView> with WidgetsBindingObserver {
     if (expectedValue.isNotEmpty && scannedCode.contains(expectedValue)) {
       cameraController.stop();
       Get.back(result: true);
+    }else{
+      'There is something wrong with QR/Bar code.'.error();
     }
   }
 

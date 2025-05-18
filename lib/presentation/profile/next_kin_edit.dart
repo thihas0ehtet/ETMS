@@ -119,6 +119,7 @@ class _NextOfKinEditViewState extends State<NextOfKinEditView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: ColorResources.white,
         appBar: MyAppBar(title: 'Next of Kin'),
         body: controller.getNextOfKinLoading.value?
         Container():

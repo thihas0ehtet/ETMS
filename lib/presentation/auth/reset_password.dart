@@ -66,6 +66,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+          backgroundColor: ColorResources.white,
           appBar: MyAppBar(title: 'Reset Password'),
           body: Form(
             key: _key,

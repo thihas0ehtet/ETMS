@@ -56,6 +56,7 @@ class _ClaimScreenState extends State<ClaimScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+          backgroundColor: ColorResources.white,
           appBar: MyAppBar(title: 'Claim'),
           body: Column(
             children: [

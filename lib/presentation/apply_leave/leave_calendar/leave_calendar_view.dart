@@ -165,8 +165,8 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
           Material(
             elevation: 2,
             borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
+            color: ColorResources.white,
             child: Container(
-              // elevation: 2,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(5))
               ),

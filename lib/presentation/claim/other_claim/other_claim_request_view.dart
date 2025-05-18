@@ -99,6 +99,7 @@ class _OtherClaimRequestViewState extends State<OtherClaimRequestView> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+            backgroundColor: ColorResources.white,
           appBar: MyAppBar(title: 'Other Claim',
             widget:  GestureDetector(
               onTap: (){
@@ -131,6 +132,7 @@ class _OtherClaimRequestViewState extends State<OtherClaimRequestView> {
                               border: Border.all(color: Color(0xff475772))
                           ),
                           child: DropdownButton(
+                              dropdownColor: ColorResources.white,
                               isExpanded: true,
                               value: selectedClaimGroup,
                               underline: Container(),
@@ -168,6 +170,7 @@ class _OtherClaimRequestViewState extends State<OtherClaimRequestView> {
                               border: Border.all(color: Color(0xff475772))
                           ),
                           child: DropdownButton(
+                              dropdownColor: ColorResources.white,
                               isExpanded: true,
                               value: selectedClaimName,
                               underline: Container(),

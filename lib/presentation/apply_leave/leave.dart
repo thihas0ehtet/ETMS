@@ -366,6 +366,7 @@ class _LeaveViewState extends State<LeaveView> {
                     border: Border.all(color: Color(0xff475772))
                 ),
                 child: DropdownButton(
+                    dropdownColor: ColorResources.white,
                     isExpanded: true,
                     value: selectedLeaveType,
                     underline: Container(),

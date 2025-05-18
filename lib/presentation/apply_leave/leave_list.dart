@@ -87,6 +87,7 @@ class _LeaveListViewState extends State<LeaveListView> {
                           border: Border.all(color: Color(0xff475772))
                       ),
                       child: DropdownButton(
+                          dropdownColor: ColorResources.white,
                           isExpanded: true,
                           value: selectedYear,
                           underline: Container(),
@@ -126,6 +127,7 @@ class _LeaveListViewState extends State<LeaveListView> {
                           border: Border.all(color: Color(0xff475772))
                       ),
                       child: DropdownButton(
+                          dropdownColor: ColorResources.white,
                           isExpanded: true,
                           value: selectedLeaveType,
                           underline: Container(),
