@@ -11,8 +11,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../app/config/config.dart';
-import '../../app/helpers/shared_preference_helper.dart';
-import '../../app/utils/app_utils.dart';
+import '../../app/helpers/helper.dart';
+import '../../data/datasources/shared_preference_helper.dart';
 import '../../data/datasources/response/profile/emp_master_response.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/my_app_bar.dart';
@@ -26,7 +26,6 @@ class ProfileEditView extends StatefulWidget {
 }
 
 class _ProfileEditViewState extends State<ProfileEditView> {
-  // EmpMasterResponse data = Get.arguments[0];
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _contactNoController = TextEditingController();
@@ -125,7 +124,7 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                   TextButton(
                     child: Text("Accept"),
                     onPressed: () {
-                      AppUtils.checkImagePermission(context).then((value) {
+                      Helper.checkImagePermission(context).then((value) {
                         if (value) {
                           Navigator.of(context).pop();
                           // AppUtils.showSnackChek("You accept permission");

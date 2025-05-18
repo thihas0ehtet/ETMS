@@ -6,7 +6,6 @@ import '../config/config.dart';
 extension CustomSnackBars on String{
   SnackbarController? error() {
     return
-      // connectivityController.isConnected.value?
       Get.snackbar(
         '',
         '',
@@ -41,7 +40,6 @@ extension CustomSnackBars on String{
   }
   SnackbarController? alert() {
     return
-      // connectivityController.isConnected.value?
       Get.snackbar(
         '',
         '',

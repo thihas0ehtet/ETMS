@@ -7,7 +7,7 @@ import '../../app/api/base_provider.dart';
 import '../../app/config/api_constants.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
 import '../../app/helpers/helper.dart';
-import '../../app/helpers/shared_preference_helper.dart';
+import '../datasources/shared_preference_helper.dart';
 
 class PaySlipRepoImpl extends BaseProvider implements PaySlipRepository{
   Helper helper = Helper();

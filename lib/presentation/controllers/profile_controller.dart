@@ -14,7 +14,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import '../../app/helpers/error_handling/InternetException.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
-import '../../app/helpers/shared_preference_helper.dart';
+import '../../data/datasources/shared_preference_helper.dart';
 
 class ProfileController extends GetxController with StateMixin{
   final ProfileRepository repository;

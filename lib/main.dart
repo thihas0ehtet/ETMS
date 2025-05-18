@@ -1,6 +1,6 @@
 import 'package:etms/app/app_binding.dart';
 import 'package:etms/app/route/route_name.dart';
-import 'package:etms/presentation/screens/root_screen.dart';
+import 'package:etms/presentation/root_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';

@@ -10,7 +10,7 @@ class ProfileTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  TextFormField(
+    return TextFormField(
         controller: controller,
         readOnly: isReadOnly,
         keyboardType: isNumber?TextInputType.number:TextInputType.text,

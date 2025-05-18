@@ -1,17 +1,13 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:etms/app/helpers/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../app/config/config.dart';
-import '../../../app/helpers/shared_preference_helper.dart';
-import '../../../app/utils/app_utils.dart';
 import '../../controllers/profile_controller.dart';
 import '../../widgets/overlay_photo.dart';
-import 'package:path/path.dart' as path;
 
 class PhotoAttachmentView extends StatefulWidget {
   const PhotoAttachmentView({ Key? key}):super(key: key);
@@ -38,7 +34,7 @@ class PhotoAttachmentViewState extends State<PhotoAttachmentView> {
   Future<void> pickImageFromCamera() async {
     var status = await Permission.camera.status;
     if (!status.isGranted) {
-      AppUtils.checkCameraPermission(context);
+      Helper.checkCameraPermission(context);
     }
     else{
       XFile? image = await _picker.pickImage(
@@ -111,7 +107,7 @@ class PhotoAttachmentViewState extends State<PhotoAttachmentView> {
                   TextButton(
                     child: Text("Accept"),
                     onPressed: () {
-                      AppUtils.checkImagePermission(context).then((value) {
+                      Helper.checkImagePermission(context).then((value) {
                         if (value) {
                           Navigator.of(context).pop();
                         } else {

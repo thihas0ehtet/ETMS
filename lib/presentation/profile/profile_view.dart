@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../app/helpers/shared_preference_helper.dart';
+import '../../data/datasources/shared_preference_helper.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends StatefulWidget {

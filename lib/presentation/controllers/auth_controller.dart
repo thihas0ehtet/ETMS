@@ -10,7 +10,7 @@ import 'package:local_auth/local_auth.dart';
 import '../../app/config/api_constants.dart';
 import '../../app/helpers/error_handling/InternetException.dart';
 import '../../app/helpers/error_handling/unknown_error.dart';
-import '../../app/helpers/shared_preference_helper.dart';
+import '../../data/datasources/shared_preference_helper.dart';
 import '../../data/datasources/request/auth/login_data.dart';
 import '../../domain/repositories/auth_repository.dart';
 

@@ -4,10 +4,10 @@ import 'package:etms/app/config/config.dart';
 
 class ThemeConfig {
   static ThemeData lightTheme = ThemeData(
-    textTheme: TextTheme(
-      bodyText1: TextStyle(color: ColorResources.text500),
-      bodyText2: TextStyle(color: ColorResources.text500),
-    ),
+    // textTheme: TextTheme(
+    //   bodyText1: TextStyle(color: ColorResources.text500),
+    //   bodyText2: TextStyle(color: ColorResources.text500),
+    // ),
     fontFamily: 'Lato',
     iconTheme:  IconThemeData(
         color: ColorResources.primary700

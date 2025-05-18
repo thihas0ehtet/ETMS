@@ -17,11 +17,11 @@ import 'package:etms/presentation/pay_slip/payslip_detail.dart';
 import 'package:etms/presentation/pay_slip/payslip_period_screen.dart';
 import 'package:etms/presentation/profile/next_kin_edit.dart';
 import 'package:etms/presentation/profile/profile_edit.dart';
-import 'package:etms/presentation/screens/auth/login.dart';
-import 'package:etms/presentation/screens/auth/reset_password.dart';
-import 'package:etms/presentation/screens/dashboard.dart';
-import 'package:etms/presentation/screens/menu/menu.dart';
-import 'package:etms/presentation/screens/splash_screen.dart';
+import 'package:etms/presentation/auth/login.dart';
+import 'package:etms/presentation/auth/reset_password.dart';
+import 'package:etms/presentation/dashboard.dart';
+import 'package:etms/presentation/menu/menu.dart';
+import 'package:etms/presentation/splash_screen.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 

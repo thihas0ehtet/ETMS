@@ -1,7 +1,5 @@
-import 'package:get/get.dart';
-
 extension ResponseCode on int {
   bool get codeSuccess {
-    return (this ~/ 100) == 2;
+    return this>= 200 && this < 300;
   }
 }

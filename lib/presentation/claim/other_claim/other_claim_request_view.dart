@@ -10,7 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../../app/config/config.dart';
-import '../../../app/helpers/shared_preference_helper.dart';
+import '../../../data/datasources/shared_preference_helper.dart';
 import '../../apply_leave/widgets/photo_attachement.dart';
 import '../../widgets/my_app_bar.dart';
 import '../../widgets/simple_text_form.dart';
@@ -312,18 +312,9 @@ class _OtherClaimRequestViewState extends State<OtherClaimRequestView> {
                           if(attachmentStateKey.currentState!.getImageFile()==null){
                             bool success = await controller.saveClaim(data: request);
                             if(success) resetData();
-
-                              // Navigator.pop(context);
-                            // if(controller.claimRequestSuccess.value==true){
-                            //   Navigator.pop(context);
-                            // }
                           } else{
                             bool success = await controller.saveClaim(data: request, image: attachmentStateKey.currentState!.getImageFile());
                             if(success) resetData();
-                              // Navigator.pop(context);
-                            // if(controller.claimRequestSuccess.value==true){
-                            //   // Navigator.pop(context);
-                            // }
                           }
                         }
                       },

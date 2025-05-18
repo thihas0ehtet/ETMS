@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../app/config/color_resources.dart';
 import '../../app/config/font_family.dart';
-import '../../app/helpers/shared_preference_helper.dart';
+import '../../data/datasources/shared_preference_helper.dart';
 import '../widgets/custom_button.dart';
 
 class NextOfKinEditView extends StatefulWidget {

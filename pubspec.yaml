@@ -68,7 +68,7 @@ dependencies:
   flutter_slidable: ^3.0.0
 
   #map
-  geolocator: ^10.1.0
+  geolocator: ^12.0.0
   flutter_map: ^6.0.0
 
   #permission_handler:
@@ -94,7 +94,8 @@ dependencies:
   open_file: ^3.3.2
 
   #qr scanner
-  qr_code_scanner: ^1.0.1
+#  qr_code_scanner: ^1.0.1
+  mobile_scanner: ^6.0.2
 
   # refresh
   pull_to_refresh: ^2.0.0

@@ -1,8 +1,5 @@
-import 'package:etms/app/config/font_family.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../config/config.dart';
-import '../helpers/shared_preference_helper.dart';
+import '../../data/datasources/shared_preference_helper.dart';
 
 extension ApiLink on String{
   Future<String> link() async {
