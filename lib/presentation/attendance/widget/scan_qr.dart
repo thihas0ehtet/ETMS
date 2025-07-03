@@ -1,8 +1,8 @@
-import 'package:etms/app/utils/custom_snackbar.dart';
+import 'dart:io';
 import 'package:etms/presentation/widgets/my_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 
 class ScanQRView extends StatefulWidget {
   const ScanQRView({super.key});
@@ -11,64 +11,74 @@ class ScanQRView extends StatefulWidget {
   State<ScanQRView> createState() => _ScanQRViewState();
 }
 
-class _ScanQRViewState extends State<ScanQRView> with WidgetsBindingObserver {
-  MobileScannerController cameraController = MobileScannerController();
+class _ScanQRViewState extends State<ScanQRView> {
+  Barcode? result;
+  QRViewController? controller;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      controller!.pauseCamera();
+    }
+    controller!.resumeCamera();
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    setState(() {
+      this.controller = controller;
+    });
+    controller.scannedDataStream.listen((scanData) async {
+      if (scanData.code!.contains(Get.arguments.toString()) &&
+          Get.arguments.toString() != '') {
+        Get.back(result: true);
+      }
+    });
+  }
+
+  void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
+    if (!p) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('no Permission')),
+      );
+    }
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    cameraController.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.inactive) {
-      cameraController.stop();
-    } else if (state == AppLifecycleState.resumed) {
-      cameraController.start();
-    }
-  }
-
-  void _onDetect(BarcodeCapture capture) {
-    final barcode = capture.barcodes.first;
-    final scannedCode = barcode.rawValue ?? '';
-    final expectedValue = Get.arguments.toString();
-
-    if (expectedValue.isNotEmpty && scannedCode.contains(expectedValue)) {
-      cameraController.stop();
-      Get.back(result: true);
-    }else{
-      'There is something wrong with QR/Bar code.'.error();
-    }
+  Widget _buildQrView(BuildContext context) {
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 170.0
+        : 400.0;
+    return QRView(
+      key: qrKey,
+      onQRViewCreated: _onQRViewCreated,
+      overlay: QrScannerOverlayShape(
+          borderColor: Colors.red,
+          borderRadius: 10,
+          borderLength: 30,
+          borderWidth: 10,
+          cutOutSize: scanArea),
+      onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: MyAppBar(title: 'QR Scan'),
-        body: Column(
-          children: [
-            Expanded(
-              flex: 4,
-              child: MobileScanner(
-                controller: cameraController,
-                onDetect: _onDetect,
-                errorBuilder: (context, error, _) => Center(
-                  child: Text('Camera error: $error'),
-                ),
-              ),
-            ),
-          ],
-        ),
+        child: Scaffold(
+      appBar: MyAppBar(title: 'QR Scan'),
+      body: Column(
+        children: [
+          Expanded(flex: 4, child: _buildQrView(context)),
+        ],
       ),
-    );
+    ));
   }
 }

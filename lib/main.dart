@@ -4,14 +4,12 @@ import 'package:etms/presentation/root_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'app/config/config.dart';
 import 'app/route/route_path.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppBinding().dependencies();
-
 
   // await SentryFlutter.init(
   //       (options) {
@@ -39,8 +37,7 @@ class MyApp extends StatelessWidget {
       ..indicatorColor = ColorResources.primary800
       ..boxShadow = <BoxShadow>[]
       ..indicatorType = EasyLoadingIndicatorType.circle
-      ..textColor=ColorResources.text500
-    ;
+      ..textColor = ColorResources.text500;
 
     return GetMaterialApp(
       title: 'ETMS',

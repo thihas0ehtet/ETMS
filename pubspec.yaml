@@ -50,7 +50,6 @@ dependencies:
   flutter_easyloading: ^3.0.5
 
   #date picker
-#  syncfusion_flutter_datepicker:
   syncfusion_flutter_datepicker:
   scroll_date_picker: ^3.7.3
 
@@ -87,7 +86,9 @@ dependencies:
   local_auth: ^2.1.7
 
   #image compress
-  flutter_image_compress: ^2.1.0
+  # flutter_image_compress: ^2.1.0
+  flutter_image_compress: ^2.4.0
+  
 
   #pdf generator
   syncfusion_flutter_pdf: ^23.1.42
@@ -95,7 +96,8 @@ dependencies:
 
   #qr scanner
 #  qr_code_scanner: ^1.0.1
-  mobile_scanner: ^6.0.2
+  qr_code_scanner_plus: ^2.0.10+1
+  # mobile_scanner: ^6.0.2
 
   # refresh
   pull_to_refresh: ^2.0.0
@@ -103,18 +105,14 @@ dependencies:
   #internet conection check
   internet_connection_checker: ^0.0.1
 
-  sentry_flutter: ^7.14.0
+  # sentry_flutter: ^7.14.0
+
   dio: ^5.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.13.1
 
