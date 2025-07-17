@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 
-Future<dynamic> responseInterceptor(
-    Request request, Response response) async {
+Future<dynamic> responseInterceptor(Request request, Response response) async {
+  print("Log : ${response.body}");
   // EasyLoading.dismiss();
 
   // if (response.statusCode != 200) {

@@ -31,13 +31,15 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
-  Map<dynamic, List<LeaveStatusResponse>> kEventsData={};
+  Map<dynamic, List<LeaveStatusResponse>> kEventsData = {};
 
   // LinkedHashMap<DateTime, List<Event>>? kEvents12;
 
   @override
   void initState() {
     super.initState();
+
+    handleGetData();
 
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
@@ -49,18 +51,17 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
     super.dispose();
   }
 
-  Color generateColor(String text){
-    if(text.toLowerCase()=='pending'){
+  Color generateColor(String text) {
+    if (text.toLowerCase() == 'pending') {
       return ColorResources.yellow;
-    }
-    else if(text.toLowerCase().contains('reject')){
+    } else if (text.toLowerCase().contains('reject')) {
       return ColorResources.red;
     }
     return ColorResources.green;
   }
 
-  Color generateTextColor(String text){
-    if(text.toLowerCase()=='pending'){
+  Color generateTextColor(String text) {
+    if (text.toLowerCase() == 'pending') {
       return Colors.black;
     }
     return ColorResources.white;
@@ -79,10 +80,9 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
 
   List<LeaveStatusResponse> _getEventsForDay(DateTime day) {
     String startOfMonth = DateTime(day.year, day.month, 1).dMY().toString();
-    String date=DateFormat('dd-MMM-yyyy').format(day);
+    String date = DateFormat('dd-MMM-yyyy').format(day);
     return kEventsData[date] ?? [];
   }
-
 
   // List<Event> _getEventsForRange(DateTime start, DateTime end) {
   //   // Implementation example
@@ -107,23 +107,27 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
     }
   }
 
-  getData(String inputDate) async{
+  getData(String inputDate) async {
     // DateTime parsedMonth = DateFormat('yyyy / MMMM').parse(inputDate);
     // DateTime startOfMonth = DateTime(parsedMonth.year, parsedMonth.month, 1);
 
-    SharedPreferenceHelper _sharedPrefs=  Get.find<SharedPreferenceHelper>();
-    String sysId= await _sharedPrefs.getEmpSysId;
-    LeaveStatusData leaveStatusData = LeaveStatusData(
-        empSysId: sysId,
-        selectDate: inputDate
-    );
+    SharedPreferenceHelper sharedPrefs = Get.find<SharedPreferenceHelper>();
+    String sysId = await sharedPrefs.getEmpSysId;
+    LeaveStatusData leaveStatusData =
+        LeaveStatusData(empSysId: sysId, selectDate: inputDate);
 
     await controller.getLeaveStatusList(data: leaveStatusData);
     setState(() {
-      kEventsData=controller.kEvents;
+      kEventsData = controller.kEvents;
     });
   }
 
+  handleGetData() {
+    String startOfMonth =
+        DateTime(_focusedDay.year, _focusedDay.month, 1).dMY().toString();
+
+    getData(startOfMonth);
+  }
 
   // void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
   //   setState(() {
@@ -144,32 +148,38 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
   //   }
   // }
 
-  Widget statusWiget(String text, Color color){
+  Widget statusWiget(String text, Color color) {
     return Expanded(
       child: Row(
         // mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Icon(Icons.circle,color: color, size: 12,).paddingOnly(right: 8),
+          Icon(
+            Icons.circle,
+            color: color,
+            size: 12,
+          ).paddingOnly(right: 8),
           Expanded(child: Text(text))
         ],
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffF4F4F4),
+      backgroundColor: const Color(0xffF4F4F4),
       appBar: MyAppBar(title: 'Leave Calendar'),
       body: Column(
         children: [
           Material(
             elevation: 2,
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
+            borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(5),
+                bottomRight: Radius.circular(5)),
             color: ColorResources.white,
             child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5))
-              ),
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -195,11 +205,9 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
             startingDayOfWeek: StartingDayOfWeek.monday,
             calendarStyle: CalendarStyle(
               selectedDecoration: BoxDecoration(
-                  color: ColorResources.secondary700,
-                  shape: BoxShape.circle),
+                  color: ColorResources.secondary700, shape: BoxShape.circle),
               todayDecoration: BoxDecoration(
-                  color: ColorResources.primary500,
-                  shape: BoxShape.circle),
+                  color: ColorResources.primary500, shape: BoxShape.circle),
               // Use `CalendarStyle` to customize the UI
               outsideDaysVisible: false,
               // markerDecoration: BoxDecoration(
@@ -218,14 +226,19 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
             //   }
             // },
             onPageChanged: (focusedDay) {
-              String parsedMonth = DateFormat('yyyy / MMMM').format(focusedDay);
-              String startOfMonth = DateTime(focusedDay.year, focusedDay.month, 1).dMY().toString();
+              // String parsedMonth = DateFormat('yyyy / MMMM').format(focusedDay);
+              String startOfMonth =
+                  DateTime(focusedDay.year, focusedDay.month, 1)
+                      .dMY()
+                      .toString();
               _focusedDay = focusedDay;
               getData(startOfMonth);
             },
           ),
-          SizedBox(height: 8.0),
-          Divider(thickness: 1,),
+          const SizedBox(height: 8.0),
+          const Divider(
+            thickness: 1,
+          ),
           Expanded(
             child: ValueListenableBuilder<List<LeaveStatusResponse>>(
               valueListenable: _selectedEvents,
@@ -233,7 +246,7 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
                 return ListView.builder(
                   itemCount: value.length,
                   itemBuilder: (context, index) {
-                    LeaveStatusResponse data= value[index];
+                    LeaveStatusResponse data = value[index];
                     return Container(
                       margin: const EdgeInsets.symmetric(
                         // horizontal: 12.0,
@@ -246,7 +259,7 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
                       // ),
                       child: GestureDetector(
                         onTap: () => debugPrint('${value[index]}'),
-                        child:  Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -254,39 +267,55 @@ class _LeaveCalenderViewState extends State<LeaveCalenderView> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(data.leaveTypeName.toString(),
+                                  Text(
+                                    data.leaveTypeName.toString(),
                                     softWrap: true,
                                     // overflow: TextOverflow.ellipsis,
                                     style: latoSemibold.copyWith(fontSize: 15),
                                   ).paddingOnly(bottom: 10),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Expanded(
-                                        child: Text(DateTime.parse(data.leaveDate.toString()).dMYE().toString(),
+                                        child: Text(
+                                          DateTime.parse(
+                                                  data.leaveDate.toString())
+                                              .dMYE()
+                                              .toString(),
                                         ),
                                       ),
-                                      SizedBox(width: 5,),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
                                     ],
                                   ).paddingOnly(bottom: 5),
-                                  Text('(${data.halfType})',
-                                    style: latoRegular.copyWith(color: ColorResources.primary500),)
+                                  Text(
+                                    '(${data.halfType})',
+                                    style: latoRegular.copyWith(
+                                        color: ColorResources.primary500),
+                                  )
                                   // Text('(Evening-half)',
                                   //   style: latoRegular.copyWith(color: ColorResources.primary500),)
-
                                 ],
                               ),
                             ),
                             Container(
-                              padding: EdgeInsets.only(left: 10,right: 10,top: 4,bottom: 4),
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 10, top: 4, bottom: 4),
                               decoration: BoxDecoration(
                                   color: generateColor(data.status.toString()),
-                                  borderRadius: BorderRadius.all(Radius.circular(20))
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(20))),
+                              child: Text(
+                                data.status.toString(),
+                                style: latoRegular.copyWith(
+                                    color: generateTextColor(
+                                        data.status.toString())),
                               ),
-                              child: Text(data.status.toString(),style: latoRegular.copyWith(color: generateTextColor(data.status.toString())),),
                             ),
                           ],
-                        ).paddingOnly(left: 20, right: 20, top: 5,bottom: 5),
+                        ).paddingOnly(left: 20, right: 20, top: 5, bottom: 5),
                       ),
                     );
                   },
