@@ -1,4 +1,4 @@
-package com.example.etms
+package com.datamineit.etms
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
